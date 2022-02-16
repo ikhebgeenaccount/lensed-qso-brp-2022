@@ -1,5 +1,4 @@
 #For locations, redshifts, luminosity distances, luminosities in fir and other info, see evernote notebook. This file is to keep a record of what data is available, and what has been added to the file already.
-
 #galaxy,Hubble available    
 J1524+4409,0
 J1608+656,2
