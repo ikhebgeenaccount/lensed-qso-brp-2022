@@ -1,12 +1,12 @@
 #For locations, redshifts, luminosity distances, luminosities in fir and other info, see evernote notebook. This file is to keep a record of what data is available, and what has been added to the file already.
-#galaxy,Hubble available    
-J1524+4409,0
-J1608+656,2
-J1330+1810,3
-J1455+1447,0
-J1633+3134,1
-J0924+0219,9
-J1650+4251,0
-J1152+200,1
-J1600+434,1
-J0806+2006,0
+#galaxy,Hubble available,single galaxy?   
+J1524+4409,0, yes(feb 2008)
+J1608+656,2, yes(december 1999)
+J1330+1810,3, yes but galaxies 120 arcsec SW (december 2008)
+J1455+1447,0, yes(april 2010)
+J1633+3134,1, yes(february 2001)
+J0924+0219,9, no 4th component might be reddened =weird (august 2003)
+J1650+4251,0, yes (november 2003)
+J1152+200,1, yes (june 1999)
+J1600+434,1, yes but weird reddening component B (january 1997)
+J0806+2006,0, yes but some nearby galaxies that may pertube the system > modeling (april 2006)
