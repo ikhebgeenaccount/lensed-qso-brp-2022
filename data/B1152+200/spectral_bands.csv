@@ -1,1 +1,2 @@
-#filter, wavelength,flux,flux_error,flux_units,source
+#filter, wavelength[Angstrom],flux,flux_error,flux_units,source
+herschel/SPIRE,2.5e6, 37, 10, mJy, Stacey paper
