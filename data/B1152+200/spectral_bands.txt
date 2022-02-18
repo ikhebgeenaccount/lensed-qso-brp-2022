@@ -31,7 +31,7 @@ https://iopscience.iop.org/article/10.1086/340096/pdf
 
 Eliasdottir paper:
 table 3: observations in many bands,both in and not in components. 
-U, B, V , RI, z, Js, H, Ks using VLT, with nice errormargins
+U, B, V , RI, z, Js, H, Ks using VLT, with nice errormargins, maar wel ratios ipv absoluut
 https://iopscience.iop.org/article/10.1086/507131/pdf
 
 doorgaan na ostman 2008
