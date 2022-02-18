@@ -1,0 +1,37 @@
+#filter, wavelength[Angstrom],flux,flux_error,flux_units,source,remarks
+
+
+Stacey paper appendix: herschel/SPIRE, 250,350 & 500 micrometers with errors, however last 2 have only upper limit so no error
+https://ui.adsabs.harvard.edu/abs/2018MNRAS.476.5075S/abstract
+
+Myers paper = discovery paper. table 1. Split up in 3 components A,B,C. In Xband (8.4351 and 8.4851 GHz with an average frequency of 8.46
+GHz) an Uband (14.94 GHz) of NRAO Very Large Array. A and B are probably the 2 images. uncertainties in caption
+https://iopscience.iop.org/article/10.1086/300875/pdf
+
+Toft paper (2000)
+U B V R I z' photometry with the nordical optical telescope, ALFOSC instrument. table 3. Again multiple components, sat down in magnitudes. 
+https://articles.adsabs.harvard.edu/pdf/2000A%26A...357..115T
+
+Edwards paper (2001)
+table 1: 6.08 Ghz and 8.64 Ghz. Multiple dates, multiple components, Australia Telescope Compact Array
+https://articles.adsabs.harvard.edu/pdf/2001PASA...18..172E
+
+Muñoz paper (2001). R band observations with Telescopio Nazionale Galileo HOWEVER no actual fluxes were given, only flux ratios. 
+https://iopscience.iop.org/article/10.1086/338735/pdf
+
+Rusin paper (2002)
+table 1: B1152+199 component flux densities (in mJy) at 1.4, 5, 8.4 and 15 GHz. Split in components again, A end B. e 1999 July 15 VLA obs. 
+table 2: Data from the VLBA 5-GHz observation of 2001 February 27 and 2001 March 18. \split into jets and core.
+table 3: HST photometry and astrometry. Listed are the positions of the components derived from the I-band image, and their integrated magnitudes mv
+and mi.
+https://articles.adsabs.harvard.edu/pdf/2002MNRAS.330..205R
+
+850 micrometer observations, in luminosities, given with an upper limit. Not components. 
+https://iopscience.iop.org/article/10.1086/340096/pdf
+
+Eliasdottir paper:
+table 3: observations in many bands,both in and not in components. 
+U, B, V , RI, z, Js, H, Ks using VLT, with nice errormargins
+https://iopscience.iop.org/article/10.1086/507131/pdf
+
+doorgaan na ostman 2008
