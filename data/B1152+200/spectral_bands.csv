@@ -1,4 +1,4 @@
 #filter, wavelength[Angstrom],flux,flux_error,flux_units,source,remarks
-herschel/SPIRE,2.5e6, 37, 10, mJy, Stacey paper,.
-.,3.5e5,<30,.,mjy,Stacey paper, UPPER
-., 5e6,<32, ., Stacey paper, UPPER
+herschel/SPIRE,2.5e6, 37, 10, mJy,Stacey paper,.
+.,3.5e5,<30,.,mJy,Stacey paper, UPPER
+., 5e6,<32, .,mJy,Stacey paper, UPPER
