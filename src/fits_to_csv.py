@@ -1,6 +1,5 @@
 import astropy.io.fits
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -15,11 +14,13 @@ def sdss_fits_to_csv(galaxy, file, url='', units='Ang,e-17 erg/s/cm2/Ang,e-17 er
 	:param url: Optional, url from where the fits file was obtained
 	:param units: Units of the fields, default: 'Ang,e-17 erg/s/cm2/Ang,e-17 erg/s/cm2/Ang'
 	:param hdu_index: the index of the hdu containing the wavelength and flux data in the fits file, default: 1
-	:return:
+	:return: A Pandas DataFrame with the fields wavelength, flux and fluxerr
 	"""
 	f = astropy.io.fits.open(f'data/{galaxy}/{file}')
 
 	df = pd.DataFrame()
+
+	# Source for SDSS fields: http://www.sdss3.org/dr9/spectro/spectro_basics.php
 
 	# ivar is inverse variance, defined as 1/sigma^2
 	# ivar = 0 indicated bad data in that row
