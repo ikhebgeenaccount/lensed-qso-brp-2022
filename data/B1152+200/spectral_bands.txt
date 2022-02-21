@@ -1,0 +1,58 @@
+C component was mostly let go, this is the galaxy
+
+
+Stacey paper appendix: herschel/SPIRE, 250,350 & 500 micrometers with errors, however last 2 have only upper limit so no error
+https://ui.adsabs.harvard.edu/abs/2018MNRAS.476.5075S/abstract
+
+Myers paper = discovery paper. table 1. Split up in 3 components A,B,C. In Xband (8.4351 and 8.4851 GHz with an average frequency of 8.46
+GHz) an Uband (14.94 GHz) of NRAO Very Large Array. A and B are probably the 2 images. uncertainties in caption
+https://iopscience.iop.org/article/10.1086/300875/pdf
+
+Toft paper (2000)
+U B V R I z' photometry with the nordical optical telescope, ALFOSC instrument. table 3. Again multiple components, sat down in magnitudes. 
+http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=NOT&gname2=ALFOSC&asttype= for filters, z' not sure
+https://irsa.ipac.caltech.edu/data/SPITZER/docs/dataanalysistools/tools/pet/magtojy/ for magnitude to flux, Johnson
+https://articles.adsabs.harvard.edu/pdf/2000A%26A...357..115T paper
+
+Edwards paper (2001)
+table 1: 6.08 Ghz and 8.64 Ghz. Multiple dates, multiple components, Australia Telescope Compact Array
+mean was taken over dates
+https://articles.adsabs.harvard.edu/pdf/2001PASA...18..172E
+
+Muñoz paper (2001). R band observations with Telescopio Nazionale Galileo HOWEVER no actual fluxes were given, only flux ratios. 
+https://iopscience.iop.org/article/10.1086/338735/pdf
+
+Rusin paper (2002)
+table 1: B1152+199 component flux densities (in mJy) at 1.4, 5, 8.4 and 15 GHz. Split in components again, A end B. e 1999 July 15 VLA obs. 
+table 2: Data from the VLBA 5-GHz observation of 2001 February 27 and 2001 March 18. \split into jets and core.
+table 3: HST photometry and astrometry. Listed are the positions of the components derived from the I-band image, and their integrated magnitudes mv
+and mi.
+Only table 1 used in csv file
+https://articles.adsabs.harvard.edu/pdf/2002MNRAS.330..205R
+
+Barvainis paper:
+850 micrometer observations, in luminosities, given with an upper limit. Not components. 
+https://iopscience.iop.org/article/10.1086/340096
+
+Eliasdottir paper:
+table 4: observations in many bands,both in and not in components. 
+U, B, V , RI, z, Js, H, Ks using VLT, with nice errormargins, HOWEVER wel ratios ipv absoluut
+https://iopscience.iop.org/article/10.1086/507131/pdf
+
+Dai paper:
+chandra data for x-ray wavelengths: 
+table 1 gives count rate and raw flux ratio, bit it is spectral? have not included it right now
+https://iopscience.iop.org/article/10.1088/0004-637X/692/1/677/pdf
+
+Rumbaugh: title seems really promising but I do not have access..
+Radio and Gamma-Ray Monitoring of Strongly Lensed Quasars and Blazars, https://research.rug.nl/en/publications/radio-and-gamma-ray-monitoring-of-strongly-lensed-quasars-and-bla
+
+Dai&Chen paper:
+spectroscopy, but does state fluxes for specific emissionlines> Might be not useful if we are studying the continuum.
+https://ui.adsabs.harvard.edu/abs/2020MNRAS.495..460D/abstract
+
+Asadi paper:
+old and new radio observations, at 5 and 8.4 Ghz. But no fluxes or magnitudes given
+https://ui.adsabs.harvard.edu/abs/2020MNRAS.492..742A/abstract
+
+Might have missed something (likely), but leaving it here for now
