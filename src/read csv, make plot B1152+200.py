@@ -19,7 +19,7 @@ flux_error = np.loadtxt( inputFile, delimiter=';', usecols=4, skiprows=1 )
 flux_A = np.loadtxt( inputFile, delimiter=';', usecols=5, skiprows=1)
 flux_B = np.loadtxt( inputFile, delimiter=';', usecols=6, skiprows=1 )
 
-#loglog without zero fluxes
+#loglog without zero fluxes 
 plt.figure(0, figsize=(10,8)) 
 for i in range(len(flux[flux>0])):
     plt.errorbar(wavelength[flux>0][i], flux[flux>0][i], yerr=flux_error[flux>0][i], fmt='.', label=paper_name[flux>0][i])
