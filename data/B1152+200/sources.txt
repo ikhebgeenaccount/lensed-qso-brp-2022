@@ -12,14 +12,14 @@ Toft paper (2000)
 U B V R I z' photometry with the nordical optical telescope, ALFOSC instrument. table 3. Again multiple components, sat down in magnitudes. 
 http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=NOT&gname2=ALFOSC&asttype= for filters, z' not sure
 https://irsa.ipac.caltech.edu/data/SPITZER/docs/dataanalysistools/tools/pet/magtojy/ for magnitude to flux, Johnson
-https://articles.adsabs.harvard.edu/pdf/2000A%26A...357..115T paper
+https://articles.adsabs.harvard.edu/pdf/2000A%26A...357..115T paper z'NOT USED
 
 Edwards paper (2001)
 table 1: 6.08 Ghz and 8.64 Ghz. Multiple dates, multiple components, Australia Telescope Compact Array
 mean was taken over dates
 https://articles.adsabs.harvard.edu/pdf/2001PASA...18..172E
 
-Muñoz paper (2001). R band observations with Telescopio Nazionale Galileo HOWEVER no actual fluxes were given, only flux ratios. 
+Muñoz paper (2001). R band observations with Telescopio Nazionale Galileo HOWEVER no actual fluxes were given, only flux ratios.  NOT USED
 https://iopscience.iop.org/article/10.1086/338735/pdf
 
 Rusin paper (2002)
@@ -37,7 +37,7 @@ https://iopscience.iop.org/article/10.1086/340096
 Eliasdottir paper:
 table 4: observations in many bands,both in and not in components. 
 U, B, V , RI, z, Js, H, Ks using VLT, with nice errormargins, HOWEVER wel ratios ipv absoluut
-https://iopscience.iop.org/article/10.1086/507131/pdf
+https://iopscience.iop.org/article/10.1086/507131/pdf NOT USED
 
 Dai paper:
 chandra data for x-ray wavelengths: 
