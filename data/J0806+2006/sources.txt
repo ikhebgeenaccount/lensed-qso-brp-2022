@@ -1,0 +1,31 @@
+# SDSS discovery paper, https://ui.adsabs.harvard.edu/abs/2006AJ....131.1934I/abstract
+# V, R, I, H 	Table 1 (p. 14), A+B is background galaxy, G is lensing galaxy
+# p.4, u, g, r, i, z
+
+# SDSS filters
+# https://www.sdss.org/instruments/camera/
+# Find SDSS paper for precise defs
+# u, 3551Å, 0.3551 um
+# g, 4686Å, 0.4686 um
+# r, 6166Å, 0.6166 um
+# i, 7480Å, 0.7480 um
+# z, 8932Å, 0.8932 um
+
+# Stacey 2018, table A1, https://ui.adsabs.harvard.edu/abs/2018MNRAS.476.5075S/abstract
+# 250, 350, 500 um
+# No error for 350, 500 um?
+
+# Sluse et al. 2012, table 5 (p. 14), https://www.aanda.org/articles/aa/pdf/2012/08/aa19125-12.pdf
+# H, K, L' bands
+# H: 			(Sluse et al., 2008, https://www.aanda.org/articles/aa/pdf/2008/47/aa10977-08.pdf), Sluse 2012 table 5 says A/B, but seems to be .5 * A/B from sluse 2008? table 2 has H magnitude
+# K: 2.2 um 	(Fadely, Keeton 2011, https://iopscience.iop.org/article/10.1088/0004-6256/141/3/101/pdf)
+# L': 3.8 um	(Fadely, Keeton 2011, https://iopscience.iop.org/article/10.1088/0004-6256/141/3/101/pdf)
+# Flux ratios, perhaps can turn into abs flux values? --> table 3 has abs values
+
+# https://ui.adsabs.harvard.edu/abs/2010PhDT........75F/abstract
+# Flux ratios for
+# many filters
+# p 149
+
+# https://arxiv.org/pdf/1805.09619.pdf
+# Emission lines
