@@ -18,7 +18,7 @@ class LensedQSO:
         self.sed = pd.read_csv(os.path.join('data', name, sed_source))
 
     def plot_spectrum(self, loglog=False, **kwargs):
-        fig, ax = plt.subplots(figsize=(10,8))
+        fig, ax = plt.subplots(figsize=(10, 8))
 
         legend_list = []
 
