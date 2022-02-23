@@ -3,6 +3,8 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from matplotlib.legend_handler import HandlerTuple
+
 
 class LensedQSO:
 
@@ -18,12 +20,29 @@ class LensedQSO:
 	def plot_spectrum(self, **kwargs):
 		fig, ax = plt.subplots()
 
+		legend_list = []
+
 		# For every unique source, add their data separately
 		for l in self.sed.source.unique():
+			# Filter based on source
 			sel = self.sed[self.sed.source == l]
-			ax.errorbar(sel.wavelength, sel.flux, sel.fluxerr, fmt='o', label=l, **kwargs)
 
-		ax.legend()
+			# Separate upper limits from regular data points
+			sel_upper_limit = sel[sel.upper_limit == 1]
+			sel_reg = sel[sel.upper_limit == 0]
+
+			# Plot regular data points and upper limits separately, upper limits with special marker
+			le_1, _, _ = ax.errorbar(sel_reg.wavelength, sel_reg.flux_total, sel_reg.flux_err, fmt='o', label=l, **kwargs)
+			le_2, _, _ = ax.errorbar(sel_upper_limit.wavelength, sel_upper_limit.flux_total, sel_upper_limit.flux_err,
+									 fmt='o', label=l, marker='v', color=le_1.get_color(), **kwargs)
+
+			legend_list.append((le_1, le_2))
+
+		ax.legend(legend_list, self.sed.source.unique(), loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
 		ax.set_xscale('log')
+
+		ax.set_title(f'{self.name} SED')
+		ax.set_xlabel('$\mathit{Wavelength}\ (\mathrm{\AA})$')
+		ax.set_ylabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
 
 		return fig, ax
