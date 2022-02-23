@@ -22,6 +22,8 @@ class LensedQSO:
 
 		legend_list = []
 
+		# upper_limits = ()
+
 		# For every unique source, add their data separately
 		for l in self.sed.source.unique():
 			# Filter based on source
@@ -38,6 +40,9 @@ class LensedQSO:
 
 			legend_list.append((le_1, le_2))
 
+			# upper_limits += (le_2, )
+
+		# ax.legend(legend_list + [upper_limits], list(self.sed.source.unique()) + ['upper limit'], loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
 		ax.legend(legend_list, self.sed.source.unique(), loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
 		ax.set_xscale('log')
 
