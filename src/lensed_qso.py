@@ -17,7 +17,7 @@ class LensedQSO:
         self.name = name
         self.sed = pd.read_csv(os.path.join('data', name, sed_source))
 
-    def plot_spectrum(self, **kwargs):
+    def plot_spectrum(self, loglog=False, **kwargs):
         fig, ax = plt.subplots(figsize=(10,8))
 
         legend_list = []
@@ -46,41 +46,8 @@ class LensedQSO:
         ax.legend(legend_list, self.sed.source.unique(), loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
         ax.set_xscale('log')
 
-        ax.set_title(f'{self.name} SED')
-        ax.set_xlabel('$\mathit{Wavelength}\ (\mathrm{\AA})$')
-        ax.set_ylabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
-
-        return fig, ax
-
-    def plot_spectrum_loglog(self, **kwargs):
-        fig, ax = plt.subplots(figsize=(10,8))
-
-        legend_list = []
-
-        # upper_limits = ()
-
-        # For every unique source, add their data separately
-        for l in self.sed.source.unique():
-            # Filter based on source
-            sel = self.sed[self.sed.source == l]
-
-            # Separate upper limits from regular data points
-            sel_upper_limit = sel[sel.upper_limit == 1]
-            sel_reg = sel[sel.upper_limit == 0]
-
-            # Plot regular data points and upper limits separately, upper limits with special marker
-            le_1, _, _ = ax.errorbar(sel_reg.wavelength, sel_reg.flux_total, sel_reg.flux_err, fmt='o', label=l, **kwargs)
-            le_2, _, _ = ax.errorbar(sel_upper_limit.wavelength, sel_upper_limit.flux_total, sel_upper_limit.flux_err,
-                       fmt='o', label=l, marker='v', color=le_1.get_color(), **kwargs)
-
-            legend_list.append((le_1, le_2))
-
-            # upper_limits += (le_2, )
-
-        # ax.legend(legend_list + [upper_limits], list(self.sed.source.unique()) + ['upper limit'], loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
-        ax.legend(legend_list, self.sed.source.unique(), loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
-        ax.set_xscale('log')
-        ax.set_yscale('log')
+        if loglog:
+            ax.set_yscale('log')
 
         ax.set_title(f'{self.name} SED')
         ax.set_xlabel('$\mathit{Wavelength}\ (\mathrm{\AA})$')
