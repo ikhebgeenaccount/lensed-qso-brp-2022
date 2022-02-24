@@ -1,0 +1,8 @@
+panstars:
+Done with excelsheet, exact same way as B1152+200
+checking with panstarr counts to see if same galaxy was selected> approx 17.9 so should be allright
+catalogue https://catalogs.mast.stsci.edu/panstarrs/search-results.html
+
+sdss:
+Done the exact same way as B1152=200, using excelsheet 
+http://skyserver.sdss.org/dr14/en/tools/chart/navi.aspx?ra=248.45408&dec=31.56997&SCALE=0.05
