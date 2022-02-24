@@ -3,7 +3,7 @@ ALL THE PAPERS REFERENCED IN COMPILING THE B1152+200 SED, EVEN IF NOT INCLUDED
 Stacey 2018
 herschel/SPIRE telescope
 appendix: 250,350 & 500 micrometers, fluxes given in mJy with errors
-last 2 have only upper limit>> FOLLOWUP
+last 2 have only upper limit
 source: https://ui.adsabs.harvard.edu/abs/2018MNRAS.476.5075S/abstract
 
 Myers 1999 = discovery paper
@@ -76,7 +76,7 @@ source: http://skyserver.sdss.org/dr14/en/tools/chart/navi.aspx?ra=178.82639&dec
 filters: http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=SLOAN&asttype=
 magnitude uncertainties: http://skyserver.sdss.org/dr14/en/tools/explore/Summary.aspx?id=1237668297664692248 
 2 filters with sigma=0, see excel sheet for calculating sigmas.
-Do we calculate the magnitudes right? >> FOLLOWUP
+maybe method a bit too difficult, but hardly a difference with simple method
 
 panstarrs:
 catalogue:https://outerspace.stsci.edu/display/PANSTARRS
