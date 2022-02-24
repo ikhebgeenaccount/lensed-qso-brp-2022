@@ -1,4 +1,4 @@
-﻿filter,wavelength,flux_total,fluxerr,flux_G,flux_G_err,flux_A,flux_A_err,flux_B,flux_B_err,flux_C,flux_C_err,flux_D,flux_A_err,source,upper_limit
+﻿filter,wavelength,flux_total,flux_err,flux_G,flux_G_err,flux_A,flux_A_err,flux_B,flux_B_err,flux_C,flux_C_err,flux_D,flux_A_err,source,upper_limit
 .,2.5e6,37,10,0,0,0,0,0,0,0,0,0,0,Stacey,0
 .,3.5e6,30,0,0,0,0,0,0,0,0,0,0,0,Stacey,1
 .,5.0e6,32,0,0,0,0,0,0,0,0,0,0,0,Stacey,1
