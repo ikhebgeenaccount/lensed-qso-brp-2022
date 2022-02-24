@@ -29,3 +29,9 @@
 
 # https://arxiv.org/pdf/1805.09619.pdf
 # Emission lines, too specific
+
+# PanSTARRS data
+# Filters: Tonry et al. 2012 The Pan-STARRS1 Photometric System
+# Unresolved: PSF magnitude
+# Resolved: aperture magnitude
+# mag to flux: AB system, zeropoint 3631e3 mJy
