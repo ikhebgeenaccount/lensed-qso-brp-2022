@@ -16,11 +16,11 @@ source: https://iopscience.iop.org/article/10.1086/300875/pdf
 Toft paper (2000)
 U B V R I z' photometry with the nordical optical telescope, ALFOSC instrument.
 z' was not used since no absolute fluxes/magnitudes were given
-table 3: Again multiple components, written down in magnitudes. These were calculated online.
-Uncertainty in magnitudes see notebook, simple propagation of errors, for magnitude and sum.
+table 3: Again multiple components, written down in magnitudes. 
+Used AB magnitudes for calculation of fluxes, FOLLOWUP> is this correct?
+for calculation see excelsheet, simple propagation of errors, for magnitude and sum.
 For 2 bands the magnitude of the galaxy was also given, this has been added.
 filters: http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=NOT&gname2=ALFOSC&asttype= 
-magnitude to flux (Johnson): https://irsa.ipac.caltech.edu/data/SPITZER/docs/dataanalysistools/tools/pet/magtojy/ 
 source: https://articles.adsabs.harvard.edu/pdf/2000A%26A...357..115T 
 
 Edwards paper (2001)
