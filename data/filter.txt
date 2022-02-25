@@ -1,0 +1,4 @@
+telescope, filtername, central_wavelength, source
+hst,F160W,15370.34,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_IR.F160W
+hst,F555W,5355.38,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/ACS_HRC.F555W
+hst,F814W,8029.29,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_UVIS2.F814W
