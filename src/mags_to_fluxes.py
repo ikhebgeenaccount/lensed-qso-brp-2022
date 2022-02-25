@@ -74,7 +74,6 @@ def mags_to_fluxes(galaxy, mags_file='mags.csv', sed_file='sed.csv'):
                                                  fs[0], fes[0], fs[1], fes[1], fs[2], fes[2], fs[3], fes[3], fs[4], fes[4],
                                                  row.source, row.lower_limit]
 
-    print(lqso.sed[['filter', 'wavelength', 'flux_total', 'flux_A', 'flux_A_err', 'source']])
     lqso.sed.to_csv(os.path.join('data', galaxy, sed_file), index=False)
 
 
@@ -121,4 +120,4 @@ def conversion_SDSS(filter, mag, mag_err):
     zeropoint = 3631e3  # mJy
     flux = 2. * SDSS_b[filter] * np.sinh(- mag * np.log(10.) / 2.5 - np.log(SDSS_b[filter])) * zeropoint
     flux_err = np.abs(2. * SDSS_b[filter] * np.cosh(- mag * np.log(10.) / 2.5 - np.log(SDSS_b[filter])) * - np.log(10.) / 2.5 * mag_err)
-    return mag, mag_err
+    return flux, flux_err
