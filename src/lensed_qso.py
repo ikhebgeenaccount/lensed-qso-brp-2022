@@ -8,7 +8,7 @@ from matplotlib.legend_handler import HandlerTuple
 
 class LensedQSO:
 
-    def __init__(self, name, sed_source='sed.csv'):
+    def __init__(self, name, sed_source='sed.csv', properties='properties.txt'):
         """
         :param name: Name of the lensed qso.
         :param sed_source: source of the spectral energy density (SED). Must be located in 'data/[name]'. Default is
@@ -16,6 +16,12 @@ class LensedQSO:
         """
         self.name = name
         self.sed = pd.read_csv(os.path.join('data', name, sed_source))
+        self.sed.fillna(0, inplace=True)
+
+        self.props = pd.read_csv(os.path.join('data', properties), skiprows=1)
+
+        # filtered_sed only selects entries that have a wavelength and a flux_total
+        self.filtered_sed = self.sed[(self.sed.wavelength > 0) * (self.sed.flux_total > 0)].copy()
 
     def plot_spectrum(self, loglog=False, **kwargs):
         fig, ax = plt.subplots(figsize=(10, 8))
@@ -62,3 +68,25 @@ class LensedQSO:
         ax.set_ylabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
 
         return fig, ax
+
+    def sed_to_agn_fitter(self):
+        """
+        Translates the SED to a catalog that is compatible with AGNfitter.
+        :return: str
+        """
+        # TODO: use split data, model subtraction from total fluxes
+        id = self.name.replace('B', '')
+        id = id.replace('J', '')
+        id = id.replace('+', '')
+
+        header = '# ID redshift [wavelength_angstrom flux_mJy flux_error_mJy]\n'
+
+        catalog = header + f'{id} {self.props.loc[self.props.galaxy == self.name].z_qso.values[0]} '
+        for i, row in self.filtered_sed.iterrows():
+            if not row.upper_limit:
+                catalog += f'{row.wavelength} {row.flux_total} {row.flux_err} '
+            else:
+                # Upper limit has error -99 as flag for AGNfitter
+                catalog += f'{row.wavelength} {row.flux_total} -99 '
+
+        return catalog
