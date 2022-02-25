@@ -16,6 +16,7 @@ class LensedQSO:
         """
         self.name = name
         self.sed = pd.read_csv(os.path.join('data', name, sed_source))
+        self.sed.fillna(0, inplace=True)
 
         self.props = pd.read_csv(os.path.join('data', properties), skiprows=1)
 
@@ -73,6 +74,7 @@ class LensedQSO:
         Translates the SED to a catalog that is compatible with AGNfitter.
         :return: str
         """
+        # TODO: use split data, model subtraction from total fluxes
         id = self.name.replace('B', '')
         id = id.replace('J', '')
         id = id.replace('+', '')

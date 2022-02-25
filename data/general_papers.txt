@@ -1,0 +1,3 @@
+Oguri et al. 2014
+Estimates of stellar masses using Salpeter function.
+https://ui.adsabs.harvard.edu/abs/2014MNRAS.439.2494O/abstract
