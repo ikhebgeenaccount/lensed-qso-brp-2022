@@ -14,6 +14,8 @@ def mags_to_fluxes(galaxy, mags_file='mags.csv', sed_file='sed.csv'):
     Reads the mags.csv file of galaxy and converts the magnitudes to fluxes, using the appropriate conversion formulas.
     Saves these fluxes to sed.csv.
     :param galaxy:
+    :param sed_file:
+    :param mags_file:
     :return: DataFrame with fluxes
     """
     mags_csv = pd.read_csv(os.path.join('data', galaxy, mags_file))
@@ -55,7 +57,9 @@ def mags_to_fluxes(galaxy, mags_file='mags.csv', sed_file='sed.csv'):
                                                  row.source, row.lower_limit]
         else:
             # It exists, overwrite
-            lqso.sed[(lqso.sed['filter'] == row['filter']) & (lqso.sed.source == row.source)].loc[0] = [row['filter'], wavelength, sum(fs), sum(fes),
+            # Find the index of the row with same filter and source
+            index = lqso.sed.index[(lqso.sed['filter'] == row['filter']) & (lqso.sed.source == row.source)]
+            lqso.sed.loc[index] = [row['filter'], wavelength, sum(fs), sum(fes),
                                                  fs[0], fes[0], fs[1], fes[1], fs[2], fes[2], fs[3], fes[3], fs[4], fes[4],
                                                  row.source, row.lower_limit]
 
