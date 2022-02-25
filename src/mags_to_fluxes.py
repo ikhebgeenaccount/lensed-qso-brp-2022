@@ -33,6 +33,10 @@ def mags_to_fluxes(galaxy, mags_file='mags.csv', sed_file='sed.csv'):
             print(f'No conversion found for {row.telescope} {row["filter"]} filter in data/filter.csv.')
             continue
 
+        # Flag that is set to true if there is a G component, then it is assumed that all components are listed and
+        # a total flux can be calculated
+        total = False
+
         # Used to store fluxes and flux_errs for all components
         fs = []
         fes = []
@@ -44,22 +48,29 @@ def mags_to_fluxes(galaxy, mags_file='mags.csv', sed_file='sed.csv'):
                 fes.append(0.)
                 continue
 
+            # If a G (foreground galaxy) component magnitude is listed, assume all components are and produce a total
+            if comp == '_G':
+                total = True
+
             f, fe = conversion(row.filter, row[f'mag{comp}'], row[f'mag{comp}_err'])
 
             fs.append(f)
             fes.append(fe)
 
+        total_f = sum(fs) * total
+        total_fe = sum(fes) * total
+
         # If this combination of filter and wavelength does not exist yet in lqso.sed
         if lqso.sed[(lqso.sed['filter'] == row['filter']) & (lqso.sed.source == row.source)].empty:
             # Add it
-            lqso.sed.loc[len(lqso.sed.index)] = [row['filter'], wavelength, sum(fs), sum(fes),
+            lqso.sed.loc[len(lqso.sed.index)] = [row['filter'], wavelength, total_f, total_fe,
                                                  fs[0], fes[0], fs[1], fes[1], fs[2], fes[2], fs[3], fes[3], fs[4], fes[4],
                                                  row.source, row.lower_limit]
         else:
             # It exists, overwrite
             # Find the index of the row with same filter and source
             index = lqso.sed.index[(lqso.sed['filter'] == row['filter']) & (lqso.sed.source == row.source)]
-            lqso.sed.loc[index] = [row['filter'], wavelength, sum(fs), sum(fes),
+            lqso.sed.loc[index] = [row['filter'], wavelength, total_f, total_fe,
                                                  fs[0], fes[0], fs[1], fes[1], fs[2], fes[2], fs[3], fes[3], fs[4], fes[4],
                                                  row.source, row.lower_limit]
 
