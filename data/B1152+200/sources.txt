@@ -83,7 +83,8 @@ catalogue:https://outerspace.stsci.edu/display/PANSTARRS
 from counts to magnitudes:https://outerspace.stsci.edu/display/PANSTARRS/PS1+Stack+images#PS1Stackimages-Photometriccalibration
 The catalogue was used, searched for the coordinates given in the QSO database, with an angle of 5 arcseconds. Found 4 sources, most quite dim but one with magnitude around 17. 
 Then using ds9 by making an aperture, and transforming the counts to magnitudes we found a rough estimate, which was also around 17. This must be the galaxy, so these values were used in the table. 
-for magnitudes, column _meanPSFMag was used, since this galaxy is pretty round. Lars' galaxy was a little differet
+for magnitudes, column _meanPSFMag was used, since this galaxy is pretty round. Lars' galaxy was a little different.
+to fluxes with code
 for uncertainties, we used _meanPSFMagerr, as the uncertainty in the stacked image
 central wavelengths: https://coolwiki.ipac.caltech.edu/index.php/Central_wavelengths_and_zero_points
 
