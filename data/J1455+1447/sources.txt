@@ -1,5 +1,17 @@
 Kayo 2010
+source:https://iopscience.iop.org/article/10.1088/0004-6256/139/4/1614/pdf
+DATA WAS NOT USED since sdss dr14 was more recent, small difference
+
 Rusu 2016
-panstarrs> check catalogue
-hst> check catalogue, no data available on site
-sdss> check if same with kayo
+Gives K' band magnitudes for total and seperated into components and galaxy
+source: https://ui.adsabs.harvard.edu/abs/2016MNRAS.458....2R/abstract
+
+panstarrs
+used Lars' code for first time
+source: https://catalogs.mast.stsci.edu/panstarrs/search-results.html
+
+sdss: use instead of Kayo 2010
+used Lars' code for first time
+source:http://skyserver.sdss.org/dr14/en/tools/chart/navi.aspx?ra=223.75782&dec=14.79301&SCALE=0.05
+
+hst: NO DATA AVAILABLE
