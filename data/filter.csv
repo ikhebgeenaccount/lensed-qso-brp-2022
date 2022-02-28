@@ -29,3 +29,8 @@ WIYN,U,3579.71,,vega,3650000
 WIYN,B,4303.52,,vega,3650000
 WIYN,R,6393.93,,vega,3650000
 WIYN,I,8372.33,,vega,3650000
+NOT,U,3600.85,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=NOT&gname2=ALFOSC&asttype=,AB,3631000
+NOT,B,4306.12,,AB,3631000
+NOT,V,5389.63,,AB,3631000
+NOT,R,6396.64,,AB,3631000
+NOT,I,8559.60,,AB,3631000
