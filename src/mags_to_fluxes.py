@@ -52,7 +52,7 @@ def mags_to_fluxes(galaxy, mags_file='mags.csv', sed_file='sed.csv'):
                 fes.append(0.)
                 continue
 
-            f, fe = conversion(row.filter, row[f'mag{comp}'], row[f'mag{comp}_err'])
+            f, fe = conversion(row['filter'], row[f'mag{comp}'], row[f'mag{comp}_err'])
 
             # If a G (foreground galaxy) component magnitude is listed, assume all components are and produce a total
             if comp == '_G':
