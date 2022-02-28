@@ -19,3 +19,9 @@ SDSS,r,6166,,SDSS,3631000
 SDSS,i,7480,,SDSS,3631000
 SDSS,z,8932,,SDSS,3631000
 Subaru,K',21200,http://www.ifa.hawaii.edu/~tokunaga/filterSpecs.html,AB,636000
+Gemini North,K,22000,,vega,3650000
+Gemini North,L,38000,,vega,3650000
+UH88,V,5510,,vega,3650000
+UH88,R,6580,,vega,3650000
+UH88,I,8060,,vega,3650000
+UH88,H,16300,,vega,3650000
