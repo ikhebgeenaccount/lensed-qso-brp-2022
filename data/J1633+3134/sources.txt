@@ -1,5 +1,5 @@
 panstars:
-Done with excelsheet, exact same way as B1152+200
+Done with code
 checking with panstarr counts to see if same galaxy was selected> approx 17.9 so should be allright
 catalogue https://catalogs.mast.stsci.edu/panstarrs/search-results.html
 

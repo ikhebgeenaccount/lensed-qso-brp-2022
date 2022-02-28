@@ -3,8 +3,10 @@ source:https://iopscience.iop.org/article/10.1088/0004-6256/139/4/1614/pdf
 DATA WAS NOT USED since sdss dr14 was more recent, small difference
 
 Rusu 2016
+subaru
 Gives K' band magnitudes for total and seperated into components and galaxy
 source: https://ui.adsabs.harvard.edu/abs/2016MNRAS.458....2R/abstract
+zeropoint https://subarutelescope.org/staff/guyon/15teaching.web/01AstrOptics2012.web/AstOpt2012_01-fund.pdf
 
 panstarrs
 used Lars' code for first time
