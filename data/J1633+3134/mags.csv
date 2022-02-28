@@ -1,6 +1,6 @@
 telescope,filter,wavelength,mag,mag_err,mag_G,mag_G_err,mag_A,mag_A_err,mag_B,mag_B_err,mag_C,mag_C_err,mag_D,mag_D_err,source,lower_limit
-PanSTARRS,g,,18.76,0.01,,,,,,,,,,,Panstarrs+DR2,0
-PanSTARRS,r,,18.50,0.03,,,,,,,,,,,Panstarrs+DR2,0
-PanSTARRS,i,,18.37,0.05,,,,,,,,,,,Panstarrs+DR2,0
-PanSTARRS,z,,18.3,0.01,,,,,,,,,,,Panstarrs+DR2,0
-PanSTARRS,y,,18.04,0.03,,,,,,,,,,,Panstarrs+DR2,0
+PanSTARRS,g,,17.57,0.02,,,,,,,,,,,Panstarrs+DR2,0
+PanSTARRS,r,,17.48,0.0099,,,,,,,,,,,Panstarrs+DR2,0
+PanSTARRS,i,,17.28,0.005,,,,,,,,,,,Panstarrs+DR2,0
+PanSTARRS,z,,17.26,0.002,,,,,,,,,,,Panstarrs+DR2,0
+PanSTARRS,y,,17.26,0.02,,,,,,,,,,,Panstarrs+DR2,0
