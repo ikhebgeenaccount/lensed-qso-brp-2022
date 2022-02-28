@@ -8,8 +8,8 @@ Done the exact same way as B1152=200, using excelsheet
 http://skyserver.sdss.org/dr14/en/tools/chart/navi.aspx?ra=248.45408&dec=31.56997&SCALE=0.05
 
 Yonehara 2008>Castles survey>HST data
-one paper led to a rabbit hole of other papers, found hubble magnitudes seperately for gallaxy, A and B.
-However, recalculating to flux was tricky since I do not know which magnitude system they used. I chose VEGAMAG, however we should check this.
+one paper led to a rabbit hole of other papers, found hubble magnitudes seperately for galaxy, A and B.
+However, recalculating to flux was tricky since I do not know which magnitude system they used. We chose Ab mag for all hst data. and more searching found also same zeropoint
 Source: https://www.aanda.org/articles/aa/pdf/2008/04/aa7014-06.pdf
 Hst:https://lweb.cfa.harvard.edu/castles/Individual/FBQ1633.html
 filters; http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_IR.F160W
