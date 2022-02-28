@@ -1,0 +1,11 @@
+telescope,filter,wavelength,mag,mag_err,mag_G,mag_G_err,mag_A,mag_A_err,mag_B,mag_B_err,mag_C,mag_C_err,mag_D,mag_D_err,source,lower_limit
+SDSS,u,,19.66,0.03,,,,,,,,,,,SDSS+DR14,
+SDSS,g,,19.24,0.01,,,,,,,,,,,SDSS+DR14,
+SDSS,r,,18.74,0.01,,,,,,,,,,,SDSS+DR14,
+SDSS,i,,18.41,0.01,,,,,,,,,,,SDSS+DR14,
+SDSS,z,,18.27,0.03,,,,,,,,,,,SDSS+DR14,
+panSTARRS,g,,18.7628,0.01,,,,,,,,,,,panSTARRS+DR2,
+panSTARRS,r,,18.497,0.0285,,,,,,,,,,,panSTARRS+DR2,
+panSTARRS,i,,18.367,0.04846,,,,,,,,,,,panSTARRS+DR2,
+panSTARRS,z,,18.302,0.0139,,,,,,,,,,,panSTARRS+DR2,
+panSTARRS,y,,18.0412,0.02934,,,,,,,,,,,panSTARRS+DR2,
