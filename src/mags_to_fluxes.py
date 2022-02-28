@@ -33,32 +33,43 @@ def mags_to_fluxes(galaxy, mags_file='mags.csv', sed_file='sed.csv'):
             print(f'No conversion found for {row.telescope} {row["filter"]} filter in data/filter.csv.')
             continue
 
-        # Flag that is set to true if there is a G component, then it is assumed that all components are listed and
+        # Flag that is set to 1 if there is a G component, then it is assumed that all components are listed and
         # a total flux can be calculated
-        total = False
+        # Set to 2 if there is a total magnitude
+        total = 0
+
+        # Total flux and flux error
+        total_f, total_fe = 0, 0
 
         # Used to store fluxes and flux_errs for all components
         fs = []
         fes = []
         # Calculate fluxes and flux errors for each component
-        for comp in ['_G', '_A', '_B', '_C', '_D']:
+        for comp in ['', '_G', '_A', '_B', '_C', '_D']:
             # magnitude 0 means no magnitude given
             if row[f'mag{comp}'] == 0:
                 fs.append(0.)
                 fes.append(0.)
                 continue
 
+            f, fe = conversion(row.filter, row[f'mag{comp}'], row[f'mag{comp}_err'])
+
             # If a G (foreground galaxy) component magnitude is listed, assume all components are and produce a total
             if comp == '_G':
-                total = True
+                total = 1
 
-            f, fe = conversion(row.filter, row[f'mag{comp}'], row[f'mag{comp}_err'])
+            # mag means total mag, use this as total flux and error
+            if comp == '':
+                total = 2
+                total_f = f
+                total_fe = fe
 
             fs.append(f)
             fes.append(fe)
 
-        total_f = sum(fs) * total
-        total_fe = sum(fes) * total
+        if total == 1:
+            total_f = sum(fs) * total
+            total_fe = sum(fes) * total
 
         # If this combination of filter and wavelength does not exist yet in lqso.sed
         if lqso.sed[(lqso.sed['filter'] == row['filter']) & (lqso.sed.source == row.source)].empty:
