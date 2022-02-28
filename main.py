@@ -7,5 +7,6 @@ if __name__ == '__main__':
     lqso = LensedQSO('J1455+1447')
     lqso.plot_spectrum()
     lqso.plot_spectrum(loglog=True)
+    
     mags_to_fluxes('J1455+1447')
     plt.show()
