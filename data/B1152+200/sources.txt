@@ -89,3 +89,6 @@ central wavelengths: https://coolwiki.ipac.caltech.edu/index.php/Central_wavelen
 
 transforming to fluxes, use AB system, see excel sheet, same prop of errors as in sdss
 
+hst/castles:
+source:https://lweb.cfa.harvard.edu/castles/Individual/B1152.html
+same method as 1633+3134, using the excelsheet
