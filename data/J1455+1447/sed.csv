@@ -1,4 +1,4 @@
-filter,wavelength,flux_total,flux_err,flux_G,flux_G_err,flux_A,flux_A_err,flux_B,flux_B_err,flux_C,flux_C_err,flux_D,flux_A_err_1,source,upper_limit
+filter,wavelength,flux_total,flux_err,flux_G,flux_G_err,flux_A,flux_A_err,flux_B,flux_B_err,flux_C,flux_C_err,flux_D,flux_D_err_1,source,upper_limit
 u,3551.0,0.04965703031600146,3.779570367631609e-10,0.04965703031600146,3.779570367631609e-10,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,SDSS+DR14,0.0
 g,4686.0,0.07311686697986057,1.8547456233063804e-10,0.07311686697986057,1.8547456233063804e-10,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,SDSS+DR14,0.0
 r,6166.0,0.11588310123640166,2.9395565519768067e-10,0.11588310123640166,2.9395565519768067e-10,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,SDSS+DR14,0.0
