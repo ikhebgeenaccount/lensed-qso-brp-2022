@@ -8,33 +8,52 @@ from matplotlib.legend_handler import HandlerTuple
 
 class LensedQSO:
 
-    def __init__(self, name, sed_source='sed.csv', properties='properties.txt'):
+    def __init__(self, name, sed_source='sed.csv',  mags_source='mags.csv', properties='properties.txt'):
         """
         :param name: Name of the lensed qso.
         :param sed_source: source of the spectral energy density (SED). Must be located in 'data/[name]'. Default is
         'data/[name]/sed.csv'.
         """
         self.name = name
+        
+        # Read SED
         self.sed = pd.read_csv(os.path.join('data', name, sed_source))
         self.sed.fillna(0, inplace=True)
+        
+        # Read mags
+        self.mags = pd.read_csv(os.path.join('data', name, mags_source))
+        self.mags.fillna(0, inplace=True)
 
         self.props = pd.read_csv(os.path.join('data', properties), skiprows=1)
 
         # filtered_sed only selects entries that have a wavelength and a flux_total
         self.filtered_sed = self.sed[(self.sed.wavelength > 0) * (self.sed.flux_total > 0)].copy()
 
-    def plot_spectrum(self, loglog=False, **kwargs):
+    def plot_spectrum(self, loglog=False, mags=False, **kwargs):
         fig, ax = plt.subplots(figsize=(10, 8))
 
         legend_list = []
 
         # upper_limits = ()
+        
+        data = None
+        data_type = None
+        data_err = None
+        
+        if mags:
+            data = self.mags
+            data_type = 'mag'
+            data_err = 'mag_err'
+        else:
+            data = self.sed
+            data_type = 'flux_total'
+            data_err = 'mag_err'
 
         # For every unique source, add their data separately
-        for l in self.sed.source.unique():
+        for l in data.source.unique():
             # Filter based on source
             # Only take those that have both a wavelength and a total flux
-            sel = self.sed[(self.sed.source == l) * (self.sed.wavelength > 0) * (self.sed.flux_total > 0)]
+            sel = data[(data.source == l) * (data.wavelength > 0) * (data[data_type] > 0)]
 
             # If there are no entries after filtering, continue to next source
             if len(sel) == 0:
@@ -45,10 +64,10 @@ class LensedQSO:
             sel_reg = sel[sel.upper_limit == 0]
 
             # Plot regular data points and upper limits separately, upper limits with special marker
-            le_1, _, _ = ax.errorbar(sel_reg.wavelength, sel_reg.flux_total, sel_reg.flux_err, fmt='o', label=l, **kwargs)
+            le_1, _, _ = ax.errorbar(sel_reg.wavelength, sel_reg[data_type], sel_reg[data_err], fmt='o', label=l, **kwargs)
 
             if len(sel_upper_limit) > 0:
-                le_2, _, _ = ax.errorbar(sel_upper_limit.wavelength, sel_upper_limit.flux_total, sel_upper_limit.flux_err,
+                le_2, _, _ = ax.errorbar(sel_upper_limit.wavelength, sel_upper_limit[data_type], sel_upper_limit[data_err],
                                          fmt='o', label=l, marker='v', color=le_1.get_color(), **kwargs)
                 legend_list.append((le_1, le_2))
             else:
@@ -57,7 +76,7 @@ class LensedQSO:
             # upper_limits += (le_2, )
 
         # ax.legend(legend_list + [upper_limits], list(self.sed.source.unique()) + ['upper limit'], loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
-        ax.legend(legend_list, self.sed[(self.sed.wavelength > 0) * (self.sed.flux_total > 0)].source.unique(), loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
+        ax.legend(legend_list, self.sed[(self.sed.wavelength > 0) * (self.sed[data_type] > 0)].source.unique(), loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
         ax.set_xscale('log')
 
         if loglog:
@@ -65,9 +84,13 @@ class LensedQSO:
 
         ax.set_title(f'{self.name} SED')
         ax.set_xlabel('$\mathit{Wavelength}\ (\mathrm{\AA})$')
-        ax.set_ylabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
+        if mags:
+            ax.set_ylabel('$\mathit{mag)$')
+        else:
+            ax.set_ylabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
 
         return fig, ax
+        
 
     def sed_to_agn_fitter(self):
         """
