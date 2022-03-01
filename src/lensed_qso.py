@@ -78,7 +78,7 @@ class LensedQSO:
 
             if len(sel_upper_limit) > 0:
                 le_2, _, _ = ax.errorbar(sel_upper_limit.wavelength, sel_upper_limit[data_type], sel_upper_limit[data_err],
-                                         fmt='o', label=l, marker='v', color=le_1.get_color(), **kwargs)
+                                         fmt='v', label=l, color=le_1.get_color(), **kwargs)
                 legend_list.append((le_1, le_2))
             else:
                 legend_list.append(le_1)
