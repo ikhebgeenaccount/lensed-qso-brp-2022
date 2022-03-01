@@ -41,6 +41,7 @@ propagation of errors for sigma total flux
 source: https://articles.adsabs.harvard.edu/pdf/2002MNRAS.330..205R
 
 Barvainis paper:
+IRAS mission
 850 and 450 micrometer observations, fluxes in mJy, given with an upper limit. Not components but total. 
 https://iopscience.iop.org/article/10.1086/340096
 
