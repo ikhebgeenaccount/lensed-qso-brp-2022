@@ -2,3 +2,7 @@ Morgan 2003 discovery paper
 https://ui.adsabs.harvard.edu/abs/2003AJ....126.2145M/abstract
 WIYN mags as well
 
+COSMOGRAIL
+https://www.aanda.org/articles/aa/pdf/2007/12/aa5823-06.pdf
+reports Deltam of -0.05, Deltat ~ 50 days
+
