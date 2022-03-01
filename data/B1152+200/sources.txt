@@ -87,6 +87,7 @@ for magnitudes, column _meanPSFMag was used, since this galaxy is pretty round. 
 to fluxes with code
 for uncertainties, we used _meanPSFMagerr, as the uncertainty in the stacked image
 central wavelengths: https://coolwiki.ipac.caltech.edu/index.php/Central_wavelengths_and_zero_points
+WHEN PLOTTING THIS DATA there is some weird dip, but this is explained in the magnitudes themselves, not our problem
 
 
 hst/castles:
