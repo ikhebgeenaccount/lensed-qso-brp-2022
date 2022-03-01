@@ -1,0 +1,19 @@
+Sdss:
+used code
+http://skyserver.sdss.org/dr14/en/tools/chart/navi.aspx?ra=231.19008&dec=44.16375&SCALE=0.05
+
+Panstarrs:
+used code
+https://catalogs.mast.stsci.edu/panstarrs/search-results.html
+
+HST/castles:
+no data available
+
+Stacey 2018:
+1 upperlimit
+https://ui.adsabs.harvard.edu/abs/2018MNRAS.476.5075S/abstract
+
+Oguri 2008:
+used code
+https://iopscience.iop.org/article/10.1088/0004-6256/135/2/520/pdf
+NOT USED since SDSS data from an earlier data release, use DR14 instead

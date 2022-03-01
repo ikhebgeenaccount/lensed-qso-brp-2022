@@ -1,0 +1,15 @@
+telescope,filter,mag,mag_err,mag_G,mag_G_err,mag_A,mag_A_err,mag_B,mag_B_err,mag_C,mag_C_err,mag_D,mag_D_err,source,lower_limit
+SDSS,u,19.66,0.03,,,,,,,,,,,SDSS+DR14,
+SDSS,g,19.26,0.01,,,,,,,,,,,SDSS+DR14,
+SDSS,r,18.94,0.01,,,,,,,,,,,SDSS+DR14,
+SDSS,i,18.64,0.01,,,,,,,,,,,SDSS+DR14,
+SDSS,z,18.49,0.03,,,,,,,,,,,SDSS+DR14,
+PanSTARRS,g,20.9935,0.17213,,,,,,,,,,,PanSTARRS+DR2,
+PanSTARRS,r,19.8803,0.18982,,,,,,,,,,,PanSTARRS+DR2,
+PanSTARRS,i,17.1692,0.025858,,,,,,,,,,,PanSTARRS+DR2,
+Gemini North,K,,,,,16.95,,17.93,,,,,,Fadely+2011,
+Gemini North,L,,,,,15.25,,17.21,,,,,,Fadely+2011,1
+UH88,V,,,22.27,0.07,19.23,0.01,19.82,0.02,,,,,Inada+2006,
+UH88,R,,,21.2,0.04,18.93,0.01,19.36,0.02,,,,,Inada+2006,
+UH88,I,,,20.16,0.03,18.54,0.01,18.84,0.01,,,,,Inada+2006,
+UH88,H,,,17.9,0.05,16.87,0.01,17.34,0.02,,,,,Inada+2006,

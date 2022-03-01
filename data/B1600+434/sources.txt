@@ -2,9 +2,8 @@ Munoz et al., 2011
 https://ui.adsabs.harvard.edu/abs/2011ApJ...742...67M/abstract
 CASTLES and Hubble data (Hubble: ACS/HRC)
 
-
-https://iopscience.iop.org/article/10.1086/340096/pdf
 Submillimetre fluxes
+https://iopscience.iop.org/article/10.1086/340096/pdf
 
 HST catalog
 https://archive.stsci.edu/hst/search.php?target=B1600%2B434&action=Search&resolver=SIMBAD&radius=3.0&outputformat=HTML_Table&max_records=100&ordercolumn1=ang_sep&sci_aec=S&showquery=on
