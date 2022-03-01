@@ -4,7 +4,7 @@ checking with panstarr counts to see if same galaxy was selected> approx 17.9 so
 catalogue https://catalogs.mast.stsci.edu/panstarrs/search-results.html
 
 sdss:
-Done the exact same way as B1152=200, using excelsheet 
+Done with code
 http://skyserver.sdss.org/dr14/en/tools/chart/navi.aspx?ra=248.45408&dec=31.56997&SCALE=0.05
 
 Yonehara 2008>Castles survey>HST data
@@ -15,8 +15,10 @@ Hst:https://lweb.cfa.harvard.edu/castles/Individual/FBQ1633.html
 filters; http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_IR.F160W
 
 Barvainis:
+Iras mission
 850 micrometer upper limit
 source: https://iopscience.iop.org/article/10.1086/340096/pdf
 
 Stacey:
+Herschel
 same as for B1152+200, 2 normal, 1 upperlimit
