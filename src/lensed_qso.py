@@ -5,6 +5,8 @@ import pandas as pd
 
 from matplotlib.legend_handler import HandlerTuple
 
+from src.filters import get_wavelength
+
 
 class LensedQSO:
 
@@ -44,10 +46,18 @@ class LensedQSO:
             data = self.mags
             data_type = 'mag'
             data_err = 'mag_err'
+            limit = 'lower_limit'
+
+            def wl(row):
+                return get_wavelength(row.telescope, row['filter'])
+
+            data['wavelength'] = data.apply(lambda row: wl(row), axis=1)
+
         else:
             data = self.sed
             data_type = 'flux_total'
-            data_err = 'mag_err'
+            data_err = 'flux_err'
+            limit = 'upper_limit'
 
         # For every unique source, add their data separately
         for l in data.source.unique():
@@ -60,8 +70,8 @@ class LensedQSO:
                 continue
 
             # Separate upper limits from regular data points
-            sel_upper_limit = sel[sel.upper_limit == 1]
-            sel_reg = sel[sel.upper_limit == 0]
+            sel_upper_limit = sel[sel[limit] == 1]
+            sel_reg = sel[sel[limit] == 0]
 
             # Plot regular data points and upper limits separately, upper limits with special marker
             le_1, _, _ = ax.errorbar(sel_reg.wavelength, sel_reg[data_type], sel_reg[data_err], fmt='o', label=l, **kwargs)
@@ -76,7 +86,7 @@ class LensedQSO:
             # upper_limits += (le_2, )
 
         # ax.legend(legend_list + [upper_limits], list(self.sed.source.unique()) + ['upper limit'], loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
-        ax.legend(legend_list, self.sed[(self.sed.wavelength > 0) * (self.sed[data_type] > 0)].source.unique(), loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
+        ax.legend(legend_list, data[(data.wavelength > 0) * (data[data_type] > 0)].source.unique(), loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
         ax.set_xscale('log')
 
         if loglog:
@@ -85,7 +95,7 @@ class LensedQSO:
         ax.set_title(f'{self.name} SED')
         ax.set_xlabel('$\mathit{Wavelength}\ (\mathrm{\AA})$')
         if mags:
-            ax.set_ylabel('$\mathit{mag)$')
+            ax.set_ylabel('$\mathit{mag}$')
         else:
             ax.set_ylabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
 

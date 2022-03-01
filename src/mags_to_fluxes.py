@@ -5,8 +5,7 @@ import pandas as pd
 
 from src.lensed_qso import LensedQSO
 
-
-FILTER_PROPERTIES = pd.read_csv(os.path.join('data', 'filter.csv'))
+from src.filters import FILTER_PROPERTIES, get_wavelength
 
 
 def mags_to_fluxes(galaxy, mags_file='mags.csv', sed_file='sed.csv'):
@@ -27,7 +26,7 @@ def mags_to_fluxes(galaxy, mags_file='mags.csv', sed_file='sed.csv'):
 
         try:
             # Find the wavelength of the filter
-            wavelength = FILTER_PROPERTIES[(FILTER_PROPERTIES.telescope == row.telescope) * (FILTER_PROPERTIES.filtername == row['filter'])].central_wavelength.values[0]
+            wavelength = get_wavelength(row.telescope, row['filter'])
         except IndexError:
             print(f'No conversion found for {row.telescope} {row["filter"]} filter in data/filter.csv.')
             continue
