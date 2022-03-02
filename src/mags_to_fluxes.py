@@ -83,7 +83,7 @@ def mags_to_fluxes(galaxy, mags_file='mags.csv', sed_file='sed.csv'):
                                                  fs[0], fes[0], fs[1], fes[1], fs[2], fes[2], fs[3], fes[3], fs[4], fes[4],
                                                  row.source, row.lower_limit]
 
-    lqso.sed.to_csv(os.path.join('data', galaxy, sed_file), index=False)
+    lqso.save_sed()
 
 
 def mag_to_flux(telescope, filter, mag, mag_err):
