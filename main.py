@@ -4,7 +4,7 @@ from src.lensed_qso import LensedQSO
 from src.mags_to_fluxes import mags_to_fluxes
 
 if __name__ == '__main__':
-    gal_name = 'J1633+3134'
+    gal_name = 'J1455+1447'
     mags_to_fluxes(gal_name)
     lqso = LensedQSO(gal_name)
     lqso.plot_spectrum()
