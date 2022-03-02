@@ -13,9 +13,17 @@ hst/castles:
 https://lweb.cfa.harvard.edu/castles/Individual/SDSS0924.html 
 4 components damn
 
+Inada 2003:
+sdss used more recent datarelease
+keck was spectra, not continuum
+Magellan: Some are upper limits in de u band
+source: https://iopscience.iop.org/article/10.1086/375906/pdf
+CHECK IF AB MAGNITUDES ARE CORRECT
 
-
-
+Keeton 2006:
+Hier moest ik ff een traantje laten dus dit doen we later ff
+hst fluxes given in A^-1
+source: https://iopscience.iop.org/article/10.1086/499264/pdf
 
 
 Other hst> maybe in papers?
