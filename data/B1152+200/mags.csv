@@ -17,3 +17,8 @@ NOT,B,,,,,,17.00,0.02,,,,,,,Toft+2000,0
 NOT,V,,,,,,17.28,0.03,21.73,0.03,,,,,Toft+2000,0
 NOT,R,,,,19.61,0.04,16.42,0.02,20.20,0.04,,,,,Toft+2000,0
 NOT,I,,,,19.18,0.04,16.38,0.02,19.26,0.03,,,,,Toft+2000,0
+PanSTARRS,g,,17.286,0.02,,,,,,,,,,,Panstarrs+DR2-AP,0
+PanSTARRS,r,,17.013,0.02,,,,,,,,,,,Panstarrs+DR2-AP,0
+PanSTARRS,i,,17.422,0.02,,,,,,,,,,,Panstarrs+DR2-AP,0
+PanSTARRS,z,,17.099,0.02,,,,,,,,,,,Panstarrs+DR2-AP,0
+PanSTARRS,y,,16.876,0.02,,,,,,,,,,,Panstarrs+DR2-AP,0
