@@ -4,13 +4,15 @@ import pandas as pd
 
 from src.lensed_qso import LensedQSO
 from src.mags_to_fluxes import mags_to_fluxes
+from src.ned_to_sed import ned_table_to_sed
 
 # ratio avg: 1.4543629655671957, ratio std: 0.37071640199561534
 
 GALAXIES = ['B1152+200', 'B1600+434', 'B1608+656', 'J0806+2006', 'J0924+0219', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'J1633+3134', 'J1650+4251']
 SDSS_V_PANSTARRS_GS = ['B1152+200', 'B1600+434', 'J0806+2006', 'J1633+3134', 'J1455+1447', 'J1524+4409']
 
-if __name__ == '__main__':    
+
+def sdss_panstarrs_flux_discrepancy():
     flux_discrepancy = pd.DataFrame(columns=['galaxy', 'filter', 'sdss', 'panstarrs', 'ratio', 'diff'])
     
     ratios = []
@@ -54,6 +56,10 @@ if __name__ == '__main__':
     
     print(f'ratio avg: {np.nanmean(ratios)}, ratio std: {np.nanstd(ratios)}')
     print(f'diff avg: {np.nanmean(diffs)}, diff std: {np.nanstd(diffs)}')
+
+if __name__ == '__main__':
+    ned_table_to_sed('J0806+2006', ned_file='ned_wise.txt')  
+    
             
 
     # lqso.filtered_sed['error %'] = lqso.filtered_sed.flux_err / lqso.filtered_sed.flux_total
