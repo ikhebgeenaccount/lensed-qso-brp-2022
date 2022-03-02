@@ -49,6 +49,8 @@ def ned_table_to_sed(galaxy, ned_file='ned.txt', wavelength_conversion=1e4, flux
         sel = ned_df.loc[ned_df['wavelength'] == wl]
         weights = 1. / np.power(sel['flux_err'], 2)
 
+        # TODO: I don't think we should combine the measurements, instead pick one as they have different Aperture/Qualifiers
+
         flux_total = np.average(sel['flux_total'], weights=weights)
         flux_err = np.sqrt(1. / np.sum(weights))  # TODO: sanity check error calculation
         observed_passband = sel['observed_passband'].values[0]

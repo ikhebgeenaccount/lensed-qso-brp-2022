@@ -27,7 +27,6 @@ def sdss_panstarrs_flux_discrepancy():
             continue
 
         print(f'{g}, PanSTARRS mag choice: {panstarrs_mag}')
-        # TODO: flux ratios and difference between same SDSS and PanSTARRS bands
         
         lqso = LensedQSO(g)
         # lqso.plot_spectrum()
@@ -57,10 +56,14 @@ def sdss_panstarrs_flux_discrepancy():
     print(f'ratio avg: {np.nanmean(ratios)}, ratio std: {np.nanstd(ratios)}')
     print(f'diff avg: {np.nanmean(diffs)}, diff std: {np.nanstd(diffs)}')
 
+
 if __name__ == '__main__':
-    ned_table_to_sed('J0806+2006', ned_file='ned_wise.txt')  
-    
-            
+    galaxy = 'J0806+2006'
+
+    ned_table_to_sed(galaxy, ned_file='ned_wise.txt')
+
+    lqso = LensedQSO(galaxy)
+    lqso.plot_spectrum(loglog=True)
 
     # lqso.filtered_sed['error %'] = lqso.filtered_sed.flux_err / lqso.filtered_sed.flux_total
     #
