@@ -12,10 +12,7 @@ def ned_table_to_sed(galaxy, ned_file='ned.txt', wavelength_conversion=1e4, flux
     fs = np.sum(ned_df['Flux Density'].isna())
     if fs > 0:
         warnings.warn(f'Filtered out {fs} measurements, check if this is correct!')
-        ned_df = ned_df[ned_df['Flux Density'].notna()]
-    
-    print(ned_df)
-    
+        ned_df = ned_df[ned_df['Flux Density'].notna()]    
     
     if not np.all(np.where(ned_df['Upper limit of uncertainty'] == ned_df['Lower limit of uncertainty'], 1, 0)):
         # print(ned_df[['Upper limit of uncertainty', 'Lower limit of uncertainty']])
@@ -29,10 +26,16 @@ def ned_table_to_sed(galaxy, ned_file='ned.txt', wavelength_conversion=1e4, flux
     ned_df['flux_err'] = ned_df['Upper limit of uncertainty']
     ned_df['observed_passband'] = ned_df['Observed Passband']
     
+    # TODO: convert wavelength, flux, flux_err
+    # TODO: strip strings? check if spaces in observed_passband
+    
     lqso = LensedQSO(galaxy)
+    
+    print(ned_df[['wavelength', 'flux', 'flux_err', 'observed_passband']])
     
     print(lqso.sed.size)
     
+    # TODO: append doesn' t work?
     lqso.sed.append(ned_df[['wavelength', 'flux', 'flux_err', 'observed_passband']])
     
     print(lqso.sed.size)
