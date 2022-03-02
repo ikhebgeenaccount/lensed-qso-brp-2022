@@ -74,6 +74,7 @@ class LensedQSO:
             sel_reg = sel[sel[limit] == 0]
 
             # Plot regular data points and upper limits separately, upper limits with special marker
+            # TODO: consistent colours between all plots for same sources (SDSS, PanSTARRS, etc)
             le_1, _, _ = ax.errorbar(sel_reg.wavelength, sel_reg[data_type], sel_reg[data_err], fmt='o', label=l, **kwargs)
 
             if len(sel_upper_limit) > 0:

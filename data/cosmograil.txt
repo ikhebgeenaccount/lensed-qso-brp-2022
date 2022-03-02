@@ -1,0 +1,4 @@
+B1600+434
+Paraficz et al., 2006
+https://ui.adsabs.harvard.edu/abs/2006A%26A...455L...1P/abstract
+time delay 51 days, delta m = -0.69, flux ratio would be 1.89
