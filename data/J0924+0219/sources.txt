@@ -18,12 +18,47 @@ sdss used more recent datarelease
 keck was spectra, not continuum
 Magellan: Some are upper limits in de u band
 source: https://iopscience.iop.org/article/10.1086/375906/pdf
-CHECK IF AB MAGNITUDES ARE CORRECT
+It was never mentioned in the paper whether these are Ab or vega magnitudes, so I assumed AB magnitudes>> Might exclude this from the dataset, since same problem as with dataset
 
 Keeton 2006:
-Hier moest ik ff een traantje laten dus dit doen we later ff
-hst fluxes given in A^-1
+hst fluxes given in A^-1, so conversion sucks.
+However, the 2 main bands we already have, and the others are 'spectroscopic continuum fluxes' so are they useful?
 source: https://iopscience.iop.org/article/10.1086/499264/pdf
+NOT YET ADDED
+
+morgan 2006:
+same hst as from castles, magnitudes match
+https://iopscience.iop.org/article/10.1086/505569/pdf
+NOT USED
+
+Floyd 2009:
+More magellan walter baade 6.5 telescope
+filters: http://svo2.cab.inta-csic.es/theory/fps/index.php?mode=browse&gname=LCO&gname2=IMACS&asttype=
 
 
-Other hst> maybe in papers?
+Floyd 2009:
+This has data from magellan walter baade telescope, same as Inada, but 2 different instruments(IMACS  and  PANIC).
+I have not used these (yet) since IMACS seems really similar to sdss, and the panic wavelengths are quite impossible to find.
+source:https://ui.adsabs.harvard.edu/abs/2009MNRAS.398..233F/abstract
+NOT YET ADDED
+
+Blackburne 2011;
+source: https://iopscience.iop.org/article/10.1088/0004-637X/729/1/34/pdf
+no (useful) data found, relative fluxes, but nteresting paper
+
+Pooley 2012:
+not used since it does have chandra data, but this can be found in easier fluxes at the ned database
+source:https://iopscience.iop.org/article/10.1088/0004-637X/744/2/111/pdf
+NOT USED
+
+Macleod 2015:
+has a new hubble filter f275W, but tim dependant data over 2 years. magnitude shifts about 1.5. Not used here but fun to keep an eye on
+source: https://iopscience.iop.org/article/10.1088/0004-637X/806/2/258/pdf
+NOT USED
+
+Ducourant 2018
+https://ui.adsabs.harvard.edu/abs/2018arXiv180507359D/abstract
+NOT USED since the data is also in NED
+
+
+>> from the papers, hardly any sources were found. sometimes because unusable, sometimes because NED gves the same datapoints
