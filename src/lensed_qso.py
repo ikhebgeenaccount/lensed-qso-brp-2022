@@ -19,6 +19,7 @@ class LensedQSO:
         self.name = name
         
         # Read SED
+        self.sed_file = sed_source
         self.sed = pd.read_csv(os.path.join('data', name, sed_source))
         self.sed.fillna(0, inplace=True)
         
@@ -101,7 +102,9 @@ class LensedQSO:
             ax.set_ylabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
 
         return fig, ax
-        
+
+    def save_sed(self):
+        self.sed.to_csv(os.path.join('data', self.name, self.sed_file), index=False)
 
     def sed_to_agn_fitter(self):
         """
