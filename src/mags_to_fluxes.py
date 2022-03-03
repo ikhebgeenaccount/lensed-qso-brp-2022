@@ -8,7 +8,7 @@ from src.lensed_qso import LensedQSO
 from src.filters import FILTER_PROPERTIES, get_wavelength
 
 
-def mags_to_fluxes(lqso, mags_file='mags.csv', sed_file='sed.csv'):
+def mags_to_fluxes(lqso):
     """
     Reads the mags.csv file of galaxy and converts the magnitudes to fluxes, using the appropriate conversion formulas.
     Saves these fluxes to sed.csv.
