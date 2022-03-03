@@ -23,16 +23,19 @@ class LensedQSO:
         self.sed = pd.read_csv(os.path.join('data', name, sed_source))
         self.sed.fillna(0, inplace=True)
         
-        # Read mags
-        self.mags = pd.read_csv(os.path.join('data', name, mags_source))
-        self.mags.fillna(0, inplace=True)
+        try:
+            # Read mags
+            self.mags = pd.read_csv(os.path.join('data', name, mags_source))
+            self.mags.fillna(0, inplace=True)
+        except FileNotFoundError:
+            print('No mags file found for galaxy ' + self.name)
 
         self.props = pd.read_csv(os.path.join('data', properties), skiprows=1)
 
         # filtered_sed only selects entries that have a wavelength and a flux_total
         self.filtered_sed = self.sed[(self.sed.wavelength > 0) * (self.sed.flux_total > 0)].copy()
 
-    def plot_spectrum(self, loglog=False, mags=False, **kwargs):
+    def plot_spectrum(self, loglog=False, mags=False, sources='all', **kwargs):
         fig, ax = plt.subplots(figsize=(10, 8))
 
         legend_list = []
@@ -61,7 +64,8 @@ class LensedQSO:
             limit = 'upper_limit'
 
         # For every unique source, add their data separately
-        for l in data.source.unique():
+        u_sources = data.source.unique() if sources == 'all' else sources
+        for l in u_sources:
             # Filter based on source
             # Only take those that have both a wavelength and a total flux
             sel = data[(data.source == l) * (data.wavelength > 0) * (data[data_type] > 0)]
@@ -88,7 +92,7 @@ class LensedQSO:
             # upper_limits += (le_2, )
 
         # ax.legend(legend_list + [upper_limits], list(self.sed.source.unique()) + ['upper limit'], loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
-        ax.legend(legend_list, data[(data.wavelength > 0) * (data[data_type] > 0)].source.unique(), loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
+        ax.legend(legend_list, data[(data.wavelength > 0) * (data[data_type] > 0)].source.unique() if sources == 'all' else u_sources, loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
         ax.set_xscale('log')
 
         if loglog:

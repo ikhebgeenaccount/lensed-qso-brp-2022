@@ -59,11 +59,13 @@ def sdss_panstarrs_flux_discrepancy():
 
 if __name__ == '__main__':
     galaxy = 'J0806+2006'
-
-    ned_table_to_sed(galaxy, ned_file='ned_wise.txt')
-
     lqso = LensedQSO(galaxy)
-    lqso.plot_spectrum(loglog=True)
+
+    #ned_table_to_sed(lqso, ned_file='ned_wise.txt')
+    
+    mags_to_fluxes(lqso)
+
+    lqso.plot_spectrum(loglog=True)#, sources=['SDSS+DR14', 'Inada+2003'])
 
     # lqso.filtered_sed['error %'] = lqso.filtered_sed.flux_err / lqso.filtered_sed.flux_total
     #

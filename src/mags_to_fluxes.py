@@ -8,7 +8,7 @@ from src.lensed_qso import LensedQSO
 from src.filters import FILTER_PROPERTIES, get_wavelength
 
 
-def mags_to_fluxes(galaxy, mags_file='mags.csv', sed_file='sed.csv'):
+def mags_to_fluxes(lqso, mags_file='mags.csv', sed_file='sed.csv'):
     """
     Reads the mags.csv file of galaxy and converts the magnitudes to fluxes, using the appropriate conversion formulas.
     Saves these fluxes to sed.csv.
@@ -17,12 +17,7 @@ def mags_to_fluxes(galaxy, mags_file='mags.csv', sed_file='sed.csv'):
     :param mags_file:
     :return: DataFrame with fluxes
     """
-    mags_csv = pd.read_csv(os.path.join('data', galaxy, mags_file))
-    mags_csv.fillna(0, inplace=True)
-
-    lqso = LensedQSO(galaxy)
-
-    for i, row in mags_csv.iterrows():
+    for i, row in lqso.mags.iterrows():
 
         try:
             # Find the wavelength of the filter
