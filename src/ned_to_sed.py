@@ -109,8 +109,8 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
         else:
             # Overwrite it
             index = lqso.sed.index[(lqso.sed['wavelength'] == wl) & (lqso.sed['observed_passband'] == observed_passband)]
-            lqso.sed.loc[index, ['wavelength', 'flux_total', 'flux_err', 'observed_passband']] = \
-                [wl, flux_total, flux_err, observed_passband]
+            lqso.sed.loc[index, ['wavelength', 'flux_total', 'flux_err', 'observed_passband', 'source']] = \
+                [wl, flux_total, flux_err, observed_passband, source]
 
     # Save to SED
     lqso.save_sed()
