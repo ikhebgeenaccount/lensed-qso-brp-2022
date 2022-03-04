@@ -81,10 +81,11 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
         # Default: don't skip
         skip = False
         # Check for every skip_sources if it occurs in the observed_passband, if so, set skip to True
-        for ss in skip_sources:
-            if ss.lower() in observed_passband.lower():
-                skip = True
-                break
+        if skip_sources is not None:
+            for ss in skip_sources:
+                if ss.lower() in observed_passband.lower():
+                    skip = True
+                    break
 
         if skip:
             continue
