@@ -33,7 +33,7 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
     # Give fields we want proper name, convert
     ned_df['wavelength'] = ned_df['Wavelength'] * wavelength_conversion
     ned_df['flux_total'] = ned_df['Flux Density'] * flux_conversion
-    ned_df['flux_err'] = ned_df['Upper limit of uncertainty']
+    ned_df['flux_err'] = ned_df['Upper limit of uncertainty'] * flux_conversion
     
     ned_df['observed_passband'] = ned_df['Observed Passband'].apply(lambda v: v.strip())
     ned_df['Qualifiers'] = ned_df['Qualifiers'].apply(lambda v: v.strip())
