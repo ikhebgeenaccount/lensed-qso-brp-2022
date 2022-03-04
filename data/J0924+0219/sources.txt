@@ -65,9 +65,14 @@ Peng 2006
 source: https://iopscience.iop.org/article/10.1086/506266/pdf
 NOT USED but gives seperately quasar and host magnitudes, might be useful to check
 
-It did not save most of my comments about NED but:
+NED:
 -WISE was always added, chose profile-fit
 -galex: AB means AB magnitude. for FUV and NUV, chose the medium sky survey since deeper, chose kron fluxes.
 -2mass: chose profile-fit
 -Chandra was always added, left out 0.5-8 kev and 0.3-8 kev since inconsistent with itself. For the other filterbands use flux_aper;var
 always left out: hst(no components), sdss(already have them), USNO(more optical)
+in the file with 11 measurements there are 2 vlt images. However looking at the paper, this was not the total flux but the lensing galaxy flux. Will add this by hand to sed.
+
+Faura 2011
+VLT data FROM THE LENSING GALAXY, conversion by ned and added to sed ny hand
+source:https://www.aanda.org/articles/aa/pdf/2011/12/aa17787-11.pdf
