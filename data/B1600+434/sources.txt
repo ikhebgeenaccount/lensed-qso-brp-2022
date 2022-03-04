@@ -11,3 +11,18 @@ check proposals for more papers
 
 https://ui.adsabs.harvard.edu/search/p_=0&q=((%3Dabs%3A(%22QSO%201600%2B434%22)%20OR%20simbid%3A(%22470925%22)%20OR%20nedid%3A(%220%22))%20database%3Aastronomy)&sort=date%20desc%2C%20bibcode%20desc
 Check here as well using the data search stuff
+
+NED:
+ADDED:
+wise
+galex> used kron flux, used medium sky survey, 
+
+NOT YET ADDED:
+HST: first page has some more filters
+NRAO: one with 1 measurements
+SUBARU (page with phot=3)
+
+NOT ADDED:
+sdss
+mips
+some nameless things
