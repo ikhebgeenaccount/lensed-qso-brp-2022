@@ -68,6 +68,7 @@ class LensedQSO:
 
         # For every unique source, add their data separately
         u_sources = list(data.source.unique())
+        print(u_sources)
         to_remove = []
 
         if disallowed_sources is not None:
@@ -81,6 +82,10 @@ class LensedQSO:
             for r in to_remove:
                 u_sources.remove(r)
 
+        print(u_sources)
+
+        plotted_sources = []
+
         for l in u_sources:
             # Filter based on source
             # Only take those that have both a wavelength and a total flux
@@ -89,6 +94,8 @@ class LensedQSO:
             # If there are no entries after filtering, continue to next source
             if len(sel) == 0:
                 continue
+
+            plotted_sources.append(l)
 
             # Separate upper limits from regular data points
             sel_upper_limit = sel[sel[limit] == 1]
@@ -108,7 +115,7 @@ class LensedQSO:
             # upper_limits += (le_2, )
 
         # ax.legend(legend_list + [upper_limits], list(self.sed.source.unique()) + ['upper limit'], loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
-        ax.legend(legend_list, u_sources, loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
+        ax.legend(legend_list, plotted_sources, loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
         ax.set_xscale('log')
 
         if loglog:
