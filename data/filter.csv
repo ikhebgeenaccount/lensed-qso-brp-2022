@@ -22,10 +22,6 @@ NOT,R,,,6396.64,vega,3033260,http://svo2.cab.inta-csic.es/theory/fps/index.php?i
 NOT,I,,,8559.6,vega,2309980,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_I&&mode=browse&gname=NOT&gname2=ALFOSC#filter
 Subaru,K',,,21939.11,vega,647720,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Subaru/CIAO.K&&mode=browse&gname=Subaru&gname2=CIAO#filter
 ,,,,,,,
-MagIC,u,,,3556.07,vega,1524610,http://svo2.cab.inta-csic.es/theory/fps/index.php?mode=browse&gname=LCO&gname2=MagIC&asttype=
-MagIC,g,,,4768.79,vega,3960130,
-MagIC,r,,,6146.1,vega,3168340,
-MagIC,i,,,7604.74,vega,2548380,
 UH88,V,,,5510,vega,3650000,
 UH88,R,,,6580,vega,3650000,
 UH88,I,,,8060,vega,3650000,

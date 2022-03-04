@@ -12,10 +12,13 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
     :param wavelength_conversion: default: um to Angstrom
     :param flux_conversion: default: Jy to mJy
     :param qualifier:
-    :param skip_sources: List of sources to skip, e.g. ['SDSS']
+    :param allowed_sources: List of sources to use, e.g. ['Chandra']
     :return:
     """
     ned_df = pd.read_csv(os.path.join('data', lqso.name, ned_file), delimiter='|')
+
+    if allowed_sources is None:
+        raise ValueError('No allowed sources, enter a list of allowed sources using ned_table_to_sed(..., allowed_sources=[...])')
 
     # Filter out non-measurement
     fs = np.sum(ned_df['Flux Density'].isna())
@@ -48,6 +51,7 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
     if not 'observed_passband' in lqso.sed.columns:
         lqso.sed['observed_passband'] = ''
 
+    # Filter on qualifier
     q_sel = ned_df.loc[(ned_df['Qualifiers'] == qualifier)]
     wls = q_sel['wavelength'].unique()
 
@@ -69,6 +73,8 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
         flux_err = sel['flux_err'].values[0]
         observed_passband = sel['observed_passband'].values[0]
 
+        source = ''
+
         # Check if source is in sources to skip
         # Default: skip
         skip = True
@@ -76,6 +82,7 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
         if allowed_sources is not None:
             for als in allowed_sources:
                 if als.lower() in observed_passband.lower():
+                    source = als  # Set source of this entry to the allowed source name
                     skip = False
                     break
 
@@ -88,15 +95,6 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
 
         if np.all(np.where(sel['Upper limit of Flux Density'] == np.nan, 1, 0)) or np.all(np.where(sel['Lower limit of Flux Density'] == np.nan, 1, 0)):
             raise NotImplementedError('Table has upper or lower limit for flux density, this cannot be handled.')
-
-        source = ''
-        # Check some default values for source
-        if 'WISE' in observed_passband:
-            source = 'WISE'
-        elif 'Chandra' in observed_passband:
-            source = 'Chandra'
-        elif 'GALEX' in observed_passband:
-            source = 'GALEX'
 
         # Check if entry is not in lqso.sed yet
         if lqso.sed[(lqso.sed['wavelength'] == wl) & (lqso.sed['observed_passband'] == observed_passband)].empty:
