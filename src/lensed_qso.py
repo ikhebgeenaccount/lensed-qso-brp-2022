@@ -68,7 +68,6 @@ class LensedQSO:
 
         # For every unique source, add their data separately
         u_sources = list(data.source.unique())
-        print(u_sources)
         to_remove = []
 
         if disallowed_sources is not None:
@@ -81,8 +80,6 @@ class LensedQSO:
             # Remove all found disallowed sources
             for r in to_remove:
                 u_sources.remove(r)
-
-        print(u_sources)
 
         plotted_sources = []
 
