@@ -6,13 +6,15 @@ import warnings
 from src.lensed_qso import LensedQSO
 
 
-def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_conversion=1e3, qualifier=None):
+def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_conversion=1e3, qualifier=None, skip_sources=None):
     """
     Reads a ned.txt file of a NED bar-separated table and enters it into the SED of the galaxy.
     :param galaxy:
     :param ned_file:
     :param wavelength_conversion: default: um to Angstrom
     :param flux_conversion: default: Jy to mJy
+    :param qualifier:
+    :param skip_sources: List of sources to skip, e.g. ['SDSS']
     :return:
     """
     ned_df = pd.read_csv(os.path.join('data', lqso.name, ned_file), delimiter='|')
@@ -74,6 +76,18 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
         flux_total = sel['flux_total'].values[0]
         flux_err = sel['flux_err'].values[0]
         observed_passband = sel['observed_passband'].values[0]
+
+        # Check if source is in sources to skip
+        # Default: don't skip
+        skip = False
+        # Check for every skip_sources if it occurs in the observed_passband, if so, set skip to True
+        for ss in skip_sources:
+            if ss.lower() in observed_passband.lower():
+                skip = True
+                break
+
+        if skip:
+            continue
 
         source = ''
         # Check some default values for source
