@@ -19,6 +19,7 @@ keck was spectra, not continuum
 Magellan: Some are upper limits in de u band
 source: https://iopscience.iop.org/article/10.1086/375906/pdf
 It was never mentioned in the paper whether these are Ab or vega magnitudes, so I assumed AB magnitudes>> Might exclude this from the dataset, since same problem as with dataset
+SDSS-split magnitudes: only use these to fit foreground galaxy. SDSS catalog has more recent and better total mags, but split values are useful for G.
 
 Keeton 2006:
 hst fluxes given in A^-1, so conversion sucks.
