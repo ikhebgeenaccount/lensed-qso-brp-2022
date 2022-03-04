@@ -93,3 +93,17 @@ WHEN PLOTTING THIS DATA there is some weird dip, but this is explained in the ma
 hst/castles:
 source:https://lweb.cfa.harvard.edu/castles/Individual/B1152.html
 same method as 1633+3134, using code
+
+NED:
+ADDED:
+WISE in the one that has 18 phot, chose profile-fit
+2mass in the one with 18 phot, chose profile-fit
+Galex: in the on with 4, used kron flux
+
+NOT YET ADDED: 
+Chandra, since the 20 and the 28 source thing give wildly different values for ;ext end the other one. Need to add!
+VLA
+(VLBI, NRAO, TEXAS)
+
+NOT ADDED:
+gaia, sdss, 
