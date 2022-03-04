@@ -74,6 +74,13 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
         flux_total = sel['flux_total'].values[0]
         flux_err = sel['flux_err'].values[0]
         observed_passband = sel['observed_passband'].values[0]
+        
+        source = ''
+        # Check some default values for source
+        if 'WISE' in observed_passband:
+            source = 'WISE'
+        elif 'Chandra' in observed_passband:
+            source = 'Chandra'
 
         # Check if entry is not in lqso.sed yet
         if lqso.sed[(lqso.sed['wavelength'] == wl) & (lqso.sed['observed_passband'] == observed_passband)].empty:
@@ -82,7 +89,8 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
                 'wavelength': wl,
                 'flux_total': flux_total,  # weighted average
                 'flux_err': flux_err,
-                'observed_passband': observed_passband
+                'observed_passband': observed_passband,
+                'source': source
             }, ignore_index=True)
         else:
             # Overwrite it
