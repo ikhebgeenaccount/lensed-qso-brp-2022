@@ -60,5 +60,9 @@ Ducourant 2018
 https://ui.adsabs.harvard.edu/abs/2018arXiv180507359D/abstract
 NOT USED since the data is also in NED
 
+Peng 2006
+source: https://iopscience.iop.org/article/10.1086/506266/pdf
+NOT USED but gives seperately quasar and host magnitudes, might be useful to check
+
 
 >> from the papers, hardly any sources were found. sometimes because unusable, sometimes because NED gves the same datapoints
