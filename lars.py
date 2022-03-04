@@ -61,11 +61,11 @@ if __name__ == '__main__':
     galaxy = 'J0924+0219'
     lqso = LensedQSO(galaxy)
 
-    ned_table_to_sed(lqso, ned_file='NED_71', allowed_sources=['Chandra', 'WISE'])
+    #ned_table_to_sed(lqso, ned_file='NED_11', allowed_sources=['Chandra', 'WISE', '2MASS'])
 
-    mags_to_fluxes(lqso)
+    #mags_to_fluxes(lqso)
 
-    lqso.plot_spectrum(loglog=True)#, sources=['SDSS+DR14', 'Inada+2003'])
+    lqso.plot_spectrum(loglog=True, disallowed_sources=['panstarrs'])#, sources=['SDSS+DR14', 'Inada+2003'])
 
     # lqso.filtered_sed['error %'] = lqso.filtered_sed.flux_err / lqso.filtered_sed.flux_total
     #
