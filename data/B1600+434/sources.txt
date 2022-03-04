@@ -14,15 +14,14 @@ Check here as well using the data search stuff
 
 NED:
 ADDED:
-wise
-galex> used kron flux, used medium sky survey, 
+wise>used profule-fit, has 1 upper limit so no data
+galex> used kron flux, used medium sky survey, has 1 upper limit so no data
 
 NOT YET ADDED:
 HST: first page has some more filters
-NRAO: one with 1 measurements
-SUBARU (page with phot=3)
+CHANDRA: gives 2 pages, one with ;ext and one with;var
 
 NOT ADDED:
+SUBARU (page with phot=3) since it had no errorbars, we could still add this as upperlimit maybe?
 sdss
-mips
-some nameless things
+MIPS,NRAO,some other nameless things
