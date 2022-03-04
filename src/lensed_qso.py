@@ -17,12 +17,12 @@ class LensedQSO:
         'data/[name]/sed.csv'.
         """
         self.name = name
-        
+
         # Read SED
         self.sed_file = sed_source
         self.sed = pd.read_csv(os.path.join('data', name, sed_source))
         self.sed.fillna(0, inplace=True)
-        
+
         try:
             # Read mags
             self.mags = pd.read_csv(os.path.join('data', name, mags_source))
@@ -35,20 +35,20 @@ class LensedQSO:
         # filtered_sed only selects entries that have a wavelength and a flux_total
         self.filtered_sed = self.sed[(self.sed.wavelength > 0) * (self.sed.flux_total > 0)].copy()
 
-    def plot_spectrum(self, loglog=False, mags=False, sources='all', **kwargs):
+    def plot_spectrum(self, loglog=False, mags=False, disallowed_sources=['panstarrs'], **kwargs):
         # Fill with NaNs in case something was added
         self.sed.fillna(0, inplace=True)
-        
+
         fig, ax = plt.subplots(figsize=(10, 8))
 
         legend_list = []
 
         # upper_limits = ()
-        
+
         data = None
         data_type = None
         data_err = None
-        
+
         if mags:
             data = self.mags
             data_type = 'mag'
@@ -67,7 +67,20 @@ class LensedQSO:
             limit = 'upper_limit'
 
         # For every unique source, add their data separately
-        u_sources = data.source.unique() if sources == 'all' else sources
+        u_sources = list(data.source.unique())
+        to_remove = []
+
+        if disallowed_sources is not None:
+            # Check for occurrences of disallowed sources in the unique sources
+            for ds in disallowed_sources:
+                for s in u_sources:
+                    if ds.lower() in s.lower():
+                        to_remove.append(s)
+
+            # Remove all found disallowed sources
+            for r in to_remove:
+                u_sources.remove(r)
+
         for l in u_sources:
             # Filter based on source
             # Only take those that have both a wavelength and a total flux
@@ -95,7 +108,7 @@ class LensedQSO:
             # upper_limits += (le_2, )
 
         # ax.legend(legend_list + [upper_limits], list(self.sed.source.unique()) + ['upper limit'], loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
-        ax.legend(legend_list, data[(data.wavelength > 0) * (data[data_type] > 0)].source.unique() if sources == 'all' else u_sources, loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
+        ax.legend(legend_list, u_sources, loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
         ax.set_xscale('log')
 
         if loglog:
