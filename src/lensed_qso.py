@@ -36,6 +36,9 @@ class LensedQSO:
         self.filtered_sed = self.sed[(self.sed.wavelength > 0) * (self.sed.flux_total > 0)].copy()
 
     def plot_spectrum(self, loglog=False, mags=False, sources='all', **kwargs):
+        # Fill with NaNs in case something was added
+        self.sed.fillna(0, inplace=True)
+        
         fig, ax = plt.subplots(figsize=(10, 8))
 
         legend_list = []
