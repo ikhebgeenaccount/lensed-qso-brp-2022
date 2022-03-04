@@ -14,12 +14,12 @@ SDSS_V_PANSTARRS_GS = ['B1152+200', 'B1600+434', 'J0806+2006', 'J1633+3134', 'J1
 
 def sdss_panstarrs_flux_discrepancy():
     flux_discrepancy = pd.DataFrame(columns=['galaxy', 'filter', 'sdss', 'panstarrs', 'ratio', 'diff'])
-    
+
     ratios = []
     diffs = []
-    
+
     panstarrs_mag = 'ap'
-    
+
     for g in SDSS_V_PANSTARRS_GS:
         try:
             mags_to_fluxes(g)
@@ -27,42 +27,42 @@ def sdss_panstarrs_flux_discrepancy():
             continue
 
         print(f'{g}, PanSTARRS mag choice: {panstarrs_mag}')
-        
+
         lqso = LensedQSO(g)
         # lqso.plot_spectrum()
         lqso.plot_spectrum(loglog=True)
         lqso.plot_spectrum(mags=True)
-        
+
         for i, r in lqso.sed.iterrows():
             if 'SDSS' not in r['source'] and panstarrs_mag not in r['source']:
                 continue
             if r['filter'] in ['g', 'r', 'i', 'z']:
                 source = 'sdss' if 'SDSS' in r.source else 'panstarrs'
                 flux_discrepancy.loc[r['filter'], source] = r.flux_total
-        
+
         flux_discrepancy['ratio'] = flux_discrepancy.sdss.div(flux_discrepancy.panstarrs.where(flux_discrepancy.panstarrs != 0, np.nan))
         # Make all ratios > 1 so we can compare
         flux_discrepancy['ratio'] = flux_discrepancy['ratio'].apply(lambda r: 1. / r if r < 1  else r)
         flux_discrepancy['diff'] = flux_discrepancy['sdss'] - flux_discrepancy['panstarrs']
         print(flux_discrepancy)
         print()
-        
+
         ratios.append(list(flux_discrepancy['ratio']))
         diffs.append(list(flux_discrepancy['diff']))
-    
+
     ratios = np.array(ratios).flatten()
     diffs= np.array(diffs).flatten()
-    
+
     print(f'ratio avg: {np.nanmean(ratios)}, ratio std: {np.nanstd(ratios)}')
     print(f'diff avg: {np.nanmean(diffs)}, diff std: {np.nanstd(diffs)}')
 
 
 if __name__ == '__main__':
-    galaxy = 'J0806+2006'
+    galaxy = 'J0924+0219'
     lqso = LensedQSO(galaxy)
 
-    #ned_table_to_sed(lqso, ned_file='ned_wise.txt')
-    
+    ned_table_to_sed(lqso, ned_file='NED_71', allowed_sources=['Chandra', 'WISE'])
+
     mags_to_fluxes(lqso)
 
     lqso.plot_spectrum(loglog=True)#, sources=['SDSS+DR14', 'Inada+2003'])

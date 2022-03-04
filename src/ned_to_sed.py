@@ -3,10 +3,8 @@ import numpy as np
 import os.path
 import warnings
 
-from src.lensed_qso import LensedQSO
 
-
-def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_conversion=1e3, qualifier=None, skip_sources=None):
+def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_conversion=1e3, qualifier=None, allowed_sources=None):
     """
     Reads a ned.txt file of a NED bar-separated table and enters it into the SED of the galaxy.
     :param galaxy:
@@ -25,22 +23,13 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
         warnings.warn('Filtered out ' + str(fs) + ' measurements, check if this is correct!')
         ned_df = ned_df[ned_df['Flux Density'].notna()]
 
-    if not np.all(np.where(ned_df['Upper limit of uncertainty'] == ned_df['Lower limit of uncertainty'], 1, 0)):
-        # print(ned_df[['Upper limit of uncertainty', 'Lower limit of uncertainty']])
-        raise NotImplementedError('Upper and lower limit of uncertainty are different, this cannot be handled.')
-
-    if np.all(np.where(ned_df['Upper limit of Flux Density'] == np.nan, 1, 0)) or np.all(np.where(ned_df['Lower limit of Flux Density'] == np.nan, 1, 0)):
-        raise NotImplementedError('Table has upper or lower limit for flux density, this cannot be handled.')
-
-    # Give fields we want proper name, convert
+    # Give fields we want proper name, convertFalse
     ned_df['wavelength'] = ned_df['Wavelength'] * wavelength_conversion
     ned_df['flux_total'] = ned_df['Flux Density'] * flux_conversion
     ned_df['flux_err'] = ned_df['Upper limit of uncertainty'] * flux_conversion
 
     ned_df['observed_passband'] = ned_df['Observed Passband'].apply(lambda v: v.strip())
     ned_df['Qualifiers'] = ned_df['Qualifiers'].apply(lambda v: v.strip())
-
-    wls = ned_df['wavelength'].unique()
 
     qualis = ned_df['Qualifiers'].unique()
 
@@ -59,9 +48,12 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
     if not 'observed_passband' in lqso.sed.columns:
         lqso.sed['observed_passband'] = ''
 
+    q_sel = ned_df.loc[(ned_df['Qualifiers'] == qualifier)]
+    wls = q_sel['wavelength'].unique()
+
     # Combine measurements for each unique wavelength into single value and error
     for wl in wls:
-        sel = ned_df.loc[(ned_df['wavelength'] == wl) & (ned_df['Qualifiers'] == qualifier)]
+        sel = q_sel.loc[(q_sel['wavelength'] == wl)]
 
         # Check for proper size of selection, if not exactly one warn the user and continue to next wavelength
         if sel.shape[0] > 1:
@@ -78,17 +70,24 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
         observed_passband = sel['observed_passband'].values[0]
 
         # Check if source is in sources to skip
-        # Default: don't skip
-        skip = False
+        # Default: skip
+        skip = True
         # Check for every skip_sources if it occurs in the observed_passband, if so, set skip to True
-        if skip_sources is not None:
-            for ss in skip_sources:
-                if ss.lower() in observed_passband.lower():
-                    skip = True
+        if allowed_sources is not None:
+            for als in allowed_sources:
+                if als.lower() in observed_passband.lower():
+                    skip = False
                     break
 
         if skip:
             continue
+
+        if not np.all(np.where(sel['Upper limit of uncertainty'] == sel['Lower limit of uncertainty'], 1, 0)):
+            # print(ned_df[np.where(ned_df['Upper limit of uncertainty'] == ned_df['Lower limit of uncertainty'], 1, 0)][['Upper limit of uncertainty', 'Lower limit of uncertainty']])
+            raise NotImplementedError('Upper and lower limit of uncertainty are different, this cannot be handled.')
+
+        if np.all(np.where(sel['Upper limit of Flux Density'] == np.nan, 1, 0)) or np.all(np.where(sel['Lower limit of Flux Density'] == np.nan, 1, 0)):
+            raise NotImplementedError('Table has upper or lower limit for flux density, this cannot be handled.')
 
         source = ''
         # Check some default values for source
@@ -104,7 +103,7 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
             # Add it
             lqso.sed = lqso.sed.append({
                 'wavelength': wl,
-                'flux_total': flux_total,  # weighted average
+                'flux_total': flux_total,
                 'flux_err': flux_err,
                 'observed_passband': observed_passband,
                 'source': source
