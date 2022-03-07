@@ -30,7 +30,7 @@ wise: profile-fit;extended
 2mass: profile fit
 
 not yet added:
-USNO
+
 
 not added:
 sdss
