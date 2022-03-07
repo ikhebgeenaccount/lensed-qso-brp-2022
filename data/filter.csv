@@ -21,7 +21,9 @@ NOT,V,,,5389.63,vega,3636940,http://svo2.cab.inta-csic.es/theory/fps/index.php?i
 NOT,R,,,6396.64,vega,3033260,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_R&&mode=browse&gname=NOT&gname2=ALFOSC#filter
 NOT,I,,,8559.6,vega,2309980,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_I&&mode=browse&gname=NOT&gname2=ALFOSC#filter
 Subaru,K',,,21939.11,vega,647720,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Subaru/CIAO.K&&mode=browse&gname=Subaru&gname2=CIAO#filter
-,,,,,,,
+magellan_PANIC,J,,PANIC,,1.25e4,vega,1594000,https://iopscience.iop.org/article/10.1086/376474/pdf for zeropoints
+magellan_PANIC,H,,PANIC,,1.65e4,vega,1024000,http://instrumentation.obs.carnegiescience.edu/wirc/wircpaper.pdf for wavelengths
+magellan_PANIC,Ks,,PANIC,,2.16e4,vega,666800,
 UH88,V,,,5510,vega,3650000,
 UH88,R,,,6580,vega,3650000,
 UH88,I,,,8060,vega,3650000,
