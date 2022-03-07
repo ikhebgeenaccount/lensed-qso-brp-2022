@@ -2,6 +2,8 @@
 # V, R, I, H 	Table 1 (p. 14), A+B is background galaxy, G is lensing galaxy
 # p.4, u, g, r, i, z
 
+VRIH are not used: we do not know how to convert these mags to fluxes, unable to find what type of mags, what the zeropoints are for the filters, or filter profiles
+
 # SDSS filters
 # https://www.sdss.org/instruments/camera/
 # Find SDSS paper for precise defs
