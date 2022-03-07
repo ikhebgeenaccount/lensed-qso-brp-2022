@@ -8,3 +8,18 @@ No SDSS :(
 Snellen et al. 95
 https://ui.adsabs.harvard.edu/abs/1995ApJ...447L...9S/abstract
 Lens is a radio galaxy with lobes, quadruple image
+
+COSMOGRAIL
+https://www.aanda.org/articles/aa/pdf/2012/02/aa15844-10.pdf
+Hubble data, but what is G1 and G2
+
+NED:
+to do:
+1.4 GHz
+HST
+
+maybe:
+4.85 GHz
+92 cm WENSS
+325 MHz WSRT
+(these three could be from Snellen?)
