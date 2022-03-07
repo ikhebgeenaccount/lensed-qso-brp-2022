@@ -18,10 +18,10 @@ wise>used profule-fit, has 1 upper limit so no data
 galex> used kron flux, used medium sky survey, has 1 upper limit so no data
 
 NOT YET ADDED:
-HST: first page has some more filters
 CHANDRA: gives 2 pages, one with ;ext and one with;var
 
 NOT ADDED:
 SUBARU (page with phot=3) since it had no errorbars, we could still add this as upperlimit maybe?
 sdss
 MIPS,NRAO,some other nameless things
+HST: first page has some more filters
