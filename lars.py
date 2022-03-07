@@ -57,20 +57,31 @@ def sdss_panstarrs_flux_discrepancy():
     print(f'diff avg: {np.nanmean(diffs)}, diff std: {np.nanstd(diffs)}')
 
 
-if __name__ == '__main__':
-    galaxy = 'J0924+0219'
+def all_galaxies():
+    for g in GALAXIES:
+        lqso = LensedQSO(g)
+
+        lqso.plot_spectrum(loglog=True)
+        mags_to_fluxes(lqso)
+        lqso.plot_spectrum(loglog=True)
+
+        count = lqso.sed.loc[lqso.sed['flux_G'] > 0].shape[0]
+
+        print(f'{g}, {count}')
+
+
+def single_galaxy():
+    galaxy = 'J0806+2006'
     lqso = LensedQSO(galaxy)
 
     #ned_table_to_sed(lqso, ned_file='NED_11', allowed_sources=['Chandra', 'WISE', '2MASS'])
 
     #mags_to_fluxes(lqso)
 
-    lqso.plot_spectrum(loglog=True, disallowed_sources=['panstarrs'])#, sources=['SDSS+DR14', 'Inada+2003'])
+    lqso.plot_spectrum(loglog=True)
 
-    # lqso.filtered_sed['error %'] = lqso.filtered_sed.flux_err / lqso.filtered_sed.flux_total
-    #
-    # print(lqso.filtered_sed[['source', 'error %']])
 
-    # print(lqso.sed_to_agn_fitter())
+if __name__ == '__main__':
+    all_galaxies()
 
     plt.show()

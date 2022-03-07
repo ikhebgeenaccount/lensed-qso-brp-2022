@@ -48,8 +48,6 @@ class LensedQSO:
 
         fig, ax = plt.subplots(figsize=(10, 8))
 
-        print(disallowed_sources)
-
         if self.name in FILTERED_SOURCES:
             # Add standard filtered sources to disallowed sources
             disallowed_sources += FILTERED_SOURCES[self.name]
@@ -86,9 +84,6 @@ class LensedQSO:
         # For every unique source, add their data separately
         u_sources = list(data.source.unique())
         to_remove = []
-
-        print(disallowed_sources)
-        print(u_sources)
 
         if disallowed_sources is not None:
             # Check for occurrences of disallowed sources in the unique sources
