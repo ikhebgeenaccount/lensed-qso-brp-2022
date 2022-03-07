@@ -17,19 +17,25 @@ Stacey 2015 (master thesis)
 No access...
 
 Rusu 2016:
-has subaru data, use conversions from Ned but components from this paper
+has subaru data, use conversions from Ned but components from this paper :)
+source:https://ui.adsabs.harvard.edu/abs/2016MNRAS.458....2R/abstract
+
+Shajib, 2019:
+No castles data is available, but this paper does give some componental hst data, so nice
+converted as other hst data
+source:https://ui.adsabs.harvard.edu/abs/2019MNRAS.483.5649S/abstract
 
 NED:
 done:
 wise
 galex 1
+subaru
 2mass
 
 not yet done:
 galex 1 upper limit
-Subaru
 
 not done:
 sdss
 hst
-gaia
+gaia since we already have optical
