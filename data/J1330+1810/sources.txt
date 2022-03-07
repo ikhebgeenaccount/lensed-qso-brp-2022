@@ -1,1 +1,35 @@
+sdss: http://skyserver.sdss.org/dr14/en/tools/chart/navi.aspx?ra=202.57772&dec=18.17581&SCALE=0.05
 
+Stacey+2018: no upper limits
+
+Oguri 2008:
+-uh88 skipped since lensprofile unavailable
+-magellan panic> used wavelengths found in 	http://instrumentation.obs.carnegiescience.edu/wirc/wircpaper.pdf and 2mass zeropoints https://iopscience.iop.org/article/10.1086/376474/pdf , these are useful for model plotting but maybe not for agnfitter
+-ARC telescope was left out since we already have Hband from PANIC and from 2mass. Mochten we weinig andere data vinden kan dit altijd nog toegepast worden
+source:https://ui.adsabs.harvard.edu/abs/2008MNRAS.391.1973O/abstract 
+
+Blackburne 2011
+Has MAGic data, but nothing absolute, so we can't use it.
+source:https://iopscience.iop.org/article/10.1088/0004-637X/729/1/34/pdf
+NOT USED
+
+Stacey 2015 (master thesis)
+No access...
+
+Rusu 2016:
+has subaru data, use conversions from Ned but components from this paper
+
+NED:
+done:
+wise
+galex 1
+2mass
+
+not yet done:
+galex 1 upper limit
+Subaru
+
+not done:
+sdss
+hst
+gaia
