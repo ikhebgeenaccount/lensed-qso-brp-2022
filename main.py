@@ -5,11 +5,11 @@ from src.mags_to_fluxes import mags_to_fluxes
 from src.ned_to_sed import ned_table_to_sed
 
 if __name__ == '__main__':
-    galaxy = 'J0924+0219'
+    galaxy = 'J1455+1447'
     lqso = LensedQSO(galaxy)
     
     mags_to_fluxes(lqso)
-    ned_table_to_sed(lqso,'NED_11', allowed_sources=['Chandra', 'WISE', '2MASS'])
+    ned_table_to_sed(lqso,'Ned_2mass.txt', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
     lqso.plot_spectrum(loglog=True)
     
     plt.show()

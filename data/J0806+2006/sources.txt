@@ -35,3 +35,20 @@
 # Unresolved: PSF magnitude
 # Resolved: aperture magnitude
 # mag to flux: AB system, zeropoint 3631e3 mJy
+
+NED:
+ADDED:
+wise: profile fit, 1 upper limit> not added
+
+NOT YET ADDED:
+vlt
+gemini?
+
+NOT ADDED:
+SDSS
+UH88
+hst
+Gaia
+
+
+galex: medium sky survey, kron aperture flux, for NUV and FUV

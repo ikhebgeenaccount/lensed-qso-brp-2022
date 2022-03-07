@@ -10,7 +10,7 @@ SDSS,r,,,6166,SDSS,3631000,
 SDSS,i,,,7480,SDSS,3631000,
 SDSS,z,,,8932,SDSS,3631000,
 Gemini North,K,,,22089.98,vega,640000,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Gemini/NIRI.K-G0204w&&mode=browse&gname=Gemini&gname2=NIRI#filter
-Gemini North,L’,,,37590.74,vega,248080,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Gemini/NIRI.Lprime-G0207w&&mode=browse&gname=Gemini&gname2=NIRI#filter
+Gemini North,L',,,37590.74,vega,248080,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Gemini/NIRI.Lprime-G0207w&&mode=browse&gname=Gemini&gname2=NIRI#filter
 WIYN,U,,,3576.21,vega,1693910,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w001&&mode=browse&gname=WIYN&gname2=WIYN#filter
 WIYN,B,,,4322.75,vega,3898270,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w002&&mode=browse&gname=WIYN&gname2=WIYN#filter
 WIYN,R,,,6554.66,vega,3022620,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w004&&mode=browse&gname=WIYN&gname2=WIYN#filter
@@ -35,3 +35,8 @@ hst,F814W,,,8029.29,AB,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/inde
 CASTLES,F555W,V,WFPC2/PC1,5442.92,vega,3643250,
 CASTLES,F160W,H,NICMOS/NIC2,16036.9,vega,1063080,
 CASTLES,F814W,I,WFPC2/PC1,7995.93,vega,2455070,
+hst,ACS_HRC/F330W,,,3362.99,vega,1245770,
+hst,ACS_HRC/F435W,,,4323.09,vega,3980460,
+hst,ACS_HRC/F555W,,,5355.74,vega,3665220,
+hst,ACS_HRC/F625W,,,6295.19,vega,3123530,
+hst,ACS_HRC/F814W,,,8100.44,vega,2436510,

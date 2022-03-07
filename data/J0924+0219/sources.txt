@@ -70,7 +70,7 @@ NED:
 -galex: AB means AB magnitude. for FUV and NUV, chose the medium sky survey since deeper, chose kron fluxes.
 -2mass: chose profile-fit
 -Chandra was always added, left out 0.5-8 kev and 0.3-8 kev since inconsistent with itself. For the other filterbands use flux_aper;var
-always left out: hst(no components), sdss(already have them), USNO(more optical)
+always left out: hst(no components), sdss(already have them), USNO(more optical), GAIA(more optical)
 in the file with 11 measurements there are 2 vlt images. However looking at the paper, this was not the total flux but the lensing galaxy flux. Will add this by hand to sed.
 
 Faura 2011

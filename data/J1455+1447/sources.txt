@@ -17,3 +17,16 @@ used Lars' code for first time
 source:http://skyserver.sdss.org/dr14/en/tools/chart/navi.aspx?ra=223.75782&dec=14.79301&SCALE=0.05
 
 hst: NO DATA AVAILABLE
+
+NED:
+DONE:
+wise: no upperlimits, profile-fit
+
+NOT YET DONE:
+UH88
+subaru
+
+NOT DONE:
+Gaia
+sdss
+hst
