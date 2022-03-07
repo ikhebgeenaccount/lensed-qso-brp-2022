@@ -6,3 +6,15 @@ COSMOGRAIL
 https://www.aanda.org/articles/aa/pdf/2007/12/aa5823-06.pdf
 reports Deltam of -0.05, Deltat ~ 50 days
 
+NED:
+added:
+Galex:used medium sky survey, has 1 upper limit for FUV. 
+wise: profile fit
+2mass: profile fit
+
+not yet added:
+
+not added:
+sdss
+hst
+gaia
