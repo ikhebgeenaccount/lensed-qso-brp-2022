@@ -19,7 +19,7 @@ VRIH are not used: we do not know how to convert these mags to fluxes, unable to
 
 # Sluse et al. 2012, table 5 (p. 14), https://www.aanda.org/articles/aa/pdf/2012/08/aa19125-12.pdf
 # H, K, L' bands
-# H: 			(Sluse et al., 2008, https://www.aanda.org/articles/aa/pdf/2008/47/aa10977-08.pdf), Sluse 2012 table 5 says A/B, but seems to be .5 * A/B from sluse 2008? table 2 has H magnitude
+# H: 			(Sluse et al., 2008, https://www.aanda.org/articles/aa/pdf/2008/47/aa10977-08.pdf), Sluse 2012 table 5 says A/B, but seems to be .5 * A/B from sluse 2008? table 2 has H magnitude >>> we found the same values on NED, used the fluxes given here)
 # K: 2.2 um 	(Fadely, Keeton 2011, https://iopscience.iop.org/article/10.1088/0004-6256/141/3/101/pdf)
 # L': 3.8 um	(Fadely, Keeton 2011, https://iopscience.iop.org/article/10.1088/0004-6256/141/3/101/pdf)
 # Flux ratios, perhaps can turn into abs flux values? --> table 3 has abs values
