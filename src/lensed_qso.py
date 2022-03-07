@@ -37,18 +37,26 @@ class LensedQSO:
         # filtered_sed only selects entries that have a wavelength and a flux_total
         self.filtered_sed = self.sed[(self.sed.wavelength > 0) * (self.sed.flux_total > 0)].copy()
 
-    def plot_spectrum(self, loglog=False, mags=False, disallowed_sources=['panstarrs'], **kwargs):
+    def plot_spectrum(self, loglog=False, mags=False, disallowed_sources=None, **kwargs):
+        if disallowed_sources is None:
+            disallowed_sources = ['panstarrs']
+        else:
+            disallowed_sources += 'panstarrs'
+
         # Fill with NaNs in case something was added
         self.sed.fillna(0, inplace=True)
 
         fig, ax = plt.subplots(figsize=(10, 8))
 
-        # Add standard filtered sources to disallowed sources
-        disallowed_sources += FILTERED_SOURCES[self.name]
+        print(disallowed_sources)
 
-        # No need to warn about PanSTARRS, otherwise do warn
-        if len(disallowed_sources) > 1 or (len(disallowed_sources) > 0 and 'panstarrs' not in disallowed_sources):
-            warnings.warn('Filtering sources ' + str(disallowed_sources))
+        if self.name in FILTERED_SOURCES:
+            # Add standard filtered sources to disallowed sources
+            disallowed_sources += FILTERED_SOURCES[self.name]
+
+            # No need to warn about PanSTARRS, otherwise do warn
+            if len(disallowed_sources) > 1 or (len(disallowed_sources) > 0 and 'panstarrs' not in disallowed_sources):
+                warnings.warn('Filtering sources ' + str(disallowed_sources))
 
         legend_list = []
 
@@ -79,11 +87,14 @@ class LensedQSO:
         u_sources = list(data.source.unique())
         to_remove = []
 
+        print(disallowed_sources)
+        print(u_sources)
+
         if disallowed_sources is not None:
             # Check for occurrences of disallowed sources in the unique sources
             for ds in disallowed_sources:
                 for s in u_sources:
-                    if ds.lower() in s.lower():
+                    if ds.lower() in s.lower() and s not in to_remove:
                         to_remove.append(s)
 
             # Remove all found disallowed sources

@@ -7,6 +7,8 @@ from src.lensed_qso import LensedQSO
 
 from src.filters import FILTER_PROPERTIES, get_wavelength
 
+import warnings
+
 
 def mags_to_fluxes(lqso):
     """
@@ -17,6 +19,10 @@ def mags_to_fluxes(lqso):
     :param mags_file:
     :return: DataFrame with fluxes
     """
+    if not hasattr(lqso, 'mags'):
+        warnings.warn(lqso.name + ' has no mags file')
+        return
+
     for i, row in lqso.mags.iterrows():
 
         try:
@@ -61,8 +67,8 @@ def mags_to_fluxes(lqso):
             fes.append(fe)
 
         if total == 1:
-            total_f = sum(fs) * total
-            total_fe = sum(fes) * total
+            total_f = sum(fs)
+            total_fe = np.linalg.norm(fes)
 
         # If this combination of filter and wavelength does not exist yet in lqso.sed
         if lqso.sed[(lqso.sed['filter'] == row['filter']) & (lqso.sed.source == row.source)].empty:
