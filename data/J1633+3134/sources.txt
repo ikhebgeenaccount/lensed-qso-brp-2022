@@ -22,3 +22,18 @@ source: https://iopscience.iop.org/article/10.1086/340096/pdf
 Stacey:
 Herschel
 same as for B1152+200, 2 normal, 1 upperlimit
+
+NED:
+done
+Galex: for fuv used all sky survey, for NUV used medium sky>>kron 
+wise: profile-fit;extended
+2mass: profile fit
+
+not yet added:
+USNO
+
+not added:
+sdss
+hst
+nameless thing
+
