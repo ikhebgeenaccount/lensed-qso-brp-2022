@@ -31,6 +31,7 @@ UH88,H,,,16300,vega,3650000,
 hst,F160W,,,15370.34,AB,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_IR.F160W
 hst,F330W,,,3362.92,AB,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=HST&asttype=
 hst,F435W,,,4310.8,AB,3631000,
+hst,F475X,,WFC3,4937.39,AB,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_UVIS2.F475X&&mode=browse&gname=HST&gname2=WFC3_UVIS2#filter
 hst,F555W,,,5355.38,AB,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/ACS_HRC.F555W
 hst,F625W,,,6295.1,AB,3631000,
 hst,F814W,,,8029.29,AB,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_UVIS2.F814W
