@@ -17,3 +17,17 @@ Oguri 2008:
 used code
 https://iopscience.iop.org/article/10.1088/0004-6256/135/2/520/pdf
 NOT USED since SDSS data from an earlier data release, use DR14 instead
+
+NED:
+done:
+wise: profle fit
+2mass;profile fit
+galex:kron aperture
+
+not yet done:
+uh88
+
+not done:
+gaia
+sdss
+hst
