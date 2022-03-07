@@ -21,6 +21,7 @@ hst: NO DATA AVAILABLE
 NED:
 DONE:
 wise: no upperlimits, profile-fit
+2mass: profile fit
 
 NOT YET DONE:
 UH88
