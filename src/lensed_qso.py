@@ -7,6 +7,8 @@ from matplotlib.legend_handler import HandlerTuple
 
 from src.filters import get_wavelength
 
+import warnings
+
 
 class LensedQSO:
 
@@ -40,6 +42,13 @@ class LensedQSO:
         self.sed.fillna(0, inplace=True)
 
         fig, ax = plt.subplots(figsize=(10, 8))
+
+        # Add standard filtered sources to disallowed sources
+        disallowed_sources += FILTERED_SOURCES[self.name]
+
+        # No need to warn about PanSTARRS, otherwise do warn
+        if len(disallowed_sources) > 1 or (len(disallowed_sources) > 0 and 'panstarrs' not in disallowed_sources):
+            warnings.warn('Filtering sources ' + str(disallowed_sources))
 
         legend_list = []
 
@@ -151,3 +160,8 @@ class LensedQSO:
                 catalog += f'{row.wavelength} {row.flux_total} -99 '
 
         return catalog
+
+FILTERED_SOURCES = {
+    'J0806+2006': ['Inada'],
+    'J1455+1447': ['Rusu']
+}
