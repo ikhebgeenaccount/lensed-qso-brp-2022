@@ -25,10 +25,11 @@ wise: no upperlimits, profile-fit
 2mass: profile fit
 
 NOT YET DONE:
-UH88
 
 
 NOT DONE:
 Gaia
 sdss
 hst
+uh88 since no zeropoints to be found to check, weird telescope, no filterprofiles available as well
+
