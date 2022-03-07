@@ -25,9 +25,10 @@ wise: profle fit
 galex:kron aperture
 
 not yet done:
-uh88
+
 
 not done:
 gaia
 sdss
 hst
+uh88 since no zeropoints to be found to check, weird telescope, no filterprofiles available as well
