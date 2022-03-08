@@ -6,7 +6,7 @@ from src.ned_to_sed import ned_table_to_sed
 from src.xml_to_txt import xml_to_txt
 
 if __name__ == '__main__':
-    xml_to_txt('Gemini.NIRI.K-G0204w.xml')
+    xml_to_txt('Gemini_K.xml')
     #galaxy = 'J0924+0219'
     #lqso = LensedQSO(galaxy)
     
