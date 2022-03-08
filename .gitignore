@@ -8,6 +8,7 @@
 
 *.fits
 meetings/
+plots/
 
 # User-specific stuff
 .idea/*

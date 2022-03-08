@@ -26,13 +26,25 @@ FILTERED_SOURCES = {
 
 class LensedQSO:
 
-    def __init__(self, name, sed_source='sed.csv',  mags_source='mags.csv', properties='properties.txt'):
+    def __init__(self, name, sed_source='sed.csv',  mags_source='mags.csv', properties='properties.txt', save_all_plots=True, save_location='plots'):
         """
         :param name: Name of the lensed qso.
         :param sed_source: source of the spectral energy density (SED). Must be located in 'data/[name]'. Default is
         'data/[name]/sed.csv'.
         """
         self.name = name
+
+        # Save location for plots
+        self.save_all_plots = save_all_plots
+        self.save_location = os.path.join(save_location, name)
+
+        # Check if location exists
+        # Base plots folder
+        if not os.path.isdir(save_location):
+            os.mkdir(save_location)
+        # This specific galaxy
+        if not os.path.isdir(self.save_location):
+            os.mkdir(self.save_location)
 
         # Read SED
         self.sed_file = sed_source
@@ -172,6 +184,10 @@ class LensedQSO:
             ax.set_ylabel('$\mathit{mag}$')
         else:
             ax.set_ylabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
+
+        if self.save_all_plots:
+            fig.savefig(os.path.join(self.save_location, 'SED_total.pdf'))
+            fig.savefig(os.path.join(self.save_location, 'SED_total.png'))
 
         return fig, ax
 
