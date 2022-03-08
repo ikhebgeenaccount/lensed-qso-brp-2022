@@ -18,6 +18,7 @@ No access...
 
 Rusu 2016:
 has subaru data, use conversions from Ned but components from this paper :)
+ Also, the lens in SDSS J1330+1810 is originally fitted with Sersic index ´ ∼3.4, but ∼2.2 in the new data, closer to the morphology of a disc-like galaxy.
 source:https://ui.adsabs.harvard.edu/abs/2016MNRAS.458....2R/abstract
 
 Shajib, 2019:
