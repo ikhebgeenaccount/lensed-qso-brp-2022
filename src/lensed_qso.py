@@ -39,9 +39,7 @@ class LensedQSO:
 
     def plot_spectrum(self, loglog=False, mags=False, disallowed_sources=None, **kwargs):
         if disallowed_sources is None:
-            disallowed_sources = ['panstarrs']
-        else:
-            disallowed_sources += 'panstarrs'
+            disallowed_sources = []
 
         # Fill with NaNs in case something was added
         self.sed.fillna(0, inplace=True)
@@ -167,7 +165,16 @@ class LensedQSO:
 
         return catalog
 
+
 FILTERED_SOURCES = {
-    'J0806+2006': ['Inada'],
-    'J1455+1447': ['Rusu']
+    'B1152+200' : ['panstarrs'],
+    'B1600+434' : ['panstarrs'],
+    'B1608+656' : [],
+    'J0806+2006' : ['panstarrs', 'Inada'],
+    'J0924+0219' : ['panstarrs'],
+    'J1330+1810' : ['panstarrs'],
+    'J1455+1447' : ['panstarrs', 'Rusu'],
+    'J1524+4409' : ['panstarrs'],
+    'J1633+3134' : ['panstarrs'],
+    'J1650+4251' : ['panstarrs']
 }

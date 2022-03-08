@@ -13,6 +13,10 @@ COSMOGRAIL
 https://www.aanda.org/articles/aa/pdf/2012/02/aa15844-10.pdf
 Hubble data, but what is G1 and G2
 
+Barvainis 2002 https://ui.adsabs.harvard.edu/abs/2002ApJ...571..712B/abstract
+Submillimetere fluxes
+
+
 NED:
 to do:
 1.4 GHz
