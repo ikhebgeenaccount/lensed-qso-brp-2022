@@ -9,6 +9,22 @@ Snellen et al. 95
 https://ui.adsabs.harvard.edu/abs/1995ApJ...447L...9S/abstract
 Lens is a radio galaxy with lobes, quadruple image
 
+Fassnacht et al., 1999
+https://ui.adsabs.harvard.edu/abs/1999ApJ...527..498F/abstract
+Table 2: mean flux densities, at 8.5 GHz
+
+Fassnacht et al., 2002
+https://iopscience.iop.org/article/10.1086/344368/pdf
+TAble 2: mean flux densities, over longer period of time, S_1, S_2, S_3 are observing seasons
+
+Surpi 2003
+https://ui.adsabs.harvard.edu/abs/2003ApJ...584..100S/abstract
+Hubble VIH images, two lensing galaxies
+
+Sluse et al., 2012
+https://ui.adsabs.harvard.edu/abs/2012A%26A...538A..99S/abstract
+CASTLES data, split for all components including G1 and G2
+
 COSMOGRAIL
 https://www.aanda.org/articles/aa/pdf/2012/02/aa15844-10.pdf
 Hubble data, but what is G1 and G2
