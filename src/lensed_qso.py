@@ -10,6 +10,20 @@ from src.filters import get_wavelength
 import warnings
 
 
+FILTERED_SOURCES = {
+    'B1152+200': ['panstarrs'],
+    'B1600+434': ['panstarrs'],
+    'B1608+656': [],
+    'J0806+2006': ['panstarrs', 'Inada'],
+    'J0924+0219': ['panstarrs'],
+    'J1330+1810': ['panstarrs'],
+    'J1455+1447': ['panstarrs', 'Rusu'],
+    'J1524+4409': ['panstarrs'],
+    'J1633+3134': ['panstarrs'],
+    'J1650+4251': ['panstarrs']
+}
+
+
 class LensedQSO:
 
     def __init__(self, name, sed_source='sed.csv',  mags_source='mags.csv', properties='properties.txt'):
@@ -37,23 +51,56 @@ class LensedQSO:
         # filtered_sed only selects entries that have a wavelength and a flux_total
         self.filtered_sed = self.sed[(self.sed.wavelength > 0) * (self.sed.flux_total > 0)].copy()
 
-    def plot_spectrum(self, loglog=False, mags=False, disallowed_sources=None, **kwargs):
+    def filter_sed(self, disallowed_sources=None):
+        """
+        Returns a DataFrame that contains only those rows that are allowed through LensedQSO.allowed_sources
+        :param disallowed_sources: passed to LensedQSO.allowed_sources
+        :return:
+        """
+        allowed_sources = self.allowed_sources(disallowed_sources)
+
+        return self.sed.loc[self.sed.source.isin(allowed_sources)]
+
+    def allowed_sources(self, disallowed_sources=None):
+        """
+        Returns a list of allowed sources based on FILTERED_SOURCES and disallowed_sources.
+        :param disallowed_sources:
+        :return:
+        """
         if disallowed_sources is None:
             disallowed_sources = []
-
-        # Fill with NaNs in case something was added
-        self.sed.fillna(0, inplace=True)
-
-        fig, ax = plt.subplots(figsize=(10, 8))
 
         if self.name in FILTERED_SOURCES:
             # Add standard filtered sources to disallowed sources
             disallowed_sources += FILTERED_SOURCES[self.name]
 
             # No need to warn about PanSTARRS, otherwise do warn
-            if len(disallowed_sources) > 1 or (len(disallowed_sources) > 0 and 'panstarrs' not in disallowed_sources):
-                warnings.warn('Filtering sources ' + str(disallowed_sources))
+            if len(disallowed_sources) > 0:
+                warnings.warn(self.name + ': Filtering sources ' + str(disallowed_sources))
 
+        u_sources = list(self.sed.source.unique())
+        to_remove = []
+
+        # Check for occurrences of disallowed sources in the unique sources
+        for ds in disallowed_sources:
+            for s in u_sources:
+                if ds.lower() in s.lower() and s not in to_remove:
+                    to_remove.append(s)
+
+        # Remove all found disallowed sources
+        for r in to_remove:
+            u_sources.remove(r)
+
+        return u_sources
+
+    def plot_spectrum(self, loglog=False, mags=False, disallowed_sources=None, **kwargs):
+        if mags:
+            raise NotImplementedError('I broke mags plot so if you want it let me know.')
+
+        # Fill with NaNs in case something was added
+        self.sed.fillna(0, inplace=True)
+
+        fig, ax = plt.subplots(figsize=(10, 8))
         legend_list = []
 
         # upper_limits = ()
@@ -80,19 +127,7 @@ class LensedQSO:
             limit = 'upper_limit'
 
         # For every unique source, add their data separately
-        u_sources = list(data.source.unique())
-        to_remove = []
-
-        if disallowed_sources is not None:
-            # Check for occurrences of disallowed sources in the unique sources
-            for ds in disallowed_sources:
-                for s in u_sources:
-                    if ds.lower() in s.lower() and s not in to_remove:
-                        to_remove.append(s)
-
-            # Remove all found disallowed sources
-            for r in to_remove:
-                u_sources.remove(r)
+        u_sources = self.allowed_sources(disallowed_sources)
 
         plotted_sources = []
 
@@ -164,17 +199,3 @@ class LensedQSO:
                 catalog += f'{row.wavelength} {row.flux_total} -99 '
 
         return catalog
-
-
-FILTERED_SOURCES = {
-    'B1152+200': ['panstarrs'],
-    'B1600+434': ['panstarrs'],
-    'B1608+656': [],
-    'J0806+2006': ['panstarrs', 'Inada'],
-    'J0924+0219': ['panstarrs'],
-    'J1330+1810': ['panstarrs'],
-    'J1455+1447': ['panstarrs', 'Rusu'],
-    'J1524+4409': ['panstarrs'],
-    'J1633+3134': ['panstarrs'],
-    'J1650+4251': ['panstarrs']
-}

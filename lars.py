@@ -61,27 +61,44 @@ def all_galaxies():
     for g in GALAXIES:
         lqso = LensedQSO(g)
 
-        lqso.plot_spectrum(loglog=True)
-        mags_to_fluxes(lqso)
-        lqso.plot_spectrum(loglog=True)
+        # lqso.plot_spectrum(loglog=True)
 
         count = lqso.sed.loc[lqso.sed['flux_G'] > 0].shape[0]
 
         print(f'{g}, {count}')
 
 
+def big_plot():
+    fig, ax = plt.subplots()
+    for g in GALAXIES:
+        lqso = LensedQSO(g)
+
+        sed = lqso.filter_sed().sort_values(by='wavelength')
+        sed = sed.loc[sed.flux_total > 0]
+
+        ax.errorbar(sed.wavelength, sed.flux_total, yerr=sed.flux_err, label=g, alpha=0.7)
+
+    ax.legend()
+    ax.set_yscale('log')
+    ax.set_xscale('log')
+
+
 def single_galaxy():
     galaxy = 'J0806+2006'
     lqso = LensedQSO(galaxy)
 
-    #ned_table_to_sed(lqso, ned_file='NED_11', allowed_sources=['Chandra', 'WISE', '2MASS'])
+    # ned_table_to_sed(lqso, ned_file='ned_wise.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
+    # ned_table_to_sed(lqso, ned_file='ned_2mass.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
+    # ned_table_to_sed(lqso, ned_file='ned_chandra.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
 
-    #mags_to_fluxes(lqso)
+    # mags_to_fluxes(lqso)
 
     lqso.plot_spectrum(loglog=True)
 
+    print(lqso.filter_sed()[['source']])
+
 
 if __name__ == '__main__':
-    all_galaxies()
+    big_plot()
 
     plt.show()
