@@ -26,7 +26,7 @@ def xml_to_txt(xmlname,txtname):
     
     #Seperate into wavelength and transmission
     for TD in root.iter("TD"):
-        if float(TD.text) <= 1 :
+        if float(TD.text) <= 1.1 :
             transmission.append(float(TD.text))
             save_string += f' {TD.text}\n'
         else:
