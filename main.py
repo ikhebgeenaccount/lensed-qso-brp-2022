@@ -6,7 +6,7 @@ from src.ned_to_sed import ned_table_to_sed
 from src.xml_to_txt import xml_to_txt
 
 if __name__ == '__main__':
-    xml_to_txt('WIYN.I_HARRIS.xml', 'WIYN.I_HARRIS.txt')
+    xml_to_txt('JCMT.SCUBA.850.xml', 'JCMT.SCUBA.850.txt')
     
 #    galaxy = 'J1455+1447'
 #    lqso = LensedQSO(galaxy)
