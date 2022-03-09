@@ -21,19 +21,15 @@ NOT,V,,,5389.63,vega,3636940,http://svo2.cab.inta-csic.es/theory/fps/index.php?i
 NOT,R,,,6396.64,vega,3033260,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_R&&mode=browse&gname=NOT&gname2=ALFOSC#filter
 NOT,I,,,8559.6,vega,2309980,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_I&&mode=browse&gname=NOT&gname2=ALFOSC#filter
 Subaru,K',,IRCS,21049.98,vega,693680,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Subaru/IRCS.Kp&&mode=browse&gname=Subaru&gname2=IRCS#filter
-Magellan_PANIC,J,,PANIC,1.25e4,vega,1594000,https://iopscience.iop.org/article/10.1086/376474/pdf for zeropoints
-Magellan_PANIC,H,,PANIC,1.65e4,vega,1024000,http://instrumentation.obs.carnegiescience.edu/wirc/wircpaper.pdf for wavelengths
-Magellan_PANIC,Ks,,PANIC,2.16e4,vega,666800,
+Magellan_PANIC,J,,PANIC,12500,vega,1594000,https://iopscience.iop.org/article/10.1086/376474/pdf for zeropoints
+Magellan_PANIC,H,,PANIC,16500,vega,1024000,http://instrumentation.obs.carnegiescience.edu/wirc/wircpaper.pdf for wavelengths
+Magellan_PANIC,Ks,,PANIC,21600,vega,666800,
 UH88,V,,,5510,vega,3650000,
 UH88,R,,,6580,vega,3650000,
 UH88,I,,,8060,vega,3650000,
 UH88,H,,,16300,vega,3650000,
 hst,WFC_3/F160W,,,15370.34,AB,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_IR.F160W
-hst,F330W,,,3362.92,AB,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=HST&asttype=
-hst,F435W,,,4310.8,AB,3631000,
 hst,WFC_3/F475X,,,4937.39,AB,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_UVIS2.F475X&&mode=browse&gname=HST&gname2=WFC3_UVIS2#filter
-hst,F555W,,,5355.38,AB,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/ACS_HRC.F555W
-hst,F625W,,,6295.1,AB,3631000,
 hst,WFC_3/F814W,,,8029.29,AB,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_UVIS2.F814W
 CASTLES,F555W,V,WFPC2/PC1,5442.92,vega,3643250,
 CASTLES,F160W,H,NICMOS/NIC2,16036.9,vega,1063080,
