@@ -63,7 +63,7 @@ class LensedQSO:
         # filtered_sed only selects entries that have a wavelength and a flux_total
         self.filtered_sed = self.sed[(self.sed.wavelength > 0) * (self.sed.flux_total > 0)].copy()
 
-    def filter_sed(self, disallowed_sources=None):
+    def filter_sed(self, disallowed_sources=None, component=None):
         """
         Returns a DataFrame that contains only those rows that are allowed through LensedQSO.allowed_sources
         :param disallowed_sources: passed to LensedQSO.allowed_sources
@@ -71,7 +71,10 @@ class LensedQSO:
         """
         allowed_sources = self.allowed_sources(disallowed_sources)
 
-        return self.sed.loc[self.sed.source.isin(allowed_sources)]
+        if component is None:
+            return self.sed.loc[self.sed.source.isin(allowed_sources)]
+        else:
+            return self.sed.loc[self.sed.source.isin(allowed_sources) * (self.sed[f'flux{component}'] > 0)]
 
     def allowed_sources(self, disallowed_sources=None):
         """
@@ -105,7 +108,7 @@ class LensedQSO:
 
         return u_sources
 
-    def plot_spectrum(self, loglog=False, mags=False, disallowed_sources=None, **kwargs):
+    def plot_spectrum(self, loglog=False, mags=False, disallowed_sources=None, component=None, **kwargs):
         if mags:
             raise NotImplementedError('I broke mags plot so if you want it let me know.')
 
@@ -134,8 +137,8 @@ class LensedQSO:
 
         else:
             data = self.sed
-            data_type = 'flux_total'
-            data_err = 'flux_err'
+            data_type = 'flux_total' if component is None else f'flux{component}'
+            data_err = 'flux_err' if component is None else f'flux{component}_err'
             limit = 'upper_limit'
 
         # For every unique source, add their data separately
@@ -178,7 +181,7 @@ class LensedQSO:
         if loglog:
             ax.set_yscale('log')
 
-        ax.set_title(f'{self.name} SED')
+        ax.set_title(f'{self.name} SED' if component is None else f'{self.name}{component} SED')
         ax.set_xlabel('$\mathit{Wavelength}\ (\mathrm{\AA})$')
         if mags:
             ax.set_ylabel('$\mathit{mag}$')

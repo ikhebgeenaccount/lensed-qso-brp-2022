@@ -70,13 +70,12 @@ def all_galaxies():
 
         mags_to_fluxes(lqso, components=None if g != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
 
-        # count = lqso.sed.loc[lqso.sed['flux_G'] > 0].shape[0]
+        count = lqso.sed.loc[lqso.sed['flux_G'] > 0].shape[0]
+        print(f'{g}, {count}')
 
         # telescope = 'Magellan'
         # if lqso.mags.loc[lqso.mags.telescope == telescope].shape[0] > 0:
             # print(g, 'has', telescope)
-
-        # print(f'{g}, {count}')
 
 
 def big_plot():
@@ -110,17 +109,17 @@ def single_galaxy():
     lqso.plot_spectrum(loglog=True)
 
 
+def fit_foreground():
+    for g in GALAXIES:
+        lqso = LensedQSO(g)
+
+        if lqso.filter_sed(component='_G').shape[0] > 1:
+            src.model_sed.fit(lqso)
+        else:
+            print(f'{g} has only {lqso.filter_sed(component="_G").shape[0]} foreground datapoints.')
+
+
 if __name__ == '__main__':
     # all_galaxies()
-
-    fig, ax = plt.subplots()
-    ax.plot(src.model_sed.MODELS['NGC_3351_spec'].wavelength, src.model_sed.MODELS['NGC_3351_spec'].flux)
-    ax.set_xscale('log')
-    ax.set_yscale('log')
-
-    galaxy = 'J1524+4409'
-    lqso = LensedQSO(galaxy)
-
-    src.model_sed.fit(lqso)
-
+    fit_foreground()
     plt.show()
