@@ -7,7 +7,7 @@ subaru
 Gives K' band magnitudes for total and seperated into components and galaxy
 source: https://ui.adsabs.harvard.edu/abs/2016MNRAS.458....2R/abstract
 zeropoint https://subarutelescope.org/staff/guyon/15teaching.web/01AstrOptics2012.web/AstOpt2012_01-fund.pdf
-HOWEVER later we found the sama wavelength in the ned database for 3 different valuesm neither corresponding to the flux we calculated. Since we had no way of knowing which one would be correct >> ned does not reference well >> we chose to emit this datapoint altogether. we have a 2mass datapoint around the same wavelength
+Ned also gives the conversion for the 3 components
 
 panstarrs
 used Lars' code for first time
