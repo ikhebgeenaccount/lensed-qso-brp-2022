@@ -16,9 +16,7 @@ NED:
 ADDED:
 wise>used profule-fit, has 1 upper limit so no data
 galex> used kron flux, used medium sky survey, has 1 upper limit so no data
-
-NOT YET ADDED:
-CHANDRA: gives 2 pages, one with ;ext and one with;var
+CHANDRA: gives 2 pages, one with ;ext and one with;var. We have assumed this is for the 2 components that can be distuinghuished in pictures, so we added them together and assumed they were the total flux combined. Used flux_aper. 
 
 NOT ADDED:
 SUBARU (page with phot=3) since it had no errorbars, we could still add this as upperlimit maybe?
