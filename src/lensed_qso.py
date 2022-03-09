@@ -17,7 +17,7 @@ FILTERED_SOURCES = {
     'J0806+2006': ['panstarrs', 'Inada'],
     'J0924+0219': ['panstarrs'],
     'J1330+1810': ['panstarrs'],
-    'J1455+1447': ['panstarrs', 'Rusu'],
+    'J1455+1447': ['panstarrs'],
     'J1524+4409': ['panstarrs'],
     'J1633+3134': ['panstarrs'],
     'J1650+4251': ['panstarrs']
