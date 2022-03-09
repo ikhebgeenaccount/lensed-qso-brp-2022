@@ -23,7 +23,7 @@ NOT,I,,,8559.6,vega,2309980,http://svo2.cab.inta-csic.es/theory/fps/index.php?id
 Subaru,K',,IRCS,21049.98,vega,693680,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Subaru/IRCS.Kp&&mode=browse&gname=Subaru&gname2=IRCS#filter
 Magellan_PANIC,J,,PANIC,12500,vega,1594000,https://iopscience.iop.org/article/10.1086/376474/pdf for zeropoints
 Magellan_PANIC,H,,PANIC,16500,vega,1024000,http://instrumentation.obs.carnegiescience.edu/wirc/wircpaper.pdf for wavelengths
-Magellan_PANIC,Ks,,PANIC,21600,vega,666800,
+Magellan_PANIC,Ks,,PANIC,21600,vega,666800, used in J1330>have sent email about filter profile>otherwise emit
 UH88,V,,,5510,vega,3650000,
 UH88,R,,,6580,vega,3650000,
 UH88,I,,,8060,vega,3650000,
