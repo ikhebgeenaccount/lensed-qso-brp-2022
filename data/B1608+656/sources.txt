@@ -35,6 +35,10 @@ Submillimetere fluxes
 RADIO FLUXES: not added. We have average over 3 seasons in Fassnacht+2002, single exposures in Snellen+1995.
 Ignored for now as the foreground galaxy models don't have radio anyway.
 
+Chandra: 
+doubles so added together by hand
+
+
 
 NED:
 to do:
