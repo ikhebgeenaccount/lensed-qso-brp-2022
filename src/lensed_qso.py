@@ -108,7 +108,7 @@ class LensedQSO:
 
         return u_sources
 
-    def plot_spectrum(self, loglog=False, mags=False, disallowed_sources=None, component=None, **kwargs):
+    def plot_spectrum(self, loglog=True, mags=False, disallowed_sources=None, component=None, **kwargs):
         if mags:
             raise NotImplementedError('I broke mags plot so if you want it let me know.')
 
