@@ -1,3 +1,5 @@
+import os.path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -9,10 +11,12 @@ from src.ned_to_sed import ned_table_to_sed
 # ratio avg: 1.4543629655671957, ratio std: 0.37071640199561534
 
 GALAXIES = ['B1152+200', 'B1600+434', 'B1608+656', 'J0806+2006', 'J0924+0219', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'J1633+3134', 'J1650+4251']
-SDSS_V_PANSTARRS_GS = ['B1152+200', 'B1600+434', 'J0806+2006', 'J1633+3134', 'J1455+1447', 'J1524+4409']
+
+PLOTS_SAVE = 'plots'
 
 
 def sdss_panstarrs_flux_discrepancy():
+    SDSS_V_PANSTARRS_GS = ['B1152+200', 'B1600+434', 'J0806+2006', 'J1633+3134', 'J1455+1447', 'J1524+4409']
     flux_discrepancy = pd.DataFrame(columns=['galaxy', 'filter', 'sdss', 'panstarrs', 'ratio', 'diff'])
 
     ratios = []
@@ -61,7 +65,7 @@ def all_galaxies():
     for g in GALAXIES:
         lqso = LensedQSO(g)
 
-        # lqso.plot_spectrum(loglog=True)
+        lqso.plot_spectrum(loglog=True)
 
         count = lqso.sed.loc[lqso.sed['flux_G'] > 0].shape[0]
 
@@ -82,6 +86,9 @@ def big_plot():
     ax.set_yscale('log')
     ax.set_xscale('log')
 
+    fig.savefig(os.path.join(PLOTS_SAVE, 'SED_all.pdf'))
+    fig.savefig(os.path.join(PLOTS_SAVE, 'SED_all.png'))
+
 
 def single_galaxy():
     galaxy = 'J0806+2006'
@@ -99,6 +106,7 @@ def single_galaxy():
 
 
 if __name__ == '__main__':
+    all_galaxies()
     big_plot()
 
     plt.show()
