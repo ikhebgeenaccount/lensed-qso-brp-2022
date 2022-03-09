@@ -32,14 +32,15 @@ Hubble data, but what is G1 and G2
 Barvainis 2002 https://ui.adsabs.harvard.edu/abs/2002ApJ...571..712B/abstract
 Submillimetere fluxes
 
+RADIO FLUXES: not added. We have average over 3 seasons in Fassnacht+2002, single exposures in Snellen+1995.
+Ignored for now as the foreground galaxy models don't have radio anyway.
+
 
 NED:
 to do:
 1.4 GHz
-HST
 
-maybe:
+maybe: IGNORED FOR NOW SINCE RADIO
 4.85 GHz
 92 cm WENSS
 325 MHz WSRT
-(these three could be from Snellen?)
