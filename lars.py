@@ -8,6 +8,8 @@ from src.lensed_qso import LensedQSO
 from src.mags_to_fluxes import mags_to_fluxes
 from src.ned_to_sed import ned_table_to_sed
 
+import src.model_sed
+
 # ratio avg: 1.4543629655671957, ratio std: 0.37071640199561534
 
 GALAXIES = ['B1152+200', 'B1600+434', 'B1608+656', 'J0806+2006', 'J0924+0219', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'J1633+3134', 'J1650+4251']
@@ -64,12 +66,17 @@ def sdss_panstarrs_flux_discrepancy():
 def all_galaxies():
     for g in GALAXIES:
         lqso = LensedQSO(g)
-
         lqso.plot_spectrum(loglog=True)
 
-        count = lqso.sed.loc[lqso.sed['flux_G'] > 0].shape[0]
+        mags_to_fluxes(lqso, components=None if g != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
 
-        print(f'{g}, {count}')
+        # count = lqso.sed.loc[lqso.sed['flux_G'] > 0].shape[0]
+
+        # telescope = 'Magellan'
+        # if lqso.mags.loc[lqso.mags.telescope == telescope].shape[0] > 0:
+            # print(g, 'has', telescope)
+
+        # print(f'{g}, {count}')
 
 
 def big_plot():
@@ -91,22 +98,29 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'J0806+2006'
+    galaxy = 'B1608+656'
     lqso = LensedQSO(galaxy)
 
     # ned_table_to_sed(lqso, ned_file='ned_wise.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
     # ned_table_to_sed(lqso, ned_file='ned_2mass.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
     # ned_table_to_sed(lqso, ned_file='ned_chandra.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
 
-    # mags_to_fluxes(lqso)
+    mags_to_fluxes(lqso, components=None if galaxy != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
 
     lqso.plot_spectrum(loglog=True)
 
-    print(lqso.filter_sed()[['source']])
-
 
 if __name__ == '__main__':
-    all_galaxies()
-    big_plot()
+    # all_galaxies()
+
+    fig, ax = plt.subplots()
+    ax.plot(src.model_sed.MODELS['NGC_3351_spec'].wavelength, src.model_sed.MODELS['NGC_3351_spec'].flux)
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+
+    galaxy = 'J1524+4409'
+    lqso = LensedQSO(galaxy)
+
+    src.model_sed.fit(lqso)
 
     plt.show()
