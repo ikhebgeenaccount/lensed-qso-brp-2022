@@ -10,7 +10,7 @@ from src.filters import FILTER_PROPERTIES, get_wavelength
 import warnings
 
 
-def mags_to_fluxes(lqso):
+def mags_to_fluxes(lqso, components=None):
     """
     Reads the mags.csv file of galaxy and converts the magnitudes to fluxes, using the appropriate conversion formulas.
     Saves these fluxes to sed.csv.
@@ -22,6 +22,9 @@ def mags_to_fluxes(lqso):
     if not hasattr(lqso, 'mags'):
         warnings.warn(lqso.name + ' has no mags file')
         return
+
+    if components is None:
+        components = ['_G', '_A', '_B', '_C', '_D', '']
 
     for i, row in lqso.mags.iterrows():
 
@@ -43,12 +46,14 @@ def mags_to_fluxes(lqso):
         # Used to store fluxes and flux_errs for all components
         fs = []
         fes = []
+
+        f_fields = []
+        fe_fields = []
+
         # Calculate fluxes and flux errors for each component
-        for comp in ['_G', '_A', '_B', '_C', '_D', '']:
+        for comp in components:
             # magnitude 0 means no magnitude given
             if row[f'mag{comp}'] == 0:
-                fs.append(0.)
-                fes.append(0.)
                 continue
 
             f, fe = mag_to_flux(row.telescope, row['filter'], row[f'mag{comp}'], row[f'mag{comp}_err'])
@@ -57,36 +62,33 @@ def mags_to_fluxes(lqso):
             if comp == '_G':
                 total = 1
 
-            # mag means total mag, use this as total flux and error
-            if comp == '':
-                total = 2
-                total_f = f
-                total_fe = fe
-
             fs.append(f)
             fes.append(fe)
 
+            f_fields.append(f'flux{comp}' if comp != '' else 'flux_total')
+            fe_fields.append(f'flux{comp}_err')
+
         if total == 1:
-            total_f = sum(fs)
-            total_fe = np.linalg.norm(fes)
+            fs.append(sum(fs))
+            fes.append(np.linalg.norm(fes))
+
+            if 'flux_total' in f_fields:
+                raise ValueError('mags file has both all components and a total mag, this cannot be handled.')
+
+            f_fields.append('flux_total')
+            fe_fields.append('flux_err')
 
         # If this combination of filter and wavelength does not exist yet in lqso.sed
         if lqso.sed[(lqso.sed['filter'] == row['filter']) & (lqso.sed.source == row.source)].empty:
             # Add it
-            lqso.sed.loc[len(lqso.sed.index), ['filter', 'wavelength', 'flux_total', 'flux_err', 'flux_G', 'flux_G_err', 'flux_A',
-                                 'flux_A_err', 'flux_B', 'flux_B_err', 'flux_C', 'flux_C_err', 'flux_D', 'flux_D_err',
-                                 'source', 'upper_limit']] = [row['filter'], wavelength, total_f, total_fe,
-                                                 fs[0], fes[0], fs[1], fes[1], fs[2], fes[2], fs[3], fes[3], fs[4], fes[4],
-                                                 row.source, row.lower_limit]
+            lqso.sed.loc[len(lqso.sed.index), ['filter', 'wavelength', 'source', 'upper_limit'] + f_fields + fe_fields] =\
+                                                        [row['filter'], wavelength, row.source, row.lower_limit] + fs + fes
         else:
             # It exists, overwrite
             # Find the index of the row with same filter and source
             index = lqso.sed.index[(lqso.sed['filter'] == row['filter']) & (lqso.sed.source == row.source)]
-            lqso.sed.loc[index, ['filter', 'wavelength', 'flux_total', 'flux_err', 'flux_G', 'flux_G_err', 'flux_A',
-                                 'flux_A_err', 'flux_B', 'flux_B_err', 'flux_C', 'flux_C_err', 'flux_D', 'flux_D_err',
-                                 'source', 'upper_limit']] = [row['filter'], wavelength, total_f, total_fe, fs[0], fes[0],
-                                                              fs[1], fes[1], fs[2], fes[2], fs[3], fes[3], fs[4], fes[4],
-                                                              row.source, row.lower_limit]
+            lqso.sed.loc[index, ['filter', 'wavelength', 'source', 'upper_limit'] + f_fields + fe_fields] =\
+                                                        [row['filter'], wavelength, row.source, row.lower_limit] + fs + fes
 
     lqso.save_sed()
 
