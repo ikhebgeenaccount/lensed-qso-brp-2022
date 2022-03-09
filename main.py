@@ -6,12 +6,12 @@ from src.ned_to_sed import ned_table_to_sed
 from src.xml_to_txt import xml_to_txt
 
 if __name__ == '__main__':
-    xml_to_txt('JCMT.SCUBA.850.xml', 'JCMT.SCUBA.850.txt')
+    #xml_to_txt('JCMT.SCUBA.850.xml', 'JCMT.SCUBA.850.txt')
     
-#    galaxy = 'J1455+1447'
-#    lqso = LensedQSO(galaxy)
-#    mags_to_fluxes(lqso)
+    galaxy = 'J1330+1810'
+    lqso = LensedQSO(galaxy)
+    mags_to_fluxes(lqso)
     #ned_table_to_sed(lqso,'ned_galex', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
-    #lqso.plot_spectrum(loglog=True)
+    lqso.plot_spectrum(loglog=True)
     
     plt.show()
