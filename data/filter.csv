@@ -11,10 +11,10 @@ SDSS,i,,,7480,SDSS,3631000,
 SDSS,z,,,8932,SDSS,3631000,
 Gemini North,K,,,22089.98,vega,640000,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Gemini/NIRI.K-G0204w&&mode=browse&gname=Gemini&gname2=NIRI#filter
 Gemini North,L',,,37590.74,vega,248080,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Gemini/NIRI.Lprime-G0207w&&mode=browse&gname=Gemini&gname2=NIRI#filter
-WIYN,U,,,3576.21,vega,1693910,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w001&&mode=browse&gname=WIYN&gname2=WIYN#filter
-WIYN,B,,,4322.75,vega,3898270,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w002&&mode=browse&gname=WIYN&gname2=WIYN#filter
-WIYN,R,,,6554.66,vega,3022620,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w004&&mode=browse&gname=WIYN&gname2=WIYN#filter
-WIYN,I,,,8356.12,vega,2360270,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w005&&mode=browse&gname=WIYN&gname2=WIYN#filter
+WIYN,U,,,3576.21,vega,1693910,100% http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w001&&mode=browse&gname=WIYN&gname2=WIYN#filter
+WIYN,B,,,4322.75,vega,3898270,100% http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w002&&mode=browse&gname=WIYN&gname2=WIYN#filter
+WIYN,R,,,6554.66,vega,3022620,100% http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w004&&mode=browse&gname=WIYN&gname2=WIYN#filter
+WIYN,I,,,8356.12,vega,2360270,100% http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w005&&mode=browse&gname=WIYN&gname2=WIYN#filter
 NOT,U,,,3600.85,vega,1786310,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=NOT&gname2=ALFOSC&asttype=
 NOT,B,,,4306.12,vega,3927160,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_B&&mode=browse&gname=NOT&gname2=ALFOSC#filter
 NOT,V,,,5389.63,vega,3636940,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_V&&mode=browse&gname=NOT&gname2=ALFOSC#filter
