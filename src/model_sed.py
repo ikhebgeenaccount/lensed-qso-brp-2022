@@ -62,8 +62,12 @@ def fit(lqso):
 
 
 def plot_fit(lqso, model, mults):
+    # Plot the model on just the foreground galaxy data
     fig, ax = lqso.plot_spectrum(loglog=True, component='_G')
+    ax.plot(MODELS[model].wavelength, MODELS[model].flux * mults, color='black', alpha=.8)
 
+    # Plot the model on total flux data
+    fig, ax = lqso.plot_spectrum(loglog=True)
     ax.plot(MODELS[model].wavelength, MODELS[model].flux * mults, color='black', alpha=.8)
 
 
