@@ -8,7 +8,7 @@ from src.xml_to_txt import xml_to_txt
 if __name__ == '__main__':
     #xml_to_txt('HST.ACS_HRC.F330W.xml', 'HST.ACS_HRC.F330W.txt')
     
-    galaxy = 'B1600+434'
+    galaxy = 'B1152+200'
     lqso = LensedQSO(galaxy)
     mags_to_fluxes(lqso)
     #ned_table_to_sed(lqso,'ned_galex', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
