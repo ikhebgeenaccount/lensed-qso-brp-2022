@@ -59,6 +59,7 @@ class LensedQSO:
             print('No mags file found for galaxy ' + self.name)
 
         self.props = pd.read_csv(os.path.join('data', properties), skiprows=1)
+        self.props = self.props.loc[self.props.galaxy == self.name]
 
         # filtered_sed only selects entries that have a wavelength and a flux_total
         self.filtered_sed = self.sed[(self.sed.wavelength > 0) * (self.sed.flux_total > 0)].copy()
@@ -209,7 +210,7 @@ class LensedQSO:
 
         header = '# ID redshift [wavelength_angstrom flux_mJy flux_error_mJy]\n'
 
-        catalog = header + f'{id} {self.props.loc[self.props.galaxy == self.name].z_qso.values[0]} '
+        catalog = header + f'{id} {self.props.z_qso.values[0]} '
         for i, row in self.filtered_sed.iterrows():
             if not row.upper_limit:
                 catalog += f'{row.wavelength} {row.flux_total} {row.flux_err} '

@@ -110,7 +110,7 @@ def single_galaxy():
 
 
 def fit_foreground():
-    for g in ['B1152+200']:
+    for g in GALAXIES:
         lqso = LensedQSO(g)
 
         if lqso.filter_sed(component='_G').shape[0] > 1:

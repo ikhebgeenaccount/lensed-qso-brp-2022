@@ -4,6 +4,7 @@ import re
 import pandas
 
 import numpy as np
+import tqdm as tqdm
 from matplotlib import pyplot as plt
 
 from scipy.optimize import curve_fit, minimize
@@ -34,12 +35,12 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
     MODELS[name]['flux'] = MODELS[name]['flux_cgs'] * np.power(MODELS[name]['wavelength'], 2.) / 2.998e18 * 1e26
 
 # Fitting
-# model_sed.fit uses scipy.optimize.curve_fit (non-linear least squares)
 #
 # Duncan+2017 (https://academic.oup.com/mnras/article/473/2/2655/4315948?login=true) uses EAZY
 # (https://github.com/gbrammer/eazy-photoz/tree/master) on single template mode, EAZY is for photometric redshift though
 #
 # Leja+2017 (https://iopscience.iop.org/article/10.3847/1538-4357/aa5ffe/meta) uses scipy minimize combined with MCMC
+
 
 def fit(lqso, morph=None, method='curve_fit'):
     """
@@ -61,76 +62,109 @@ def fit(lqso, morph=None, method='curve_fit'):
     else:
         model_set = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].isin(morph)]
 
-    for i, m in model_set.iterrows():
-        model = m['name']
+    # Chi squared necessities
+    # Parameter space of mults
+    mults_space = np.logspace(-7, -2, 10000)  # logspace, 10**-7 through 10**-2
+    # Arrays to save chisq and mults values for plots
+    chisqs = []
 
-        f = FitFunction(model).f
+    for i in tqdm.tqdm(range(0, model_set.shape[0])):
+        m = model_set.loc[[i]]
+        model = m['name'].values[0]
 
         if method == 'curve_fit':
+            ff = FitFunction(sed, model)
 
-            popt, pcov = curve_fit(f, sed.wavelength.values, sed.flux_G.values, sigma=sed.flux_G_err.values, p0=[1e-2])
+            popt, pcov = curve_fit(ff.f, sed.wavelength.values, sed.flux_G.values, sigma=sed.flux_G_err.values, p0=[1e-2])
 
             # Keep track of scores and multiplication factors
             # Score is sum of squared difference between fitted function f and data of foreground galaxy divided by flux errors
-            scores.append(np.sum(np.power(
-                (f(sed.wavelength.values, popt[0]) - sed.flux_G.values) / sed.flux_G_err.values
-                , 2)))
+            scores.append(ff.chi_squared(popt[0]))
             covs.append(np.sqrt(np.diag(pcov))[0])
             model_mults.append(popt[0])
         elif method == 'minimize':
+            ff = FitFunction(sed, model)
 
-            def to_min(x, f):
-                mult = x[0]
-                return np.sum(np.power((f(sed.wavelength.values, mult) - sed.flux_G.values) / sed.flux_G_err.values, 2))
-
-            res = minimize(to_min, [0.0016001601158415841], method='Powell', args=(f))
+            res = minimize(ff.chi_squared, [1e-2], method='Powell')
 
             scores.append(res.fun)
-            model_mults.append(res.x[0])
-            covs.append(1)  # TODO
+            model_mults.append(res.x)
+            covs.append(1)  # WONTFIX: we don't use minimize
+
+        elif method == 'chi_squared':
+            ff = FitFunction(sed, model)
+
+            chisqs.append([])
+
+            # TODO: optimize loop away
+            for m in mults_space:
+                chisqs[i].append(ff.chi_squared([m]))
+
+            l_index = np.argmin(chisqs[i])
+
+            scores.append(chisqs[i][l_index])
+            model_mults.append(mults_space[l_index])
+
+            covs.append(1)  # TODO: bootstrap?
 
     # Lowest score is best model
     bm_index = np.argmin(scores)
-    best_model = list(MODELS.keys())[bm_index]
+    best_model = model_set.loc[[bm_index]]['name'].values[0]  # FIXME: when using a subset of the models, this will not point to the correct one, I think
     best_mult = model_mults[bm_index]
-    print(f'{lqso.name}, best model: {best_model}, mult: {best_mult:.4e}, std: {covs[bm_index]:.4e}')
+    print(f'{lqso.name}, best model: {best_model}, mult: {best_mult:.4e}, std: {covs[bm_index]:.4e}, chisq: {scores[bm_index]}')
 
-    mults = np.linspace(1e-10, 1, 10000)
-    chisq = []
-    f = FitFunction(best_model).f
-    for m in mults:
-        chisq.append(to_min([m], f=f))
-
-    fig, ax = plt.subplots()
-    ax.plot(mults, chisq)
-    ax.set_xscale('log')
-    ax.set_yscale('log')
-
-    print(mults[np.argmin(chisq)])
+    if method == 'chi_squared':
+        fig, ax = plt.subplots()
+        ax.plot(mults_space, chisqs[bm_index])
+        ax.set_xscale('log')
+        ax.set_yscale('log')
 
     # Histogram of scores
-    fig, ax = plt.subplots()
-    ax.hist(scores, bins=20)
+    # fig, ax = plt.subplots()
+    # ax.hist(scores, bins=20)
 
     plot_fit(lqso, best_model, best_mult)
-    plot_fit(lqso, best_model, mults[np.argmin(chisq)])
 
     return best_model, best_mult
 
+
 class FitFunction:
 
-    def __init__(self, model, interp=True):
-        self.model= model
+    def __init__(self, sed, model, interp=True, component='_G'):
+        """
+        Class with function to fit.
+        :param sed:
+        :param model:
+        :param interp:
+        :param component:
+        """
+        self.sed = sed
+        self.model = model
         self.interp = interp
+        self.component = component
 
     # f is the function that will be used for curve_fit
-    def f(self, x, mult, interp=True):
+    def f(self, x, mult):
         model = self.model
         if self.interp:
             return mult * interp_fluxes(x, model)
         else:
             cwl = closest_wavelength(x, model)
             return mult * MODELS[model].loc[MODELS[model].wavelength.isin(cwl)].flux
+
+    def chi_squared(self, mults):
+        mult = mults[0]
+        # TODO: calculate proper model wavelengths based on lens redshift
+
+        # print(mult)
+        # print('interp values', self.f(self.sed.wavelength.values, mult))
+        # print('true values', self.sed[f'flux{self.component}'].values)
+        # print('subtracted', self.f(self.sed.wavelength.values, mult) - self.sed[f'flux{self.component}'].values)
+        # print('errors', self.sed[f'flux{self.component}_err'].values)
+        # print('div', (self.f(self.sed.wavelength.values, mult) - self.sed[f'flux{self.component}'].values) /
+        #                        self.sed[f'flux{self.component}_err'].values)
+        return np.sum(np.power((self.f(self.sed.wavelength.values, mult) - self.sed[f'flux{self.component}'].values) /
+                               self.sed[f'flux{self.component}_err'].values, 2))
 
 
 def plot_fit(lqso, model, mults):
