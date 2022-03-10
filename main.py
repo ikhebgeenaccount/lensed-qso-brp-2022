@@ -11,7 +11,7 @@ if __name__ == '__main__':
     galaxy = 'J1650+4251'
     lqso = LensedQSO(galaxy)
     mags_to_fluxes(lqso)
-    #ned_table_to_sed(lqso,'NED_galex', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
+    ned_table_to_sed(lqso,'ned_galex', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
     lqso.plot_spectrum(loglog=True)
     
     plt.show()
