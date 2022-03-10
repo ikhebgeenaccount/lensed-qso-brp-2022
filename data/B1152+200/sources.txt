@@ -98,7 +98,7 @@ NED:
 ADDED:
 WISE in the one that has 18 phot, chose profile-fit
 2mass in the one with 18 phot, chose profile-fit
-Galex: in the on with 4, used kron flux, only allsky available
+Galex: in the on with 4, used 7.5 arcsec, only allsky available
 Chandra, since the 20 and the 28 source thing give wildly different values for ;ext end the other one, we have added these sources since we think it's because they are distinguishable on the ccd
 
 NOT YET ADDED: 
