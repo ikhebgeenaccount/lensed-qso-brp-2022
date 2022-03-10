@@ -8,10 +8,10 @@ from src.xml_to_txt import xml_to_txt
 if __name__ == '__main__':
     #xml_to_txt('HST.ACS_HRC.F330W.xml', 'HST.ACS_HRC.F330W.txt')
     
-    galaxy = 'J0806+2006'
+    galaxy = 'J1633+3134'
     lqso = LensedQSO(galaxy)
     mags_to_fluxes(lqso)
-    ned_table_to_sed(lqso,'ned_chandra', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
+    ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
     lqso.plot_spectrum(loglog=True)
     
     plt.show()
