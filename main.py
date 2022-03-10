@@ -14,6 +14,6 @@ if __name__ == '__main__':
     #mags_to_fluxes(lqso)
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
     lqso.plot_spectrum(loglog=True, component='_A')
-    tophat(6.08,2, 'ATCA_6.08.txt',True)
+    tophat(15,6, 'VLA_15.txt',True)
     
     plt.show()
