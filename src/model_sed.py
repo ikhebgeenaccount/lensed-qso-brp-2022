@@ -98,9 +98,17 @@ def fit(lqso, morph=None, method='curve_fit'):
     mults = np.linspace(1e-10, 1, 10000)
     chisq = []
     f = FitFunction(best_model).f
+    # optimize such that no loop anymore
+    # add redshift effect on spectrum
+    # lambda_obs in lqso.sed, lambda_source in brown SEDs
+    # 1+z = ....
+    # we know z_lens, but can still try small range?
     for m in mults:
         chisq.append(to_min([m], f=f))
 
+    # TODO: chi squared for all models instead of curve_fit/minimize
+
+    # TODO: save plots
     fig, ax = plt.subplots()
     ax.plot(mults, chisq)
     ax.set_xscale('log')
