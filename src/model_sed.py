@@ -111,6 +111,7 @@ def fit(lqso, morph=None, method='curve_fit'):
     bm_index = np.argmin(scores)
     best_model = model_set.loc[[bm_index]]['name'].values[0]  # FIXME: when using a subset of the models, this will not point to the correct one, I think
     best_mult = model_mults[bm_index]
+
     print(f'{lqso.name}, best model: {best_model}, mult: {best_mult:.4e}, std: {covs[bm_index]:.4e}, chisq: {scores[bm_index]}')
 
     if method == 'chi_squared':
