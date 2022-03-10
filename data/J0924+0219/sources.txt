@@ -71,7 +71,7 @@ NOT USED but gives seperately quasar and host magnitudes, might be useful to che
 
 NED:
 -WISE was always added, chose profile-fit
--galex: AB means AB magnitude. for FUV and NUV, chose the medium sky survey since deeper, chose kron fluxes.
+-galex: AB means AB magnitude. for FUV and NUV, chose the medium sky survey since deeper, chose 7.5 arcsec.
 -2mass: chose profile-fit
 -Chandra was always added, left out 0.5-8 kev and 0.3-8 kev since inconsistent with itself. For the other filterbands use flux_aper;var
 always left out: hst(no components), sdss(already have them), USNO(more optical), GAIA(more optical)
