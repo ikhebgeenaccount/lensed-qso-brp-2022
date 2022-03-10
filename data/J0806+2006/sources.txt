@@ -52,5 +52,5 @@ UH88
 hst
 Gaia
 
-
-galex: medium sky survey, kron aperture flux, for NUV and FUV
+have also added chandra, tiny discrepancy in coordinates but think it is okey
+galex: medium sky survey, 7.5 arcsec, for NUV and FUV
