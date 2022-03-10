@@ -29,7 +29,7 @@ source:https://ui.adsabs.harvard.edu/abs/2019MNRAS.483.5649S/abstract
 NED:
 done:
 wise
-galex 
+galex with 7.5 arcsec
 subaru
 2mass
 
