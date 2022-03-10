@@ -8,7 +8,7 @@ reports Deltam of -0.05, Deltat ~ 50 days
 
 NED:
 added:
-Galex:used medium sky survey, has 1 upper limit for FUV. 
+Galex:used medium sky survey, 7.5 arcsec. 
 wise: profile fit
 2mass: profile fit
 
