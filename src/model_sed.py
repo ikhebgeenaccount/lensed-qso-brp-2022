@@ -8,21 +8,44 @@ from matplotlib import pyplot as plt
 
 from scipy.optimize import curve_fit
 
+# Load model properties
+MODEL_PROPERTIES = pandas.read_csv(os.path.join('data', 'brown_seds', 'sed_properties.dat'), delimiter='|',
+                               names=['name', 'ra_dec', 'morph', 'type', 'bpt_class'], usecols=[0, 1, 2, 3, 4])
+
+# Remove all leading and trainling spaces
+MODEL_PROPERTIES['name'] = MODEL_PROPERTIES['name'].apply(lambda n: n.strip().replace(' ', '_'))  # Replace spaces with underscores such that names are equal for model spec files
+MODEL_PROPERTIES['ra_dec'] = MODEL_PROPERTIES['ra_dec'].apply(lambda n: n.strip())
+MODEL_PROPERTIES['morph'] = MODEL_PROPERTIES['morph'].apply(lambda n: n.strip())
+MODEL_PROPERTIES['type'] = MODEL_PROPERTIES['type'].apply(lambda n: n.strip())
+
 # Load the models
 MODELS = {}
 
-NAME_MATCH = '([A-Za-z0-9_\-+]*).dat'
+NAME_MATCH = '([A-Za-z0-9_\-+]*)_spec.dat'
 NAME_MATCH_RE = re.compile(NAME_MATCH)
 
 for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
-    name = re.findall(NAME_MATCH_RE, sed_file)[0]
-    MODELS[name] = pandas.read_csv(sed_file, delim_whitespace=True, comment='#', names=['wavelength', 'flux', 'observed_wavelength', 'source'])
+    try:
+        name = re.findall(NAME_MATCH_RE, sed_file)[0]
+    except IndexError:
+        continue
+    MODELS[name] = pandas.read_csv(sed_file, delim_whitespace=True, comment='#', names=['wavelength', 'flux_cgs', 'observed_wavelength', 'source'])
+    # Convert units to Jansky
+    MODELS[name]['flux'] = MODELS[name]['flux_cgs'] * np.power(MODELS[name]['wavelength'], 2.) / 2.998e18 * 1e26
 
+# Fitting
+# model_sed.fit uses scipy.optimize.curve_fit (non-linear least squares)
+#
+# Duncan+2017 (https://academic.oup.com/mnras/article/473/2/2655/4315948?login=true) uses EAZY
+# (https://github.com/gbrammer/eazy-photoz/tree/master) on single template mode, EAZY is for photometric redshift though
+#
+# Leja+2017 (https://iopscience.iop.org/article/10.3847/1538-4357/aa5ffe/meta) uses scipy minimize combined with MCMC
 
-def fit(lqso):
+def fit(lqso, morph=None):
     """
-    Fits a Brown SED to the foreground galaxy data points of given LensedQSO.
+    Fits a Brown SED to the foreground galaxy data points of given LensedQSO using scipy.optimize.curve_fit.
     :param lqso:
+    :param morph: List of allowed morphologies
     :return:
     """
     sed = lqso.filter_sed(component='_G')
@@ -30,27 +53,38 @@ def fit(lqso):
 
     # Arrays to store scores and multiplication factors per model
     scores = []
+    covs = []
     model_mults = []
 
-    for model in MODELS:
+    if morph is None:
+        model_set = MODEL_PROPERTIES
+    else:
+        model_set = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].isin(morph)]
+
+    for i, m in model_set.iterrows():
+        model = m['name']
 
         # f is the function that will be used for curve_fit
-        def f(x, mult):
-            cwl = closest_wavelength(x, model)
-            return mult * MODELS[model].loc[MODELS[model].wavelength.isin(cwl)].flux
+        def f(x, mult, interp=True):
+            if interp:
+                return mult * interp_fluxes(x, model)
+            else:
+                cwl = closest_wavelength(x, model)
+                return mult * MODELS[model].loc[MODELS[model].wavelength.isin(cwl)].flux
 
-        popt, pcov = curve_fit(f, sed.wavelength.values, sed.flux_G.values, sigma=sed.flux_G_err.values, p0=[1e12])
+        popt, pcov = curve_fit(f, sed.wavelength.values, sed.flux_G.values, sigma=sed.flux_G_err.values, p0=[1e-2])
 
         # Keep track of scores and multiplication factors
         # Score is sum of absolute difference between fitted function f and data of foreground galaxy
-        scores.append(np.sum(np.abs(f(sed.wavelength.values, popt[0]) - sed.flux_G.values)))
+        scores.append(np.sum(np.power(f(sed.wavelength.values, popt[0]) - sed.flux_G.values, 2)))
+        covs.append(np.sqrt(np.diag(pcov))[0])
         model_mults.append(popt[0])
 
     # Lowest score is best model
-    best_model = list(MODELS.keys())[np.argmin(scores)]
-    best_mult = model_mults[np.argmin(scores)]
-    print(best_model)
-    print(best_mult)
+    bm_index = np.argmin(scores)
+    best_model = list(MODELS.keys())[bm_index]
+    best_mult = model_mults[bm_index]
+    print(f'{lqso.name}, best model: {best_model}, mult: {best_mult:.4e}, std: {covs[bm_index]:.4e}')
 
     # Histogram of scores
     fig, ax = plt.subplots()
@@ -64,11 +98,11 @@ def fit(lqso):
 def plot_fit(lqso, model, mults):
     # Plot the model on just the foreground galaxy data
     fig, ax = lqso.plot_spectrum(loglog=True, component='_G')
-    ax.plot(MODELS[model].wavelength, MODELS[model].flux * mults, color='black', alpha=.8)
+    ax.plot(MODELS[model].wavelength, MODELS[model].flux * mults, color='black', alpha=.6)
 
     # Plot the model on total flux data
     fig, ax = lqso.plot_spectrum(loglog=True)
-    ax.plot(MODELS[model].wavelength, MODELS[model].flux * mults, color='black', alpha=.8)
+    ax.plot(MODELS[model].wavelength, MODELS[model].flux * mults, color='black', alpha=.6)
 
 
 def closest_wavelength(wl, model):
@@ -85,7 +119,6 @@ def closest_wavelength(wl, model):
     # print(MODELS[model].wavelength.values.reshape(1, MODELS[model].wavelength.values.size))
     # Now, subtracting causes the model wavelength array to be broadcast and have extra rows added, while the wl array
     # will add columns to conform to the model wavelength array shape. Then, each given wl wavelenght is subtracted from
-    # each value of model wavelength.
     # print(MODELS[model].wavelength.values.reshape(1, MODELS[model].wavelength.values.size) - wl.reshape(wl.size, 1))
     # Find the argmin of the abs after subtraction, i.e. the closest value of model wavelength for each given
     # wavelength, thus axis=1
@@ -95,3 +128,7 @@ def closest_wavelength(wl, model):
     return MODELS[model].wavelength.loc[np.argmin(
         np.abs(MODELS[model].wavelength.values.reshape(1, MODELS[model].wavelength.values.size) -
                wl.reshape(wl.size, 1)), axis=1)].values
+
+
+def interp_fluxes(wl, model):
+    return np.interp(wl, xp=MODELS[model].wavelength.values, fp=MODELS[model].flux.values)
