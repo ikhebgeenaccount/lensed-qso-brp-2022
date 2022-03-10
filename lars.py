@@ -114,7 +114,7 @@ def fit_foreground():
         lqso = LensedQSO(g)
 
         if lqso.filter_sed(component='_G').shape[0] > 1:
-            src.model_sed.fit(lqso, method='curve_fit')
+            src.model_sed.fit(lqso, method='minimize')
         else:
             print(f'{g} has {lqso.filter_sed(component="_G").shape[0]} foreground galaxy datapoints, can\'t be fitted.')
 

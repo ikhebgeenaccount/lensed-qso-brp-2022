@@ -79,11 +79,11 @@ def fit(lqso, morph=None, method='curve_fit'):
             model_mults.append(popt[0])
         elif method == 'minimize':
 
-            def to_min(x):
+            def to_min(x, f):
                 mult = x[0]
                 return np.sum(np.power((f(sed.wavelength.values, mult) - sed.flux_G.values) / sed.flux_G_err.values, 2))
 
-            res = minimize(to_min, [1e-2], method='Powell')
+            res = minimize(to_min, [0.0016001601158415841], method='Powell', args=(f))
 
             scores.append(res.fun)
             model_mults.append(res.x[0])
@@ -95,11 +95,25 @@ def fit(lqso, morph=None, method='curve_fit'):
     best_mult = model_mults[bm_index]
     print(f'{lqso.name}, best model: {best_model}, mult: {best_mult:.4e}, std: {covs[bm_index]:.4e}')
 
+    mults = np.linspace(1e-10, 1, 10000)
+    chisq = []
+    f = FitFunction(best_model).f
+    for m in mults:
+        chisq.append(to_min([m], f=f))
+
+    fig, ax = plt.subplots()
+    ax.plot(mults, chisq)
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+
+    print(mults[np.argmin(chisq)])
+
     # Histogram of scores
     fig, ax = plt.subplots()
     ax.hist(scores, bins=20)
 
     plot_fit(lqso, best_model, best_mult)
+    plot_fit(lqso, best_model, mults[np.argmin(chisq)])
 
     return best_model, best_mult
 
