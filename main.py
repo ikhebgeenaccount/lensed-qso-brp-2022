@@ -9,11 +9,11 @@ from src.tophat import tophat
 if __name__ == '__main__':
     #xml_to_txt('HST.ACS_HRC.F330W.xml', 'HST.ACS_HRC.F330W.txt')
     
-    galaxy = 'J1455+1447'
+    galaxy = 'B1152+200'
     lqso = LensedQSO(galaxy)
     #mags_to_fluxes(lqso)
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
-    lqso.plot_spectrum(loglog=True)
-    #tophat(0.5,0.1, 'VLA.txt',True)
+    lqso.plot_spectrum(loglog=True, component='_A')
+    tophat(6.08,2, 'ATCA_6.08.txt',True)
     
     plt.show()
