@@ -22,7 +22,7 @@ NED:
 done:
 wise: profle fit
 2mass;profile fit
-galex:kron aperture
+galex:7.5 arcec
 
 not yet done:
 
