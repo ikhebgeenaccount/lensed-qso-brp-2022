@@ -6,7 +6,7 @@ import pandas
 import numpy as np
 from matplotlib import pyplot as plt
 
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit, minimize
 
 # Load model properties
 MODEL_PROPERTIES = pandas.read_csv(os.path.join('data', 'brown_seds', 'sed_properties.dat'), delimiter='|',
@@ -41,7 +41,7 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
 #
 # Leja+2017 (https://iopscience.iop.org/article/10.3847/1538-4357/aa5ffe/meta) uses scipy minimize combined with MCMC
 
-def fit(lqso, morph=None):
+def fit(lqso, morph=None, method='curve_fit'):
     """
     Fits a Brown SED to the foreground galaxy data points of given LensedQSO using scipy.optimize.curve_fit.
     :param lqso:
@@ -64,21 +64,30 @@ def fit(lqso, morph=None):
     for i, m in model_set.iterrows():
         model = m['name']
 
-        # f is the function that will be used for curve_fit
-        def f(x, mult, interp=True):
-            if interp:
-                return mult * interp_fluxes(x, model)
-            else:
-                cwl = closest_wavelength(x, model)
-                return mult * MODELS[model].loc[MODELS[model].wavelength.isin(cwl)].flux
+        f = FitFunction(model).f
 
-        popt, pcov = curve_fit(f, sed.wavelength.values, sed.flux_G.values, sigma=sed.flux_G_err.values, p0=[1e-2])
+        if method == 'curve_fit':
 
-        # Keep track of scores and multiplication factors
-        # Score is sum of absolute difference between fitted function f and data of foreground galaxy
-        scores.append(np.sum(np.power(f(sed.wavelength.values, popt[0]) - sed.flux_G.values, 2)))
-        covs.append(np.sqrt(np.diag(pcov))[0])
-        model_mults.append(popt[0])
+            popt, pcov = curve_fit(f, sed.wavelength.values, sed.flux_G.values, sigma=sed.flux_G_err.values, p0=[1e-2])
+
+            # Keep track of scores and multiplication factors
+            # Score is sum of squared difference between fitted function f and data of foreground galaxy divided by flux errors
+            scores.append(np.sum(np.power(
+                (f(sed.wavelength.values, popt[0]) - sed.flux_G.values) / sed.flux_G_err.values
+                , 2)))
+            covs.append(np.sqrt(np.diag(pcov))[0])
+            model_mults.append(popt[0])
+        elif method == 'minimize':
+
+            def to_min(x, f):
+                mult = x[0]
+                return np.sum(np.power((f(sed.wavelength.values, mult) - sed.flux_G.values) / sed.flux_G_err.values, 2))
+
+            res = minimize(to_min, [0.0016001601158415841], method='Powell', args=(f))
+
+            scores.append(res.fun)
+            model_mults.append(res.x[0])
+            covs.append(1)  # TODO
 
     # Lowest score is best model
     bm_index = np.argmin(scores)
@@ -86,23 +95,54 @@ def fit(lqso, morph=None):
     best_mult = model_mults[bm_index]
     print(f'{lqso.name}, best model: {best_model}, mult: {best_mult:.4e}, std: {covs[bm_index]:.4e}')
 
+    mults = np.linspace(1e-10, 1, 10000)
+    chisq = []
+    f = FitFunction(best_model).f
+    for m in mults:
+        chisq.append(to_min([m], f=f))
+
+    fig, ax = plt.subplots()
+    ax.plot(mults, chisq)
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+
+    print(mults[np.argmin(chisq)])
+
     # Histogram of scores
     fig, ax = plt.subplots()
     ax.hist(scores, bins=20)
 
     plot_fit(lqso, best_model, best_mult)
+    plot_fit(lqso, best_model, mults[np.argmin(chisq)])
 
     return best_model, best_mult
+
+class FitFunction:
+
+    def __init__(self, model, interp=True):
+        self.model= model
+        self.interp = interp
+
+    # f is the function that will be used for curve_fit
+    def f(self, x, mult, interp=True):
+        model = self.model
+        if self.interp:
+            return mult * interp_fluxes(x, model)
+        else:
+            cwl = closest_wavelength(x, model)
+            return mult * MODELS[model].loc[MODELS[model].wavelength.isin(cwl)].flux
 
 
 def plot_fit(lqso, model, mults):
     # Plot the model on just the foreground galaxy data
     fig, ax = lqso.plot_spectrum(loglog=True, component='_G')
-    ax.plot(MODELS[model].wavelength, MODELS[model].flux * mults, color='black', alpha=.6)
+    ax.plot(MODELS[model].wavelength, MODELS[model].flux * mults, color='black', alpha=.6, label=model)
+    ax.legend()
 
     # Plot the model on total flux data
     fig, ax = lqso.plot_spectrum(loglog=True)
-    ax.plot(MODELS[model].wavelength, MODELS[model].flux * mults, color='black', alpha=.6)
+    ax.plot(MODELS[model].wavelength, MODELS[model].flux * mults, color='black', alpha=.6, label=model)
+    ax.legend()
 
 
 def closest_wavelength(wl, model):

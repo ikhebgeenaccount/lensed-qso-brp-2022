@@ -110,16 +110,25 @@ def single_galaxy():
 
 
 def fit_foreground():
-    for g in GALAXIES:
+    for g in ['B1152+200']:
         lqso = LensedQSO(g)
 
         if lqso.filter_sed(component='_G').shape[0] > 1:
-            src.model_sed.fit(lqso)
+            src.model_sed.fit(lqso, method='minimize')
         else:
-            print(f'{g} has only {lqso.filter_sed(component="_G").shape[0]} foreground datapoints.')
+            print(f'{g} has {lqso.filter_sed(component="_G").shape[0]} foreground galaxy datapoints, can\'t be fitted.')
+
+
+def plot_single_model():
+    fig, ax = plt.subplots()
+
+    m = src.model_sed.MODELS['CGCG_453-062_spec']
+    ax.plot(m.wavelength, m.flux_cgs)
+    ax.plot(m.wavelength, m.flux)
 
 
 if __name__ == '__main__':
     # all_galaxies()
     fit_foreground()
+
     plt.show()
