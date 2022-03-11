@@ -1,0 +1,31 @@
+This file will keep track of papers and other resources used when finding what models would be best for this specific lensing gaalxy
+
+J0924+0219
+>matus mentioned this one might be problematic so look into it
+>In discovery paper(Inada 2003): 4th component might be reddened by microlensing or millilensing,
+    -Using the positions of components A–C and of lensing galaxy G (which of course might not bethe only lensing galaxy) > is there a second galaxy?
+    -Two additional minor possibilities exist: (1) that component D is a second lensing galaxy and contributes significantly to the lensing potential, which would change the
+    lensing model such that the predicted position of component D0 is incorrect, and (2) that this lensing system has a very interesting lensing potential that produces only three
+    lensed components.
+    -The estimated colors and the spherical appearance of component G, therefore, indicate that it may be an elliptical galaxy at 0:2 < z < 0:5. 
+    This would be the primary lensing galaxy of this lensing system. 
+    -To settle  the issue of what causes the lack of the fourth quasar component, we need to obtain deeper and higher resolution images and more sensitive faint-object spectroscopy of
+      component D.
+ >Keeton 2006
+   - While we cannot exclude the possibility that millilensing by dark matter substructure is also present, we conclude that microlensing is present and sufficient to
+    explain existing data. Under this hypothesis, the A/D flux ratio should return to a value close to unity on a timescale of years rather than millennia.
+    -Thus, we conclude that there is a range of microlensing models with reasonable parameters that can explain he flux ratio anomaly in SDSS J0924+0219 acceptably well.
+    -We believe that microlensing offers the best and most natural explanation for SDSS J0924+0219, but concede that we cannot rigorously rule millilensing out.
+    -If there is only microlensing, then over the next few years, image D ought to return to the brightness predicted by smooth lens models, in both the continuum and emission-line. 
+      If there is anymillilensing, then differences between observed and smooth model flux ratios will persist for centuries.
+ >Macleod 2015: 
+    We analyze the optical, UV, and X-ray microlensing variability of the lensed quasar SDSS J0924+0219
+    >Optical for 10 yrs in R band
+    >UV for 10 epochs
+    >IR done
+    -SDSS J0924+0219 exhibits pronounced microlensing variability in the UV compared to the optical, indicating a comparatively small extent for the UV continuum emitting
+    region, as expected for an accretion disk.
+    -The microlensing variability in SDSS J0924+0219 is even more pronounced in the X-rays compared to the optical and UV, indicating an even smaller extent for the X-ray continuum
+    emitting region. >about background galaxy
+    -These results confirm that the X-ray continuum emitting regions in quasars are compact, supporting models involving an X-ray emitting region concentrated near 
+     the inner edge of the accretion disk, >about background galaxy
