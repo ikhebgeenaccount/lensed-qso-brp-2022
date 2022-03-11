@@ -5,8 +5,7 @@ J0924+0219
 >In discovery paper(Inada 2003): 4th component might be reddened by microlensing or millilensing,
     -Using the positions of components A–C and of lensing galaxy G (which of course might not bethe only lensing galaxy) > is there a second galaxy?
     -Two additional minor possibilities exist: (1) that component D is a second lensing galaxy and contributes significantly to the lensing potential, which would change the
-    lensing model such that the predicted position of component D0 is incorrect, and (2) that this lensing system has a very interesting lensing potential that produces only three
-    lensed components.
+    lensing model such that the predicted position of component D0 is incorrect, and (2) that this lensing system has a very interesting lensing potential that produces only           three lensed components.
     -The estimated colors and the spherical appearance of component G, therefore, indicate that it may be an elliptical galaxy at 0:2 < z < 0:5. 
     This would be the primary lensing galaxy of this lensing system. 
     -To settle  the issue of what causes the lack of the fourth quasar component, we need to obtain deeper and higher resolution images and more sensitive faint-object spectroscopy of
@@ -29,3 +28,39 @@ J0924+0219
     emitting region. >about background galaxy
     -These results confirm that the X-ray continuum emitting regions in quasars are compact, supporting models involving an X-ray emitting region concentrated near 
      the inner edge of the accretion disk, >about background galaxy
+     
+     so an elliptical lensing galaxy and microlensing of component D.
+     
+B1152+200:
+Myers 1999: Further contraints cannot be determined yet
+Toft et al. (2000) modelled the lens system assuming a standard dark halo as the dominating lens mass> still more data needed
+
+Asadi 2020:
+    Whereas the jet appears straight in one of the images, the other exhibits slight
+    curvature on milliarcsecond scales. This is unexpected from the lensing solution and has
+    been interpreted as possible evidence for secondary, small-scale lensing (millilensing) by  compact object with a mass of 105–107 M located close to the curved image. 
+    The probability for such a superposition is extremely low unless the millilens population has very high surface number density
+    >> they thought there was millilensing, but now think it not so, since it might be dependant on the beam. 
+    To investigate the expected shape of image B given a macrolens model without substructure, we use the GLAFIC lensing code (Oguri 2010) to model the B1152+199 main lens as a
+    singular isothermal ellipsoid (SIE) with external shear
+
+    So just an elliptical, no millilensing
+    
+B1600+434:
+Jaunsen 1997
+    In this Letter we report the discovery of an edge-on late-type galaxy located between the two lensed components (separation 1.004), close to the fainter image. The galaxy
+    photometry indicates that its redshift is approximately 0.4.
+    We estimate the lens to have a major axis a = 4.001±0.002, an axis ratio a/b = 2.4±0.2 and a position anglePA = 46◦ ± 3◦.>maybe weird idea, bit if they have this one 
+    modelled already?? use that?
+     On the basis of the residual image and the measured galaxy properties we assume that the lensing galaxy is a spiralb galaxy
+ Koopmans 1998
+    We present new observations of the gravitational lens (GL) system B1600 + 434, strongly suggesting that the lens is an edge-on spiral galaxy.
+    B1600 + 434 was discovered as a compact flat spectrum radio double with a separation of 1.39 + 0.01 arcsec. Very
+    Large Array (VLA) 8.4-GHz observations show no structure resulting from extended emission (e.g. lobes) aroundthe compact flat spectrum radio core and 
+    no sign of a central third image above the noise level is found .
+    BUT there is a second lensing galaxy??? The companion galaxy G2 south-east of Gl appears to be a nearly face-on luminous barred spiral galaxy
+   The small galaxy G3 is a moderately inclined (spiral) galaxy some 10 arcsec west ofB1600 + 434. Because this galaxy is much smaller and ~2
+    mag fainter than G2 [~6 times less massive for the same mass-to-light ratio and redshift], we do not incorporate this galaxy in the mass models (both the convergence and 
+    shear of G3 will be ~ 10 times smaller than that of G2 at images A and B). 
+    >> maar G2 is niet lensing galaxy denk ik, hij zit ernaast, is alleen voor de mass modeling zie figuur
+
