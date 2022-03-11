@@ -1,5 +1,5 @@
 #For locations, redshifts, luminosity distances, luminosities in fir and other info, see evernote notebook. This file is to keep a record of what data is available, and what has been added to the file already.
-galaxy,lensed by spiral?,single galaxy?,z_qso,z_lens  
+galaxy,lensed by spiral?,single galaxy?,z_qso,z_lens
 J1524+4409,no, yes(feb 2008),1.21,0.320
 B1608+656,possibly 2 merging galaxies>need to check, yes(december 1999),1.39,0.630
 J1330+1810,maybe disk galaxy, yes but galaxies 120 arcsec SW (december 2008),1.393,0.373

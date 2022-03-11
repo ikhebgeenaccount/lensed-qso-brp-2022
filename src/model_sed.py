@@ -42,14 +42,15 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
 # Leja+2017 (https://iopscience.iop.org/article/10.3847/1538-4357/aa5ffe/meta) uses scipy minimize combined with MCMC
 
 
-def fit(lqso, morph=None, method='curve_fit'):
+def fit(lqso, morph=None, method='curve_fit', save_plots=True, save_location='plots'):
     """
     Fits a Brown SED to the foreground galaxy data points of given LensedQSO using scipy.optimize.curve_fit.
     :param lqso:
     :param morph: List of allowed morphologies
     :return:
     """
-    sed = lqso.filter_sed(component='_G')
+    sed = lqso.filter_sed(component='_G').copy()  # Copy such that changing the wavelength doesn't affect the original
+    sed['wavelength'] = sed['wavelength'] / (1 + lqso.props['z_lens'].values[0])  # TODO: local universe ok?
     sed.sort_values(by='wavelength')  # Doesn't matter
 
     # Arrays to store scores and multiplication factors per model
@@ -89,14 +90,14 @@ def fit(lqso, morph=None, method='curve_fit'):
 
             scores.append(res.fun)
             model_mults.append(res.x)
-            covs.append(1)  # WONTFIX: we don't use minimize
+            covs.append(1)  # TODO: determine error, perhaps bootstrap but only very few data points
 
         elif method == 'chi_squared':
             ff = FitFunction(sed, model)
 
             chisqs.append([])
 
-            # TODO: optimize loop away
+            # WONTFIX: optimize loop away
             for m in mults_space:
                 chisqs[i].append(ff.chi_squared([m]))
 
@@ -124,7 +125,7 @@ def fit(lqso, morph=None, method='curve_fit'):
     # fig, ax = plt.subplots()
     # ax.hist(scores, bins=20)
 
-    plot_fit(lqso, best_model, best_mult)
+    plot_fit(lqso, best_model, best_mult, save_plots=save_plots, save_location=save_location)
 
     return best_model, best_mult
 
@@ -168,16 +169,24 @@ class FitFunction:
                                self.sed[f'flux{self.component}_err'].values, 2))
 
 
-def plot_fit(lqso, model, mults):
+def plot_fit(lqso, model, mults, save_plots=True, save_location='plots'):
     # Plot the model on just the foreground galaxy data
     fig, ax = lqso.plot_spectrum(loglog=True, component='_G')
-    ax.plot(MODELS[model].wavelength, MODELS[model].flux * mults, color='black', alpha=.6, label=model)
+    ax.plot(MODELS[model].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[model].flux * mults, color='black', alpha=.6, label=model)
     ax.legend()
+
+    if save_plots:
+        fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit.pdf'))
+        fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit.jpg'))
 
     # Plot the model on total flux data
     fig, ax = lqso.plot_spectrum(loglog=True)
-    ax.plot(MODELS[model].wavelength, MODELS[model].flux * mults, color='black', alpha=.6, label=model)
+    ax.plot(MODELS[model].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[model].flux * mults, color='black', alpha=.6, label=model)
     ax.legend()
+
+    if save_plots:
+        fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit_full_sed.pdf'))
+        fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit_full_sed.jpg'))
 
 
 def closest_wavelength(wl, model):
