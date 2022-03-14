@@ -76,3 +76,18 @@ oguri: In all the samples, effective radii are measured using the de Vaucouleurs
 J1330+1810:
 Oguri: The wide-field image suggests a possible group of galaxies located near the lens system (see Section 2). == no influence on photometry but influence on mass modeling
     e adopt two standard mass models that are widely used in modelling strong lens systems: a Singular Isothermal Ellipsoid (SIE) and a SIE plus external shear perturbation (SIEx). >> again just an elliptical
+
+J1650+4251:
+Morgan: Our basic model is an SIS potential for the lensing galaxy, plus an external shear to break the circular degeneracy.
+
+J1524+4409:
+ofek: we fitted, in the source plane, the image positions with an elliptical softened power-law mass model 
+Oguri: The bright galaxy G has red colors and is fitted well by a de Vaucouleurs profile
+
+J1633+3134:
+    Morgan: We will adopt the singular isothermal sphere (SIS) model to describe the gravitational potential of the hypothesized lensing galaxy
+        however this one does not have imaging yet of the lensing galaxy
+    maar verder weinig over te vinden dus gebruik bovenstaande
+    
+1455+1447:
+    Kayo: We fit the I-band image with two PSFs and a galaxy, and the best-fit S ́ersic index was 3.5. 
