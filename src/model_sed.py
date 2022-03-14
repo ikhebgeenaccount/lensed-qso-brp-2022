@@ -4,7 +4,6 @@ import re
 import pandas
 
 import numpy as np
-import tqdm as tqdm
 from matplotlib import pyplot as plt
 
 from scipy.optimize import curve_fit, minimize
@@ -42,11 +41,11 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
 # Leja+2017 (https://iopscience.iop.org/article/10.3847/1538-4357/aa5ffe/meta) uses scipy minimize combined with MCMC
 
 
-def fit(lqso, morph=None, method='curve_fit', save_plots=True, save_location='plots'):
+def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='plots'):
     """
     Fits a Brown SED to the foreground galaxy data points of given LensedQSO using scipy.optimize.curve_fit.
     :param lqso:
-    :param morph: List of allowed morphologies
+    :param morph: type of allowed morphologies, valid values are 'all', 'spiral', 'elliptical'
     :return:
     """
     sed = lqso.filter_sed(component='_G').copy()  # Copy such that changing the wavelength doesn't affect the original
@@ -58,10 +57,12 @@ def fit(lqso, morph=None, method='curve_fit', save_plots=True, save_location='pl
     covs = []
     model_mults = []
 
-    if morph is None:
+    if morph == 'all':
         model_set = MODEL_PROPERTIES
-    else:
-        model_set = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].isin(morph)]
+    elif morph == 'spiral':
+        model_set = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].str.contains('S') | MODEL_PROPERTIES['morph'].str.contains('Irr')]
+    elif morph == 'elliptical':
+        model_set = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].str.contains('E')]
 
     # Chi squared necessities
     # Parameter space of mults
@@ -69,8 +70,8 @@ def fit(lqso, morph=None, method='curve_fit', save_plots=True, save_location='pl
     # Arrays to save chisq and mults values for plots
     chisqs = []
 
-    for i in tqdm.tqdm(range(0, model_set.shape[0])):
-        m = model_set.loc[[i]]
+    for i in range(0, model_set.shape[0]):
+        m = model_set.iloc[[i]]
         model = m['name'].values[0]
 
         if method == 'curve_fit':
@@ -89,7 +90,7 @@ def fit(lqso, morph=None, method='curve_fit', save_plots=True, save_location='pl
             res = minimize(ff.chi_squared, [1e-2], method='Powell')
 
             scores.append(res.fun)
-            model_mults.append(res.x)
+            model_mults.append(res.x[0])  # FIXME: x is value on laptop, array on strw pc, numpy version dependent i guess
             covs.append(1)  # TODO: determine error, perhaps bootstrap but only very few data points
 
         elif method == 'chi_squared':
@@ -110,10 +111,11 @@ def fit(lqso, morph=None, method='curve_fit', save_plots=True, save_location='pl
 
     # Lowest score is best model
     bm_index = np.argmin(scores)
-    best_model = model_set.loc[[bm_index]]['name'].values[0]  # FIXME: when using a subset of the models, this will not point to the correct one, I think
+    best_model = model_set.iloc[[bm_index]]['name'].values[0]  # FIXME: when using a subset of the models, this will not point to the correct one, I think
     best_mult = model_mults[bm_index]
 
     print(f'{lqso.name}, best model: {best_model}, mult: {best_mult:.4e}, std: {covs[bm_index]:.4e}, chisq: {scores[bm_index]}')
+    print(f'Model properties: {model_set.iloc[[bm_index]].morph.values[0]} {model_set.iloc[[bm_index]].type.values[0]}')
 
     if method == 'chi_squared':
         fig, ax = plt.subplots()

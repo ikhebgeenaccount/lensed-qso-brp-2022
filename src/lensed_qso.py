@@ -92,7 +92,7 @@ class LensedQSO:
 
             # No need to warn about PanSTARRS, otherwise do warn
             if len(disallowed_sources) > 0:
-                warnings.warn(self.name + ': Filtering sources ' + str(disallowed_sources))
+                pass # warnings.warn(self.name + ': Filtering sources ' + str(disallowed_sources))
 
         u_sources = list(self.sed.source.unique())
         to_remove = []
