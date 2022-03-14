@@ -95,7 +95,7 @@ source:https://lweb.cfa.harvard.edu/castles/Individual/B1152.html
 same method as 1633+3134, using code
 there is a G' components, we assumed it was wat Matus explained>> hst has good resolution so it does not detect some pixels as having a source if it is too close to the rms noise,  
 So spplits it up into G' and G. There is no indication in any other paper that it is anything other than a simple elliptical, should be fine. We have added the 2 components together as to form a single galaxy component. 
-DONT RUN MAGS AGAIN, SINCE I CALCULATED SOME THINGS BY HAND
+DONT RUN MAGS AGAIN, SINCE I CALCULATED SOME THINGS BY HAND > Castles has been deleted from here
 
 NED:
 ADDED:
