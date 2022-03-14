@@ -14,11 +14,11 @@ if __name__ == '__main__':
     #percent_to_fraction('WIYN.U_HARRIS.txt','WIYN.U_HARRIS_fraction.txt')
     
     #photometry
-    #galaxy = 'B1152+200'
-    #lqso = LensedQSO(galaxy)
-    #mags_to_fluxes(lqso)
+    galaxy = 'B1152+200'
+    lqso = LensedQSO(galaxy)
+    mags_to_fluxes(lqso)
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
-    #lqso.plot_spectrum(loglog=True)
+    lqso.plot_spectrum(loglog=True)
     
     
     plt.show()
