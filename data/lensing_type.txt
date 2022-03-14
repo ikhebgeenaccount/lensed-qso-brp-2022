@@ -34,7 +34,6 @@ J0924+0219
 B1152+200:
 Myers 1999: Further contraints cannot be determined yet
 Toft et al. (2000) modelled the lens system assuming a standard dark halo as the dominating lens mass> still more data needed
-
 Asadi 2020:
     Whereas the jet appears straight in one of the images, the other exhibits slight
     curvature on milliarcsecond scales. This is unexpected from the lensing solution and has
@@ -63,4 +62,17 @@ Jaunsen 1997
     mag fainter than G2 [~6 times less massive for the same mass-to-light ratio and redshift], we do not incorporate this galaxy in the mass models (both the convergence and 
     shear of G3 will be ~ 10 times smaller than that of G2 at images A and B). 
     >> maar G2 is niet lensing galaxy denk ik, hij zit ernaast, is alleen voor de mass modeling zie figuur
+    
+B1608+656:
+Koopmans: we assume they are two individual lens galaxies, perhaps merging. The surface brightness distributions of G1 and G2 were fitted with elliptical isophotes in IRAF.
+    This is not challenged in other papers, sometimes they add an external shear >> we will first try to fit the superposition of 2 galaxies?
+    
+J0806+2006:
+Inada: there are some nearby galaxies that influence the mass modeling, but it prob wont influence our data.
+    To explore the lensing hypothesis further, we modeled the system using the two standard mass models: a singular isothermal sphere with an external shear (SIS+shear) model, 
+    and a singular isothermal ellipsoid (SIE ) model.
+oguri: In all the samples, effective radii are measured using the de Vaucouleurs profile.> just an elliptical :)
 
+J1330+1810:
+Oguri: The wide-field image suggests a possible group of galaxies located near the lens system (see Section 2). == no influence on photometry but influence on mass modeling
+    e adopt two standard mass models that are widely used in modelling strong lens systems: a Singular Isothermal Ellipsoid (SIE) and a SIE plus external shear perturbation (SIEx). >> again just an elliptical
