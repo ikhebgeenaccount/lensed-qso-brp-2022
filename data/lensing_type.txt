@@ -31,7 +31,7 @@ J0924+0219
      
      so an elliptical lensing galaxy and microlensing of component D.
      
-B1152+200:
+B1152+200: elliptical
 Myers 1999: Further contraints cannot be determined yet
 Toft et al. (2000) modelled the lens system assuming a standard dark halo as the dominating lens mass> still more data needed
 Asadi 2020:
@@ -45,7 +45,7 @@ Asadi 2020:
 
     So just an elliptical, no millilensing
     
-B1600+434:
+B1600+434: spiral
 Jaunsen 1997
     In this Letter we report the discovery of an edge-on late-type galaxy located between the two lensed components (separation 1.004), close to the fainter image. The galaxy
     photometry indicates that its redshift is approximately 0.4.
@@ -56,7 +56,7 @@ Jaunsen 1997
     We present new observations of the gravitational lens (GL) system B1600 + 434, strongly suggesting that the lens is an edge-on spiral galaxy.
     B1600 + 434 was discovered as a compact flat spectrum radio double with a separation of 1.39 + 0.01 arcsec. Very
     Large Array (VLA) 8.4-GHz observations show no structure resulting from extended emission (e.g. lobes) aroundthe compact flat spectrum radio core and 
-    no sign of a central third image above the noise level is found .
+    no sign of a central third image and warn above the noise level is found .
     BUT there is a second lensing galaxy??? The companion galaxy G2 south-east of Gl appears to be a nearly face-on luminous barred spiral galaxy
    The small galaxy G3 is a moderately inclined (spiral) galaxy some 10 arcsec west ofB1600 + 434. Because this galaxy is much smaller and ~2
     mag fainter than G2 [~6 times less massive for the same mass-to-light ratio and redshift], we do not incorporate this galaxy in the mass models (both the convergence and 
@@ -67,27 +67,27 @@ B1608+656:
 Koopmans: we assume they are two individual lens galaxies, perhaps merging. The surface brightness distributions of G1 and G2 were fitted with elliptical isophotes in IRAF.
     This is not challenged in other papers, sometimes they add an external shear >> we will first try to fit the superposition of 2 galaxies?
     
-J0806+2006:
+J0806+2006: elliptical
 Inada: there are some nearby galaxies that influence the mass modeling, but it prob wont influence our data.
     To explore the lensing hypothesis further, we modeled the system using the two standard mass models: a singular isothermal sphere with an external shear (SIS+shear) model, 
     and a singular isothermal ellipsoid (SIE ) model.
 oguri: In all the samples, effective radii are measured using the de Vaucouleurs profile.> just an elliptical :)
 
-J1330+1810:
+J1330+1810: elliptical
 Oguri: The wide-field image suggests a possible group of galaxies located near the lens system (see Section 2). == no influence on photometry but influence on mass modeling
     e adopt two standard mass models that are widely used in modelling strong lens systems: a Singular Isothermal Ellipsoid (SIE) and a SIE plus external shear perturbation (SIEx). >> again just an elliptical
 
-J1650+4251:
+J1650+4251: elliptical
 Morgan: Our basic model is an SIS potential for the lensing galaxy, plus an external shear to break the circular degeneracy.
 
-J1524+4409:
+J1524+4409: elliptical
 ofek: we fitted, in the source plane, the image positions with an elliptical softened power-law mass model 
 Oguri: The bright galaxy G has red colors and is fitted well by a de Vaucouleurs profile
 
-J1633+3134:
+J1633+3134: questionmark
     Morgan: We will adopt the singular isothermal sphere (SIS) model to describe the gravitational potential of the hypothesized lensing galaxy
         however this one does not have imaging yet of the lensing galaxy
     maar verder weinig over te vinden dus gebruik bovenstaande
     
-1455+1447:
+1455+1447: ~elliptical
     Kayo: We fit the I-band image with two PSFs and a galaxy, and the best-fit S ́ersic index was 3.5. 
