@@ -77,6 +77,6 @@ NED:
 always left out: hst(no components), sdss(already have them), USNO(more optical), GAIA(more optical)
 in the file with 11 measurements there are 2 vlt images. However looking at the paper, this was not the total flux but the lensing galaxy flux. Will add this by hand to sed.
 
-Faura 2011
+Faure 2011
 VLT data FROM THE LENSING GALAXY, conversion by ned and added to sed ny hand
 source:https://www.aanda.org/articles/aa/pdf/2011/12/aa17787-11.pdf
