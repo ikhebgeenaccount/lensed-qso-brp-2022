@@ -68,7 +68,7 @@ def all_galaxies():
         lqso = LensedQSO(g)
         lqso.plot_spectrum(loglog=True)
 
-        mags_to_fluxes(lqso, components=None if g != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
+        # mags_to_fluxes(lqso, components=None if g != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
 
         count = lqso.sed.loc[lqso.sed['flux_G'] > 0].shape[0]
         print(f'{g}, {count}')
@@ -97,7 +97,7 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'B1608+656'
+    galaxy = 'J1330+1810'
     lqso = LensedQSO(galaxy)
 
     # ned_table_to_sed(lqso, ned_file='ned_wise.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
@@ -132,5 +132,5 @@ def plot_single_model():
 if __name__ == '__main__':
     # all_galaxies()
     fit_foreground()
-
+    # single_galaxy()
     plt.show()
