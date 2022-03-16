@@ -108,7 +108,7 @@ def single_galaxy():
 
 
 def fit_foreground():
-    for g in ['B1600+434']:
+    for g in GALAXIES:
         lqso = LensedQSO(g)
 
         m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
@@ -132,8 +132,8 @@ def plot_single_model():
 
 
 if __name__ == '__main__':
-    # all_galaxies()
+    all_galaxies()
     # fit_foreground()
-    plot_single_model()
+    # plot_single_model()
     # single_galaxy()
     plt.show()
