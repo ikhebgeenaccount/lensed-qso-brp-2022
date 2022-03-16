@@ -23,7 +23,11 @@ Hubble VIH images, two lensing galaxies
 
 Sluse et al., 2012
 https://ui.adsabs.harvard.edu/abs/2012A%26A...538A..99S/abstract
-CASTLES data, split for all components including G1 and G2
+CASTLES data, split for all components including G1 and G2, maar totaal andere waarden> vertrouw paper over castles
+
+Koopmans 2003
+https://iopscience.iop.org/article/10.1086/379226/pdf
+F814W als aangegeven op CASTLES voor galaxies, maar met totaal andere waarden, vertrouw papers over castles
 
 COSMOGRAIL
 https://www.aanda.org/articles/aa/pdf/2012/02/aa15844-10.pdf

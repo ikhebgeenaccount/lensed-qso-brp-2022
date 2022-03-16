@@ -1,6 +1,7 @@
 import os
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 from matplotlib.legend_handler import HandlerTuple
@@ -13,7 +14,7 @@ import warnings
 FILTERED_SOURCES = {
     'B1152+200': ['panstarrs'],
     'B1600+434': ['panstarrs'],
-    'B1608+656': [],
+    'B1608+656': [],#['Koopmans+2003' ],
     'J0806+2006': ['panstarrs', 'Inada'],
     'J0924+0219': ['panstarrs'],
     'J1330+1810': ['panstarrs'],
@@ -64,7 +65,7 @@ class LensedQSO:
         # filtered_sed only selects entries that have a wavelength and a flux_total
         self.filtered_sed = self.sed[(self.sed.wavelength > 0) * (self.sed.flux_total > 0)].copy()
 
-    def filter_sed(self, disallowed_sources=None, component=None):
+    def filter_sed(self, disallowed_sources=None, component='_total', allow_zero_error=True):
         """
         Returns a DataFrame that contains only those rows that are allowed through LensedQSO.allowed_sources
         :param disallowed_sources: passed to LensedQSO.allowed_sources
@@ -72,10 +73,13 @@ class LensedQSO:
         """
         allowed_sources = self.allowed_sources(disallowed_sources)
 
-        if component is None:
-            return self.sed.loc[self.sed.source.isin(allowed_sources)]
-        else:
-            return self.sed.loc[self.sed.source.isin(allowed_sources) * (self.sed[f'flux{component}'] > 0)]
+        compfilter = self.sed[f'flux{component}'] > 0
+
+        errorfilter = np.ones(self.sed.shape[0], dtype=bool)
+        if not allow_zero_error:
+            errorfilter= self.sed[f'flux{"" if component == "_total" else component}_err'] > 0
+
+        return self.sed.loc[self.sed.source.isin(allowed_sources) * compfilter * errorfilter]
 
     def allowed_sources(self, disallowed_sources=None):
         """
