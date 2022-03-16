@@ -13,7 +13,7 @@ import warnings
 FILTERED_SOURCES = {
     'B1152+200': ['panstarrs'],
     'B1600+434': ['panstarrs'],
-    'B1608+656': [],
+    'B1608+656': ['Koopmans+2003' ],
     'J0806+2006': ['panstarrs', 'Inada'],
     'J0924+0219': ['panstarrs'],
     'J1330+1810': ['panstarrs'],
