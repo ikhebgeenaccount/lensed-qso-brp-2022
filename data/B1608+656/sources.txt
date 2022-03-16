@@ -27,7 +27,7 @@ CASTLES data, split for all components including G1 and G2, maar totaal andere w
 
 Koopmans 2003
 https://iopscience.iop.org/article/10.1086/379226/pdf
-Dezelfde filters als aangegeven op CASTLES voor galaxies, maar met totaal andere waarden, vertrouw papers over castles
+F814W als aangegeven op CASTLES voor galaxies, maar met totaal andere waarden, vertrouw papers over castles
 
 COSMOGRAIL
 https://www.aanda.org/articles/aa/pdf/2012/02/aa15844-10.pdf
