@@ -122,13 +122,16 @@ def fit_foreground():
 
 def plot_single_model():
     fig, ax = plt.subplots()
+    model = 'UGC_08335_NW'
 
-    m = src.model_sed.MODELS['UGC_08335_NW']
+    m = src.model_sed.MODELS[model]
 
     ax.plot(m.wavelength, m.flux, label='Brown')
     ax.plot(m.wavelength, np.abs(m.flux), label='LSST repo')
+    ax.set_title(model)
     ax.set_yscale('log')
     ax.set_xscale('log')
+    ax.legend()
 
 
 if __name__ == '__main__':
