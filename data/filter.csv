@@ -39,3 +39,7 @@ hst,ACS_HRC/F435W,,,4323.09,vega,3980460,
 hst,ACS_HRC/F555W,,,5355.74,vega,3665220,
 hst,ACS_HRC/F625W,,,6295.19,vega,3123530,
 hst,ACS_HRC/F814W,,,8100.44,vega,2436510,
+UH88,OPTIC/U,,,3576.21,vega,1693910,https://www.ifa.hawaii.edu/88inch/2.2-meter-technical.htm   Cant find filterprofiles but is 6 months a year ar WIYN so used that
+WIYN,OPTIC/B,,,4322.75,vega,3898270,
+WIYN,OPTIC/R,,,6554.66,vega,3022620, 
+WIYN,OPTIC/I,,,8356.12,vega,2360270, 
