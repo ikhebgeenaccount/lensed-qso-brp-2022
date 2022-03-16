@@ -40,9 +40,6 @@ def mags_to_fluxes(lqso, components=None):
         # Set to 2 if there is a total magnitude
         total = 0
 
-        # Total flux and flux error
-        total_f, total_fe = 0, 0
-
         # Used to store fluxes and flux_errs for all components
         fs = []
         fes = []

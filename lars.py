@@ -10,9 +10,7 @@ from src.ned_to_sed import ned_table_to_sed
 
 import src.model_sed
 
-# ratio avg: 1.4543629655671957, ratio std: 0.37071640199561534
-
-GALAXIES = ['B1152+200', 'B1600+434', 'B1608+656', 'J0806+2006', 'J0924+0219', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'J1633+3134', 'J1650+4251']
+GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']
 
 PLOTS_SAVE = 'plots'
 
@@ -47,7 +45,7 @@ def sdss_panstarrs_flux_discrepancy():
                 flux_discrepancy.loc[r['filter'], source] = r.flux_total
 
         flux_discrepancy['ratio'] = flux_discrepancy.sdss.div(flux_discrepancy.panstarrs.where(flux_discrepancy.panstarrs != 0, np.nan))
-        # Make all ratios > 1 so we can compare
+        # Make all ratios > 1 so we can compare['B1600+434']
         flux_discrepancy['ratio'] = flux_discrepancy['ratio'].apply(lambda r: 1. / r if r < 1  else r)
         flux_discrepancy['diff'] = flux_discrepancy['sdss'] - flux_discrepancy['panstarrs']
         print(flux_discrepancy)
@@ -68,9 +66,9 @@ def all_galaxies():
         lqso = LensedQSO(g)
         lqso.plot_spectrum(loglog=True)
 
-        mags_to_fluxes(lqso, components=None if g != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
+        # mags_to_fluxes(lqso, components=None if g != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
 
-        count = lqso.sed.loc[lqso.sed['flux_G'] > 0].shape[0]
+        count = lqso.filter_sed().loc[lqso.sed['flux_G'] > 0].shape[0]
         print(f'{g}, {count}')
 
         # telescope = 'Magellan'
@@ -97,26 +95,27 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'B1608+656'
+    galaxy = 'J1330+1810'
     lqso = LensedQSO(galaxy)
 
     # ned_table_to_sed(lqso, ned_file='ned_wise.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
     # ned_table_to_sed(lqso, ned_file='ned_2mass.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
     # ned_table_to_sed(lqso, ned_file='ned_chandra.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
 
-    mags_to_fluxes(lqso, components=None if galaxy != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
+    # mags_to_fluxes(lqso, components=None if galaxy != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
 
     lqso.plot_spectrum(loglog=True)
 
 
 def fit_foreground():
-    for g in GALAXIES:
+    for g in ['B1600+434']:
         lqso = LensedQSO(g)
 
         m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
 
         if lqso.filter_sed(component='_G').shape[0] > 1:
-            src.model_sed.fit(lqso, method='minimize', morph=m)
+             # src.model_sed.fit(lqso, method='minimize', morph=m)
+            src.model_sed.fit(lqso, method='curve_fit', morph=m)
         else:
             print(f'{g} has {lqso.filter_sed(component="_G").shape[0]} foreground galaxy datapoints, can\'t be fitted.')
 
@@ -124,13 +123,17 @@ def fit_foreground():
 def plot_single_model():
     fig, ax = plt.subplots()
 
-    m = src.model_sed.MODELS['CGCG_453-062_spec']
-    ax.plot(m.wavelength, m.flux_cgs)
-    ax.plot(m.wavelength, m.flux)
+    m = src.model_sed.MODELS['UGC_08335_NW']
+
+    ax.plot(m.wavelength, m.flux, label='Brown')
+    ax.plot(m.wavelength, np.abs(m.flux), label='LSST repo')
+    ax.set_yscale('log')
+    ax.set_xscale('log')
 
 
 if __name__ == '__main__':
     # all_galaxies()
-    fit_foreground()
-
+    # fit_foreground()
+    plot_single_model()
+    # single_galaxy()
     plt.show()

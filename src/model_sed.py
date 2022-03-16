@@ -60,7 +60,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     if morph == 'all':
         model_set = MODEL_PROPERTIES
     elif morph == 'spiral':
-        model_set = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].str.contains('S') | MODEL_PROPERTIES['morph'].str.contains('Irr')]
+        model_set = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].str.contains('S')]
     elif morph == 'elliptical':
         model_set = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].str.contains('E')]
 
@@ -90,7 +90,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
             res = minimize(ff.chi_squared, [1e-2], method='Powell')
 
             scores.append(res.fun)
-            model_mults.append(res.x[0])  # FIXME: x is value on laptop, array on strw pc, numpy version dependent i guess
+            model_mults.append(res.x)  # FIXME: x is value on laptop, array on strw pc, numpy version dependent i guess
             covs.append(1)  # TODO: determine error, perhaps bootstrap but only very few data points
 
         elif method == 'chi_squared':
@@ -124,8 +124,8 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         ax.set_yscale('log')
 
     # Histogram of scores
-    # fig, ax = plt.subplots()
-    # ax.hist(scores, bins=20)
+    fig, ax = plt.subplots()
+    ax.hist(scores, bins=25)
 
     plot_fit(lqso, best_model, best_mult, save_plots=save_plots, save_location=save_location)
 
