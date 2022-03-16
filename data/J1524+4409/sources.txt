@@ -14,9 +14,12 @@ Stacey 2018:
 https://ui.adsabs.harvard.edu/abs/2018MNRAS.476.5075S/abstract
 
 Oguri 2008:
-used code
 https://iopscience.iop.org/article/10.1088/0004-6256/135/2/520/pdf
 NOT USED since SDSS data from an earlier data release, use DR14 instead
+Edit from later: This galaxy had NO componentwise data, but this paper had some UH88. UH88 is impossible to find, but here:
+https://www.ifa.hawaii.edu/88inch/2.2-meter-technical.htm
+they mentioned that the OPTIC instrument which was used here is sometimes at the WIYN telescope. Herefore we concluded that these filters must also be the same, 
+so we have added the UH88 with the WIYN filters, to get some componentwise data
 
 NED:
 done:
