@@ -123,13 +123,17 @@ def fit_foreground():
 def plot_single_model():
     fig, ax = plt.subplots()
 
-    m = src.model_sed.MODELS['CGCG_453-062_spec']
-    ax.plot(m.wavelength, m.flux_cgs)
-    ax.plot(m.wavelength, m.flux)
+    m = src.model_sed.MODELS['UGC_08335_NW']
+
+    ax.plot(m.wavelength, m.flux, label='Brown')
+    ax.plot(m.wavelength, np.abs(m.flux), label='LSST repo')
+    ax.set_yscale('log')
+    ax.set_xscale('log')
 
 
 if __name__ == '__main__':
     # all_galaxies()
-    fit_foreground()
+    # fit_foreground()
+    plot_single_model()
     # single_galaxy()
     plt.show()
