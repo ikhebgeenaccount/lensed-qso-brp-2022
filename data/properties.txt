@@ -1,11 +1,11 @@
 #For locations, redshifts, luminosity distances, luminosities in fir and other info, see evernote notebook. This file is to keep a record of what data is available, and what has been added to the file already.
 galaxy,lensed by spiral?,single galaxy?,z_qso,z_lens,lens_type
 J1524+4409,no, yes(feb 2008),1.21,0.320,elliptical
-B1608+656,possibly 2 merging galaxies>need to check, yes(december 1999),1.39,0.630,
+B1608+656,possibly 2 merging galaxies>need to check, yes(december 1999),1.39,0.630,elliptical
 J1330+1810,maybe disk galaxy, yes but galaxies 120 arcsec SW (december 2008),1.393,0.373,elliptical
 J1455+1447,no, yes(april 2010),1.424,0.42,elliptical
-J1633+3134,followup from Morgan 2001, yes(february 2001),1.518,0.684,
-J0924+0219,no, no 4th component might be reddened =weird (august 2003),1.523,0.393,
+J1633+3134,followup from Morgan 2001, yes(february 2001),1.518,0.684,elliptical
+J0924+0219,no, no 4th component might be reddened =weird (august 2003),1.523,0.393,elliptical
 J1650+4251,no, yes (november 2003),1.543,0.577,elliptical
 B1152+200,no, yes (june 1999),1.019,0.438,elliptical
 B1600+434,YES, yes but weird reddening component B (january 1997),1.589,0.414,spiral

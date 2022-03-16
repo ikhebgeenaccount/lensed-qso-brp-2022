@@ -48,31 +48,25 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     :param morph: type of allowed morphologies, valid values are 'all', 'spiral', 'elliptical'
     :return:
     """
-    sed = lqso.filter_sed(component='_G').copy()  # Copy such that changing the wavelength doesn't affect the original
-    sed['wavelength'] = sed['wavelength'] / (1 + lqso.props['z_lens'].values[0])  # TODO: local universe ok?
+    sed = lqso.filter_sed(component='_G', allow_zero_error=False).copy()  # Copy such that changing the wavelength doesn't affect the original
+    sed['wavelength'] = sed['wavelength'] / (1 + lqso.props['z_lens'].values[0])
     sed.sort_values(by='wavelength')  # Doesn't matter
 
-    # Arrays to store scores and multiplication factors per model
-    scores = []
-    covs = []
-    model_mults = []
+    model_set_is = MODEL_PROPERTIES.index
 
-    if morph == 'all':
-        model_set = MODEL_PROPERTIES
-    elif morph == 'spiral':
-        model_set = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].str.contains('S')]
+    if morph == 'spiral':
+        model_set_is = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].str.contains('S')].index
     elif morph == 'elliptical':
-        model_set = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].str.contains('E')]
+        model_set_is = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].str.contains('E')].index
 
-    # Chi squared necessities
-    # Parameter space of mults
-    mults_space = np.logspace(-7, -2, 10000)  # logspace, 10**-7 through 10**-2
-    # Arrays to save chisq and mults values for plots
+    # Arrays to keep track of chi squared values, stds and mults
     chisqs = []
+    stds = []
+    mults = []
 
-    for i in range(0, model_set.shape[0]):
-        m = model_set.iloc[[i]]
-        model = m['name'].values[0]
+    for i, label_index in enumerate(model_set_is):
+        m = MODEL_PROPERTIES.loc[label_index]
+        model = m['name']
 
         if method == 'curve_fit':
             ff = FitFunction(sed, model)
@@ -80,56 +74,45 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
             popt, pcov = curve_fit(ff.f, sed.wavelength.values, sed.flux_G.values, sigma=sed.flux_G_err.values, p0=[1e-2])
 
             # Keep track of scores and multiplication factors
-            # Score is sum of squared difference between fitted function f and data of foreground galaxy divided by flux errors
-            scores.append(ff.chi_squared(popt[0]))
-            covs.append(np.sqrt(np.diag(pcov))[0])
-            model_mults.append(popt[0])
+            chisqs.append(ff.chi_squared(popt))
+            stds.append(np.sqrt(np.diag(pcov))[0])
+            mults.append(popt[0])
         elif method == 'minimize':
             ff = FitFunction(sed, model)
 
             res = minimize(ff.chi_squared, [1e-2], method='Powell')
 
-            scores.append(res.fun)
-            model_mults.append(res.x)  # FIXME: x is value on laptop, array on strw pc, numpy version dependent i guess
-            covs.append(1)  # TODO: determine error, perhaps bootstrap but only very few data points
+            #model_set['score'].iloc[i] = res.fun
+            #model_set['mult'].iloc[i] = res.x  # FIXME: x is value on laptop, array on strw pc, numpy version dependent i guess
+            #model_set['std'].iloc[i] = 1  # TODO: determine error, perhaps bootstrap but only very few data points
 
-        elif method == 'chi_squared':
-            ff = FitFunction(sed, model)
+    # Turn the resulting lists into a DataFrame for easy sorting
+    result = {
+        'name': MODEL_PROPERTIES['name'].iloc[model_set_is],
+        'morph': MODEL_PROPERTIES['morph'].iloc[model_set_is],
+        'type': MODEL_PROPERTIES['type'].iloc[model_set_is],
+        'score': chisqs,
+        'std': stds,
+        'mult': mults
+    }
 
-            chisqs.append([])
-
-            # WONTFIX: optimize loop away
-            for m in mults_space:
-                chisqs[i].append(ff.chi_squared([m]))
-
-            l_index = np.argmin(chisqs[i])
-
-            scores.append(chisqs[i][l_index])
-            model_mults.append(mults_space[l_index])
-
-            covs.append(1)  # TODO: bootstrap?
+    model_set = pandas.DataFrame(result)
 
     # Lowest score is best model
-    bm_index = np.argmin(scores)
-    best_model = model_set.iloc[[bm_index]]['name'].values[0]  # FIXME: when using a subset of the models, this will not point to the correct one, I think
-    best_mult = model_mults[bm_index]
+    model_set.sort_values(by='score', ascending=True, inplace=True)
 
-    print(f'{lqso.name}, best model: {best_model}, mult: {best_mult:.4e}, std: {covs[bm_index]:.4e}, chisq: {scores[bm_index]}')
-    print(f'Model properties: {model_set.iloc[[bm_index]].morph.values[0]} {model_set.iloc[[bm_index]].type.values[0]}')
+    print(f'{lqso.name}, best model: {model_set.iloc[[0]]["name"].values[0]}, mult: {model_set.iloc[[0]]["mult"].values[0]:.4e}, std: {model_set.iloc[[0]]["std"].values[0]:.4e}, chisq: {model_set.iloc[[0]]["score"].values[0]:.4e}')
+    print(f'Model properties: {model_set.iloc[[0]].morph.values[0]} {model_set.iloc[[0]].type.values[0]}')
 
-    if method == 'chi_squared':
-        fig, ax = plt.subplots()
-        ax.plot(mults_space, chisqs[bm_index])
-        ax.set_xscale('log')
-        ax.set_yscale('log')
+    # print(model_set.head(10))
 
     # Histogram of scores
     fig, ax = plt.subplots()
-    ax.hist(scores, bins=25)
+    ax.hist(model_set['score'].head(25), bins=25)
 
-    plot_fit(lqso, best_model, best_mult, save_plots=save_plots, save_location=save_location)
+    plot_fit(lqso, model_set, save_plots=save_plots, save_location=save_location)
 
-    return best_model, best_mult
+    return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0]
 
 
 class FitFunction:
@@ -171,10 +154,13 @@ class FitFunction:
                                self.sed[f'flux{self.component}_err'].values, 2))
 
 
-def plot_fit(lqso, model, mults, save_plots=True, save_location='plots'):
+def plot_fit(lqso, models, save_plots=True, save_location='plots', count=5):
+
     # Plot the model on just the foreground galaxy data
     fig, ax = lqso.plot_spectrum(loglog=True, component='_G')
-    ax.plot(MODELS[model].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[model].flux * mults, color='black', alpha=.6, label=model)
+    for i in range(count):
+        ax.plot(MODELS[models['name'].iloc[i]].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[models['name'].iloc[i]].flux * models['mult'].iloc[i], color='black' if i == 0 else None, alpha=.6 / count * (count - i), label=models['name'].iloc[i])
+
     ax.legend()
 
     if save_plots:
@@ -183,7 +169,7 @@ def plot_fit(lqso, model, mults, save_plots=True, save_location='plots'):
 
     # Plot the model on total flux data
     fig, ax = lqso.plot_spectrum(loglog=True)
-    ax.plot(MODELS[model].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[model].flux * mults, color='black', alpha=.6, label=model)
+    ax.plot(MODELS[models['name'].iloc[0]].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[models['name'].iloc[0]].flux * models['mult'].iloc[0], color='black', alpha=.6, label=models['name'].iloc[0])
     ax.legend()
 
     if save_plots:
