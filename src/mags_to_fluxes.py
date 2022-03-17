@@ -90,6 +90,26 @@ def mags_to_fluxes(lqso, components=None):
     lqso.save_sed()
 
 
+def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3):
+    """
+    Calculates the flux ratios of the components based on the components magnitudes.
+    Applies this ratio to the closest filter (based on wavelength) it can find, if that wavelength is not split into components already.
+    :param lqso: LensedQSO object
+    :param ratio_source: indicates which source to use to find the ratio.
+    :param max_filter_dist: maximum distance between filter that ratios are taken from and filter of which total will be split
+    """
+    # TODO: for each SED row that is from ratio_source
+
+        # TODO: Select mag based on source, calculate ratios
+        # Flux ratios are given by m_1 - m_2 = -2.5 log10(f_1/f_2)
+
+        # TODO: find closest wavelength, check max_filter_dist
+
+        # TODO: Calculate fluxes from total flux based on ratios
+        # total flux / sum of ratios * single ratio = flux of that ratio
+    pass
+
+
 def mag_to_flux(telescope, filter, mag, mag_err):
     """
     Converts the given magnitude to flux using the appropriate convertion formula for given telescope filter combination.
