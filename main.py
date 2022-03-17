@@ -5,6 +5,7 @@ from src.mags_to_fluxes import mags_to_fluxes
 from src.ned_to_sed import ned_table_to_sed
 from src.xml_to_txt import xml_to_txt
 from src.tophat import tophat
+from src.model_subtraction import model_subtraction
 from src.percent_to_fraction import percent_to_fraction
 
 if __name__ == '__main__':
@@ -19,6 +20,9 @@ if __name__ == '__main__':
     mags_to_fluxes(lqso)
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
     lqso.plot_spectrum(loglog=True)
+    
+    model_subtraction(lqso)
+    
     
     
     plt.show()
