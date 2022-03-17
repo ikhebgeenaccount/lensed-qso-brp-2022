@@ -28,17 +28,35 @@ def model_subtraction(lqso):
     #fig, ax = lqso.plot_spectrum(loglog=True) 
     #ax.plot(x_model, y_model, label = model_name)
     
-    #make a new column in the sed file 
+    #an empty list to store the fluxes
+    lqso.sed['flux_sub']=0.
+    lqso.sed['flux_sub_err'] = 0.
     list_sub=[]
-    #now we want to access componentwise the sed file, later write it to sed_sub file
-    for i, row in lqso.sed.iterrows():
+    list_sub_err=[]
+    
+    #select on whether there is component-wise data or only total flux
+    for i, row in lqso.sed.iterrows(): #exclude radio and such
         if row['wavelength'] >= np.max(x_model):
-            list_sub.append( 'nope')
-        elif row['flux_G'] == 0. and row['flux_A'] == 0.:
+            list_sub.append( row['flux_total'])
+            list_sub_err.append(row['flux_err'])
+        elif row['wavelength'] <= np.min(x_model): #exclude too small lambdas 
+            list_sub.append( row['flux_total'])
+            list_sub_err.append(row['flux_err'])
+        #if only a total flux is known, subtract the model
+        elif row['flux_G'] == 0. and row['flux_A'] == 0. and row['flux_B'] == 0.\
+                                and row['flux_C'] == 0. and row['flux_D'] == 0.:
             list_sub.append( row['flux_total']- scalar * np.interp(row['wavelength'], xp=x_model, fp=y_model))
+            list_sub_err.append(0)
+        #if the componentwise data is available, use that instead of subtracting the data    
         else:
             list_sub.append( row['flux_A'] + row['flux_B'] + row['flux_C'] + row['flux_D'])
-    lqso.sed['flux_sub']=list_sub    
+            list_sub_err.append(np.sqrt(row['flux_A_err']**2 +row['flux_B_err']**2 + row['flux_C_err']**2 + row['flux_D_err']**2 ))
+    #write to the sed
+    lqso.sed['flux_sub']=list_sub  
+    lqso.sed['flux_sub_err']=list_sub_err
+    
+    
+    lqso.plot_spectrum(component='_sub')
+
     
     lqso.save_sed()
-    
