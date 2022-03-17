@@ -112,7 +112,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
     plot_fit(lqso, model_set, save_plots=save_plots, save_location=save_location)
 
-    return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0]
+    return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
 
 
 class FitFunction:
