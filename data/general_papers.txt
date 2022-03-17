@@ -14,3 +14,7 @@ Eigenbrod et al., 2005
 Simulated curves of magnitude difference as function of time delay
 Shows that mag diffs are between 0.0 - 0.3 delta m, which corresponds to 1.0 - 1.3 flux ratio difference
 https://ui.adsabs.harvard.edu/abs/2005A%26A...436...25E/abstract
+
+CASTLES Vega mag
+Source: https://arxiv.org/abs/astro-ph/9909072
+Has same magnitudes and names them as Vega mags
