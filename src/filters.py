@@ -4,7 +4,8 @@ import re
 
 import pandas as pd
 
-FILTER_PROPERTIES = pd.read_csv(os.path.join('data', 'filter.csv'))
+FILTER_PROPS_PATH = os.path.join('data', 'filter.csv')
+FILTER_PROPERTIES = pd.read_csv(FILTER_PROPS_PATH)
 
 
 def get_wavelength(telescope, tfilter):
@@ -30,3 +31,5 @@ def populate_filter_profile_path_column(profiles_dir=None):
     print(found, filters)
 
     print(FILTER_PROPERTIES)
+
+    FILTER_PROPERTIES.to_csv(FILTER_PROPS_PATH, index=False)

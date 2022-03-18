@@ -1,45 +1,45 @@
-telescope,filtername,band,instrument,central_wavelength,conversion,zeropoint,source
-PanSTARRS,g,,,4810,AB,3631000,
-PanSTARRS,r,,,6170,AB,3631000,
-PanSTARRS,i,,,7520,AB,3631000,
-PanSTARRS,z,,,8660,AB,3631000,
-PanSTARRS,y,,,9620,AB,3631000,
-SDSS,u,,,3551,AB,3631000,
-SDSS,g,,,4686,AB,3631000,
-SDSS,r,,,6166,AB,3631000,
-SDSS,i,,,7480,AB,3631000,
-SDSS,z,,,8932,AB,3631000,
-Gemini North,K,,,22089.98,vega,640000,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Gemini/NIRI.K-G0204w&&mode=browse&gname=Gemini&gname2=NIRI#filter
-Gemini North,L',,,37590.74,vega,248080,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Gemini/NIRI.Lprime-G0207w&&mode=browse&gname=Gemini&gname2=NIRI#filter
-WIYN,U,,,3576.21,vega,1693910,100% http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w001&&mode=browse&gname=WIYN&gname2=WIYN#filter
-WIYN,B,,,4322.75,vega,3898270,100% http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w002&&mode=browse&gname=WIYN&gname2=WIYN#filter
-WIYN,R,,,6554.66,vega,3022620,100% http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w004&&mode=browse&gname=WIYN&gname2=WIYN#filter
-WIYN,I,,,8356.12,vega,2360270,100% http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w005&&mode=browse&gname=WIYN&gname2=WIYN#filter
-NOT,U,,,3600.85,vega,1786310,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=NOT&gname2=ALFOSC&asttype=
-NOT,B,,,4306.12,vega,3927160,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_B&&mode=browse&gname=NOT&gname2=ALFOSC#filter
-NOT,V,,,5389.63,vega,3636940,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_V&&mode=browse&gname=NOT&gname2=ALFOSC#filter
-NOT,R,,,6396.64,vega,3033260,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_R&&mode=browse&gname=NOT&gname2=ALFOSC#filter
-NOT,I,,,8559.6,vega,2309980,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_I&&mode=browse&gname=NOT&gname2=ALFOSC#filter
-Subaru,K',,IRCS,21049.98,vega,693680,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Subaru/IRCS.Kp&&mode=browse&gname=Subaru&gname2=IRCS#filter
-Magellan_PANIC,J,,PANIC,12500,vega,1594000,https://iopscience.iop.org/article/10.1086/376474/pdf for zeropoints
-Magellan_PANIC,H,,PANIC,16500,vega,1024000,http://instrumentation.obs.carnegiescience.edu/wirc/wircpaper.pdf for wavelengths
-Magellan_PANIC,Ks,,PANIC,21600,vega,666800, used in J1330>have sent email about filter profile>otherwise omit
-UH88,V,,,5510,,,
-UH88,R,,,6580,,,
-UH88,I,,,8060,,,
-UH88,H,,,16300,,,
-HST,WFC3/F160W,,,15370.34,AB,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_IR.F160W
-HST,WFC3/F475X,,,4937.39,AB,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_UVIS2.F475X&&mode=browse&gname=HST&gname2=WFC3_UVIS2#filter
-HST,WFC3/F814W,,,8029.29,AB,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_UVIS2.F814W
-CASTLES,F555W,V,WFPC2/PC1,5442.92,vega,3643250,
-CASTLES,F160W,H,NICMOS/NIC2,16036.9,vega,1063080,
-CASTLES,F814W,I,WFPC2/PC1,7995.93,vega,2455070,
-HST,ACS_HRC/F330W,,,3362.99,vega,1245770,
-HST,ACS_HRC/F435W,,,4323.09,vega,3980460,
-HST,ACS_HRC/F555W,,,5355.74,vega,3665220,
-HST,ACS_HRC/F625W,,,6295.19,vega,3123530,
-HST,ACS_HRC/F814W,,,8100.44,vega,2436510,
-UH88,OPTIC/U,,,3576.21,vega,1693910,https://www.ifa.hawaii.edu/88inch/2.2-meter-technical.htm   Cant find filterprofiles but is 6 months a year ar WIYN so used that
-UH88,OPTIC/B,,,4322.75,vega,3898270,
-UH88,OPTIC/R,,,6554.66,vega,3022620, 
-UH88,OPTIC/I,,,8356.12,vega,2360270, 
+telescope,filtername,band,instrument,central_wavelength,conversion,zeropoint,source,file
+PanSTARRS,g,,,4810.0,AB,3631000.0,,
+PanSTARRS,r,,,6170.0,AB,3631000.0,,
+PanSTARRS,i,,,7520.0,AB,3631000.0,,
+PanSTARRS,z,,,8660.0,AB,3631000.0,,
+PanSTARRS,y,,,9620.0,AB,3631000.0,,
+SDSS,u,,,3551.0,AB,3631000.0,,
+SDSS,g,,,4686.0,AB,3631000.0,,
+SDSS,r,,,6166.0,AB,3631000.0,,
+SDSS,i,,,7480.0,AB,3631000.0,,
+SDSS,z,,,8932.0,AB,3631000.0,,
+Gemini North,K,,,22089.98,vega,640000.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Gemini/NIRI.K-G0204w&&mode=browse&gname=Gemini&gname2=NIRI#filter,
+Gemini North,L',,,37590.74,vega,248080.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Gemini/NIRI.Lprime-G0207w&&mode=browse&gname=Gemini&gname2=NIRI#filter,
+WIYN,U,,,3576.21,vega,1693910.0,100% http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w001&&mode=browse&gname=WIYN&gname2=WIYN#filter,WIYN.U_HARRIS_fraction.txt
+WIYN,B,,,4322.75,vega,3898270.0,100% http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w002&&mode=browse&gname=WIYN&gname2=WIYN#filter,WIYN.B_HARRIS_fraction.txt
+WIYN,R,,,6554.66,vega,3022620.0,100% http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w004&&mode=browse&gname=WIYN&gname2=WIYN#filter,WIYN.R_HARRIS_fraction.txt
+WIYN,I,,,8356.12,vega,2360270.0,100% http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w005&&mode=browse&gname=WIYN&gname2=WIYN#filter,WIYN.I_HARRIS_fraction.txt
+NOT,U,,,3600.85,vega,1786310.0,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=NOT&gname2=ALFOSC&asttype=,NOT_U.txt
+NOT,B,,,4306.12,vega,3927160.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_B&&mode=browse&gname=NOT&gname2=ALFOSC#filter,NOT_B.txt
+NOT,V,,,5389.63,vega,3636940.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_V&&mode=browse&gname=NOT&gname2=ALFOSC#filter,NOT_V.txt
+NOT,R,,,6396.64,vega,3033260.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_R&&mode=browse&gname=NOT&gname2=ALFOSC#filter,NOT_R.txt
+NOT,I,,,8559.6,vega,2309980.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_I&&mode=browse&gname=NOT&gname2=ALFOSC#filter,NOT_I.txt
+Subaru,K',,IRCS,21049.98,vega,693680.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Subaru/IRCS.Kp&&mode=browse&gname=Subaru&gname2=IRCS#filter,
+Magellan_PANIC,J,,PANIC,12500.0,vega,1594000.0,https://iopscience.iop.org/article/10.1086/376474/pdf for zeropoints,
+Magellan_PANIC,H,,PANIC,16500.0,vega,1024000.0,http://instrumentation.obs.carnegiescience.edu/wirc/wircpaper.pdf for wavelengths,
+Magellan_PANIC,Ks,,PANIC,21600.0,vega,666800.0, used in J1330>have sent email about filter profile>otherwise omit,
+UH88,V,,,5510.0,,,,
+UH88,R,,,6580.0,,,,
+UH88,I,,,8060.0,,,,
+UH88,H,,,16300.0,,,,
+HST,WFC3/F160W,,,15370.34,AB,3631000.0,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_IR.F160W,HST.WFC3.F160W.txt
+HST,WFC3/F475X,,,4937.39,AB,3631000.0,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_UVIS2.F475X&&mode=browse&gname=HST&gname2=WFC3_UVIS2#filter,HST.WFC3.F475X.txt
+HST,WFC3/F814W,,,8029.29,AB,3631000.0,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_UVIS2.F814W,HST.WFC3.F814W.txt
+CASTLES,F555W,V,WFPC2/PC1,5442.92,vega,3643250.0,,HST.CASTLES.F555W.txt
+CASTLES,F160W,H,NICMOS/NIC2,16036.9,vega,1063080.0,,HST.CASTLES.F160W.txt
+CASTLES,F814W,I,WFPC2/PC1,7995.93,vega,2455070.0,,HST.CASTLES.F814W.txt
+HST,ACS_HRC/F330W,,,3362.99,vega,1245770.0,,HST.ACS_HRC.F330W.txt
+HST,ACS_HRC/F435W,,,4323.09,vega,3980460.0,,HST.ACS_HRC.F435W.txt
+HST,ACS_HRC/F555W,,,5355.74,vega,3665220.0,,HST.ACS_HRC.F555W.txt
+HST,ACS_HRC/F625W,,,6295.19,vega,3123530.0,,HST.ACS_HRC.F625W.txt
+HST,ACS_HRC/F814W,,,8100.44,vega,2436510.0,,HST.ACS_HRC.F814W.txt
+UH88,OPTIC/U,,,3576.21,vega,1693910.0,https://www.ifa.hawaii.edu/88inch/2.2-meter-technical.htm   Cant find filterprofiles but is 6 months a year ar WIYN so used that,
+UH88,OPTIC/B,,,4322.75,vega,3898270.0,,
+UH88,OPTIC/R,,,6554.66,vega,3022620.0, ,
+UH88,OPTIC/I,,,8356.12,vega,2360270.0, ,
