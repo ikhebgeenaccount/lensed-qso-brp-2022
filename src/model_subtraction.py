@@ -18,7 +18,7 @@ def model_subtraction(lqso):
     scalar is by which number this model needs to be multiplied
     """
     #Fitting gives the proper model and the scalar
-    model_name, scalar = fit(lqso, save_plots=False)
+    model_name, scalar, error = fit(lqso, save_plots=False)
     #The wavelengths of the model
     x_model = mod.MODELS[model_name]['wavelength']* (1 + lqso.props['z_lens'].values[0])
     #The fluxes of the model
@@ -46,7 +46,7 @@ def model_subtraction(lqso):
         elif row['flux_G'] == 0. and row['flux_A'] == 0. and row['flux_B'] == 0.\
                                 and row['flux_C'] == 0. and row['flux_D'] == 0.:
             list_sub.append( row['flux_total']- scalar * np.interp(row['wavelength'], xp=x_model, fp=y_model))
-            list_sub_err.append(0)
+            list_sub_err.append(np.sqrt(row['flux_err']**2+error**2))
         #if the componentwise data is available, use that instead of subtracting the data    
         else:
             list_sub.append( row['flux_A'] + row['flux_B'] + row['flux_C'] + row['flux_D'])
