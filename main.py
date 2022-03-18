@@ -15,7 +15,7 @@ if __name__ == '__main__':
     #percent_to_fraction('WIYN.U_HARRIS.txt','WIYN.U_HARRIS_fraction.txt')
     
     #photometry
-    galaxy = 'B1608+656'
+    galaxy = 'J1633+3134'
     lqso = LensedQSO(galaxy)
     #mags_to_fluxes(lqso)
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
