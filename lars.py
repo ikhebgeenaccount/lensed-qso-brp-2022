@@ -7,6 +7,7 @@ import pandas as pd
 from src.lensed_qso import LensedQSO
 from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
 from src.ned_to_sed import ned_table_to_sed
+from src.filters import populate_filter_profile_path_column
 
 import src.model_sed
 
@@ -142,5 +143,8 @@ if __name__ == '__main__':
     # all_galaxies()
     # fit_foreground()
     # plot_single_model()
-    single_galaxy()
+    # single_galaxy()
+
+    populate_filter_profile_path_column()
+
     plt.show()
