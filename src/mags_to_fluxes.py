@@ -179,18 +179,17 @@ def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3, componen
     print(closest_is)
 
     for ci, ri in enumerate(source_is):
-        print(ci, ri)
         # ri is magnitude row
         # ci is corresponding index in closest_is, so row in SED that we need to fill
 
         # Check dist ok
         if subbeds[ci][closest_is[ci]] > max_filter_dist:
-            print(f'For mag row {ri}, closest row in SED {ri} is furhter than allowed max_filter_dist {max_filter_dist}, skipping.')
+            print(f'For mag row {ri}, closest row in SED {fsed_lids[closest_is[ci]]} is furhter than allowed max_filter_dist {max_filter_dist}, skipping.')
             continue
 
         # Check no _G value yet
         if fsed['flux_G'].iloc[closest_is[ci]] > 0.:
-            print(f'For mag row {ri}, closest row in SED {ri} already has foreground value')
+            print(f'For mag row {ri}, closest row in SED {fsed_lids[closest_is[ci]]} already has foreground value')
             continue
 
         # TODO: calculate fluxes from total flux based on magnitudes
