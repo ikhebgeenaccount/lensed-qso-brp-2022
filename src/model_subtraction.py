@@ -57,6 +57,7 @@ def model_subtraction(lqso):
     
     
     lqso.plot_spectrum(component='_sub')
-
-    
+    plt.vlines(np.max(x_model), 0.9*np.min(list_sub), np.max(lqso.sed['flux_total']), alpha=0.5)
+    plt.vlines(np.min(x_model), 0.9*np.min(list_sub), np.max(lqso.sed['flux_total']), alpha=0.5, label='model boundary')
+    plt.legend()
     lqso.save_sed()
