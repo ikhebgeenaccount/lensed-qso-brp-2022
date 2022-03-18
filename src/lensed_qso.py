@@ -15,7 +15,7 @@ FILTERED_SOURCES = {
     'B1152+200': ['panstarrs'],
     'B1600+434': ['panstarrs'],
     'B1608+656': [],#['Koopmans+2003' ],
-    'J0806+2006': ['panstarrs', 'Inada'],
+    'J0806+2006': ['panstarrs'],
     'J0924+0219': ['panstarrs'],
     'J1330+1810': ['panstarrs'],
     'J1455+1447': ['panstarrs'],
@@ -50,12 +50,12 @@ class LensedQSO:
         # Read SED
         self.sed_file = sed_source
         self.sed = pd.read_csv(os.path.join('data', name, sed_source))
-        self.sed.fillna(0, inplace=True)
+        self.sed.fillna(0., inplace=True)
 
         try:
             # Read mags
             self.mags = pd.read_csv(os.path.join('data', name, mags_source))
-            self.mags.fillna(0, inplace=True)
+            self.mags.fillna(0., inplace=True)
         except FileNotFoundError:
             print('No mags file found for galaxy ' + self.name)
 

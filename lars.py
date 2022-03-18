@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from src.lensed_qso import LensedQSO
-from src.mags_to_fluxes import mags_to_fluxes
+from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
 from src.ned_to_sed import ned_table_to_sed
 
 import src.model_sed
@@ -62,7 +62,7 @@ def sdss_panstarrs_flux_discrepancy():
 
 
 def all_galaxies():
-    for g in GALAXIES:
+    for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
         lqso = LensedQSO(g)
         lqso.plot_spectrum(loglog=True)
 
@@ -95,14 +95,18 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'J1330+1810'
+    galaxy = 'J0806+2006'
     lqso = LensedQSO(galaxy)
 
     # ned_table_to_sed(lqso, ned_file='ned_wise.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
     # ned_table_to_sed(lqso, ned_file='ned_2mass.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
     # ned_table_to_sed(lqso, ned_file='ned_chandra.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
 
-    # mags_to_fluxes(lqso, components=None if galaxy != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
+    mags_to_fluxes(lqso, components=None if galaxy != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
+
+    mag_ratio_split_total_flux(lqso, 'Inada+2006')
+
+    src.model_sed.fit(lqso)
 
     lqso.plot_spectrum(loglog=True)
 
@@ -135,8 +139,8 @@ def plot_single_model():
 
 
 if __name__ == '__main__':
-    all_galaxies()
+    # all_galaxies()
     # fit_foreground()
     # plot_single_model()
-    # single_galaxy()
+    single_galaxy()
     plt.show()
