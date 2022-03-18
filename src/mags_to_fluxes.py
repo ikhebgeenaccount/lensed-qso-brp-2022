@@ -94,7 +94,7 @@ def mags_to_fluxes(lqso, components=None):
     lqso.save_sed()
 
 
-def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3, components=['_G', '_A', '_B', '_C', '_D'], overwrite=False):
+def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3, components=None, overwrite=False):
     """
     Calculates the flux ratios of the components based on the components magnitudes.
     Applies this ratio to the closest filter (based on wavelength) it can find, if that wavelength is not split into components already.
@@ -102,6 +102,8 @@ def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3, componen
     :param ratio_source: indicates which source to use to find the ratio.
     :param max_filter_dist: maximum distance between filter that ratios are taken from and filter of which total will be split
     """
+    if components is None:
+        components = ['_G', '_A', '_B', '_C', '_D']
     source_is = lqso.mags.loc[lqso.mags.source == ratio_source].index
 
     if source_is.shape[0] > lqso.filter_sed().shape[0]:
@@ -196,7 +198,6 @@ def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3, componen
                 continue
             print('\tOverwriting.')
 
-        # TODO: calculate fluxes from total flux based on magnitudes
         # Flux ratios are given by m_1 - m_2 = -2.5 log10(f_1/f_2)
         for c in range(n_comps):
             comp = components[c]
@@ -216,7 +217,6 @@ def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3, componen
             lqso.sed.loc[fsed_lids[closest_is[ci]], f'flux{comp}'] = fsed['flux_total'].iloc[closest_is[ci]] / div
             print(f'flux{comp} =', fsed['flux_total'].iloc[closest_is[ci]] / div)
 
-    # TODO: enter into SED
     lqso.plot_spectrum(component='_G')
     lqso.save_sed()
 
