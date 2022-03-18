@@ -94,7 +94,7 @@ def mags_to_fluxes(lqso, components=None):
     lqso.save_sed()
 
 
-def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3, components=['_G', '_A', '_B', '_C', '_D']):
+def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3, components=['_G', '_A', '_B', '_C', '_D'], overwrite=False):
     """
     Calculates the flux ratios of the components based on the components magnitudes.
     Applies this ratio to the closest filter (based on wavelength) it can find, if that wavelength is not split into components already.
@@ -177,6 +177,7 @@ def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3, componen
 
     print('SED rows for each mag row after duplicate check:')
     print(closest_is)
+    print(f'Finding these indices took {ks - 1} attempts.')
 
     for ci, ri in enumerate(source_is):
         # ri is magnitude row
@@ -190,7 +191,10 @@ def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3, componen
         # Check no _G value yet
         if fsed['flux_G'].iloc[closest_is[ci]] > 0.:
             print(f'For mag row {ri}, closest row in SED {fsed_lids[closest_is[ci]]} already has foreground value')
-            continue
+            if not overwrite:
+                print('\tNot overwriting, if you want to, set overwriting=True')
+                continue
+            print('\tOverwriting.')
 
         # TODO: calculate fluxes from total flux based on magnitudes
         # Flux ratios are given by m_1 - m_2 = -2.5 log10(f_1/f_2)
