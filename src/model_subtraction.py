@@ -42,7 +42,7 @@ def model_subtraction(lqso):
         
         #if there is an upper limit, print it. Calculated the same way now
         if  row['upper_limit']:
-            print(f'upper limit for row {i}, not subtracted')
+            print(f'upper limit for row {i}')
         
         #exclude too large lambdas
         if row['wavelength'] >= np.max(x_model):
