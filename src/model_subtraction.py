@@ -11,7 +11,8 @@ from src.model_sed import interp_fluxes
 import matplotlib.pyplot as plt
 import numpy as np
 from src.filters import get_filename
-import pandas
+import pandas as pd
+import os
 
 def model_subtraction(lqso):
     """
@@ -51,31 +52,40 @@ def model_subtraction(lqso):
             list_sub.append( row['flux_total'])
             list_sub_err.append(row['flux_err'])
             
-        #if only a total flux is known, subtract the model
+        #if only a total flux is known, we are going to be subtracting the model
         elif row['flux_G'] == 0. and row['flux_A'] == 0. and row['flux_B'] == 0.\
                                 and row['flux_C'] == 0. and row['flux_D'] == 0.:
                                     
-            #check if there is a telescope mentioned, otherwise just take closest value
+            #check if there is a telescope mentioned, otherwise just take closest wavelength value
             if row['telescope']==0:
                 print(f'no telescope in sed file for row {i}')
-                list_sub.append( float(row['flux_total'])- scalar * np.interp(row['wavelength'], xp=x_model, fp=y_model))
-                list_sub_err.append(np.sqrt(row['flux_err']**2+error**2))
+                list_sub.append( float(row['flux_total']) - scalar * np.interp(row['wavelength'], xp=x_model, fp=y_model))
+                list_sub_err.append(np.sqrt(row['flux_err'] ** 2 + (scalar * error) ** 2)) 
                 continue
                 
             #check if the telescope has a name in filters.csv
+            #if not, just take the closest value
             filename = get_filename(row['telescope'], row['filter'])
-            if pandas.isnull(filename):
+            if pd.isnull(filename):
                 print( 'filename not in filters.csv for', row['telescope'])
                 list_sub.append( float(row['flux_total'])- scalar * np.interp(row['wavelength'], xp=x_model, fp=y_model))
-                list_sub_err.append(np.sqrt(row['flux_err']**2+error**2))
+                list_sub_err.append(np.sqrt(row['flux_err']**2 + (scalar * error) **2 ))
                 continue
             
             #read in the filterprofile
+            filterprofile = pd.read_csv (os.path.join('data','Filterprofiles','TXT',filename), \
+                delim_whitespace=True, header=None,usecols=[ 0,1], names=['wavelength', 'transmission'])
             
-            #middel over het filterprofiel
+            #middel over het filterprofiel: neem het stukje model op je filterprofiel
+            x_model_range=x_model[(x_model >= min(filterprofile['wavelength'])) * (x_model <= max(filterprofile['wavelength']))]
+            y_model_range=y_model[(x_model >= min(filterprofile['wavelength'])) * (x_model <= max(filterprofile['wavelength']))]
+            #Neem de weights = de waarden van je filterprofiel op de range van je model
+            weights_filter = np.interp(x_model_range, xp=filterprofile['wavelength'], fp=filterprofile['transmission'])
+            #Neem het weighted average = de waarden van je model op de filterrange
+            average_model = np.average (y_model_range, weights=weights_filter)
             
-            list_sub.append( float(row['flux_total'])- scalar * np.interp(row['wavelength'], xp=x_model, fp=y_model))
-            list_sub_err.append(np.sqrt(row['flux_err']**2+error**2))
+            list_sub.append( float(row['flux_total'])- scalar * average_model)
+            list_sub_err.append(np.sqrt(row['flux_err']**2 + (error * scalar)**2))
             
             
         #if the componentwise data is available, use that instead of subtracting the data    
