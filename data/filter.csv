@@ -53,8 +53,8 @@ WISE,W1,,,,,,,NRSR-W1.txt
 WISE,W2,,,,,,,NRSR-W2.txt
 WISE,W3,,,,,,,NRSR-W3.txt
 WISE,W4,,,,,,,NRSR-W4.txt
-GALEX,NUV,,,,,,,galex_2500.res
-GALEX,FUV,,,,,,,galex_1500.res
+GALEX,NUV,,,,,,,galex2500.res
+GALEX,FUV,,,,,,,galex1500.res
 Chandra,2-7,,,,,,,CHANDRA_2_7.txt
 Chandra,0.5-7,,,,,,,CHANDRA_0.5_7.txt
 Chandra,1.2-2,,,,,,,CHANDRA_1.2_2.txt
