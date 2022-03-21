@@ -66,5 +66,5 @@ VLA,8.4Ghz,X,,,,,,VLA_8.4.txt
 SCUBA,850mu,,,,,,,JCMT.SCUBA.850.txt
 SCUBA,450mu,,,,,,,JCMT.SCUBA.450.txt
 SPITZER,24mu,,,,,,,SPITZER_mips24.txt
-ATCA,6.08Ghz,X,,,,,,ATCA_6.08.txt
-ATCA,8.64Ghz,X,,,,,,ATCA_8.64.txt
+ATCA,6.08Ghz,,,,,,,ATCA_6.08.txt
+ATCA,8.64Ghz,,,,,,,ATCA_8.64.txt
