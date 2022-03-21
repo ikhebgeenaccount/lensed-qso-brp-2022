@@ -53,5 +53,5 @@ WISE,W1,,,,,,,NRSR-W1.txt
 WISE,W2,,,,,,,NRSR-W2.txt
 WISE,W3,,,,,,,NRSR-W3.txt
 WISE,W4,,,,,,,NRSR-W4.txt
-GALEX,FIR,,,,,,,galex_2500.res
-GALEX,NIR,,,,,,,galex_1500.res
+GALEX,NUV,,,,,,,galex_2500.res
+GALEX,FUV,,,,,,,galex_1500.res
