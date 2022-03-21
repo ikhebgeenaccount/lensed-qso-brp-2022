@@ -202,20 +202,38 @@ def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3, componen
         for c in range(n_comps):
             comp = components[c]
 
-            div = 1
+            ratios = [1.]
 
-            # TODO: error calculation
-
+            # Calculate flux ratios
             for cs in range(n_comps):
                 # Flux ratio with itself is 1, already in starting value of div
                 if c == cs:
                     continue
                 print(f'flux ratio {components[cs]}/{comp}={np.power(10., (lqso.mags[f"mag{components[cs]}"].loc[ri] - lqso.mags[f"mag{components[c]}"].loc[ri]) / -2.5)}')
 
-                div += np.power(10., (lqso.mags[f'mag{components[cs]}'].loc[ri] - lqso.mags[f'mag{components[c]}'].loc[ri]) / -2.5)
+                ratios.append(np.power(10., (lqso.mags[f'mag{components[cs]}'].loc[ri] - lqso.mags[f'mag{components[c]}'].loc[ri]) / -2.5))
 
-            lqso.sed.loc[fsed_lids[closest_is[ci]], f'flux{comp}'] = fsed['flux_total'].iloc[closest_is[ci]] / div
-            print(f'flux{comp} =', fsed['flux_total'].iloc[closest_is[ci]] / div)
+            sum_ratios = np.sum(ratios)
+
+            # Calculate error
+            stdsq = 0.
+
+            # df_c / dF_T, c is current component comp
+            fcft = 1. / sum_ratios
+            stdsq += np.power(fcft * lqso.sed.loc[fsed_lids[closest_is[ci]], 'flux_err'], 2.)
+
+            # df_c / dm_c
+            fcmc = np.log(10.) / 2.5 * lqso.sed.loc[fsed_lids[closest_is[ci]], 'flux_total'] * (1. - sum_ratios) / np.power(sum_ratios, 2.)
+            stdsq += np.power(fcmc * lqso.mags[f'mag{comp}_err'].loc[ri], 2.)
+
+            for cs in range(n_comps):
+                if c == cs:
+                    continue
+                fbmi = np.log(10.) / 2.5 * lqso.sed.loc[fsed_lids[closest_is[ci]], 'flux_total'] * ratios[cs] / np.power(sum_ratios, 2.)
+                stdsq += np.power(fbmi * lqso.mags[f'mag{components[c]}_err'].loc[ri], 2.)
+
+            print(f'flux{comp} =', fsed['flux_total'].iloc[closest_is[ci]] / sum_ratios, '+/-', np.sqrt(stdsq))
+            lqso.sed.loc[fsed_lids[closest_is[ci]], [f'flux{comp}', f'flux{comp}_err']] = [fsed['flux_total'].iloc[closest_is[ci]] / sum_ratios, np.sqrt(stdsq)]
 
     lqso.plot_spectrum(component='_G')
     lqso.save_sed()
