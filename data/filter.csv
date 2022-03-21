@@ -4,13 +4,13 @@ PanSTARRS,r,,,6170.0,AB,3631000.0,,
 PanSTARRS,i,,,7520.0,AB,3631000.0,,
 PanSTARRS,z,,,8660.0,AB,3631000.0,,
 PanSTARRS,y,,,9620.0,AB,3631000.0,,
-SDSS,u,,,3551.0,AB,3631000.0,,
-SDSS,g,,,4686.0,AB,3631000.0,,
-SDSS,r,,,6166.0,AB,3631000.0,,
-SDSS,i,,,7480.0,AB,3631000.0,,
-SDSS,z,,,8932.0,AB,3631000.0,,
-Gemini North,K,,,22089.98,vega,640000.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Gemini/NIRI.K-G0204w&&mode=browse&gname=Gemini&gname2=NIRI#filter,
-Gemini North,L',,,37590.74,vega,248080.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Gemini/NIRI.Lprime-G0207w&&mode=browse&gname=Gemini&gname2=NIRI#filter,
+SDSS,u,,,3551.0,AB,3631000.0,,u_SDSS.res
+SDSS,g,,,4686.0,AB,3631000.0,,g_SDSS.res
+SDSS,r,,,6166.0,AB,3631000.0,,r_SDSS.res
+SDSS,i,,,7480.0,AB,3631000.0,,i_SDSS.res
+SDSS,z,,,8932.0,AB,3631000.0,,z_SDSS.res
+Gemini North,K,,,22089.98,vega,640000.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Gemini/NIRI.K-G0204w&&mode=browse&gname=Gemini&gname2=NIRI#filter,GEMINI_K.txt
+Gemini North,L',,,37590.74,vega,248080.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Gemini/NIRI.Lprime-G0207w&&mode=browse&gname=Gemini&gname2=NIRI#filter,GEMINI_Lprime.txt
 WIYN,U,,,3576.21,vega,1693910.0,100% http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w001&&mode=browse&gname=WIYN&gname2=WIYN#filter,WIYN.U_HARRIS_fraction.txt
 WIYN,B,,,4322.75,vega,3898270.0,100% http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w002&&mode=browse&gname=WIYN&gname2=WIYN#filter,WIYN.B_HARRIS_fraction.txt
 WIYN,R,,,6554.66,vega,3022620.0,100% http://svo2.cab.inta-csic.es/theory/fps/index.php?id=WIYN/WIYN.w004&&mode=browse&gname=WIYN&gname2=WIYN#filter,WIYN.R_HARRIS_fraction.txt
