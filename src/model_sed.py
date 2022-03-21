@@ -113,7 +113,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     fig, ax = plt.subplots()
     x = range(model_set.shape[0])
     ax.scatter(x, model_set['score'])
-    ax.set_xticks(x, model_set['name'].values, rotation=90)
+    #ax.set_xticks(x, model_set['name'].values, rotation=90)
     ax.set_title(f'$\chi^2$ values of models for {lqso.name}_G')
 
     fig.savefig(os.path.join(save_location, lqso.name, 'models_chisq.pdf'))
