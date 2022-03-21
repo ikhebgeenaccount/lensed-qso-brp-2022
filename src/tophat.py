@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-def tophat(central,bandwidth,filtername,freq_Ghz=False,length=3000):
+def tophat(central,bandwidth,filtername,freq_Ghz=False,energy_Kev=False,length=3000):
     """
     This makes a tophat-like profile function for the radio wavelengths, 
     with transmission =1 within the bandwidth and 0 outside it.
@@ -26,6 +26,13 @@ def tophat(central,bandwidth,filtername,freq_Ghz=False,length=3000):
     if freq_Ghz:
         wavelength_array = 2.99e8 * (10 ** 10) / ((x_array)*(10**9) )
         x_array = wavelength_array 
+        
+    #if given in kev, let central be the lower limit and bandwidth be the upper limit
+    if energy_Kev:
+        transmission_array = np.zeros(length)
+        transmission_array[(x_array >= float(central)) * (x_array <= float(bandwidth))] = 1
+        wavelength_array = 12398 / (x_array * 10 ** 3)
+        x_array = wavelength_array
         
     plt.plot(x_array, transmission_array)
     plt.xlabel('wavelength in Angstrom')
