@@ -39,7 +39,7 @@ def model_subtraction(lqso):
     
     #iterating over the sed file
     for i, row in lqso.sed.iterrows(): 
-        
+        print(i)
         
         
         #exclude too large lambdas
