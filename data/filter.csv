@@ -63,3 +63,5 @@ Chandra,0.2-0.5,,,,,,,CHANDRA_0.2_0.5.txt
 LOFAR,LOFAR,,,,,,,LOFAR.txt
 VLA,15Ghz,,,,,,,VLA_15.txt
 VLA,8.4Ghz,,,,,,,VLA_8.4.txt
+SCUBA,850mu,,,,,,,JCMT.SCUBA.850.txt
+SCUBA,450mu,,,,,,,JCMT.SCUBA.450.txt
