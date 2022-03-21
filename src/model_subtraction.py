@@ -39,24 +39,31 @@ def model_subtraction(lqso):
     
     #iterating over the sed file
     for i, row in lqso.sed.iterrows(): 
-        print(i)
         
+        #if there is an upper limit, print it. Calculated the same way now
+        if  row['upper_limit']:
+            print(f'upper limit for row {i}, not subtracted')
         
         #exclude too large lambdas
         if row['wavelength'] >= np.max(x_model):
             list_sub.append( row['flux_total'])
             list_sub_err.append(row['flux_err'])
+            continue
             
         #exclude too small lambdas
         elif row['wavelength'] <= np.min(x_model):  
             list_sub.append( row['flux_total'])
             list_sub_err.append(row['flux_err'])
+            continue
+            
+        
             
         #if the entire row is empty
         elif row['flux_G'] == 0. and row['flux_A'] == 0. and row['flux_B'] == 0.\
                                 and row['flux_C'] == 0. and row['flux_D'] == 0. and row['flux_total']==0:
             list_sub.append(0)
             list_sub_err.append(0)
+            continue
             
         #if only a total flux is known, we are going to be subtracting the model
         elif row['flux_G'] == 0. and row['flux_A'] == 0. and row['flux_B'] == 0.\
@@ -92,6 +99,7 @@ def model_subtraction(lqso):
             
             list_sub.append( float(row['flux_total'])- scalar * average_model)
             list_sub_err.append(np.sqrt(row['flux_err']**2 + (error * scalar)**2))
+            continue
             
             
         #if the componentwise data is available, use that instead of subtracting the data    
