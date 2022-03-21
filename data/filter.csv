@@ -65,3 +65,4 @@ VLA,15Ghz,,,,,,,VLA_15.txt
 VLA,8.4Ghz,,,,,,,VLA_8.4.txt
 SCUBA,850mu,,,,,,,JCMT.SCUBA.850.txt
 SCUBA,450mu,,,,,,,JCMT.SCUBA.450.txt
+SPITZER,24mu,,,,,,,SPITZER_mips24.txt
