@@ -20,7 +20,7 @@ NOT,B,,,4306.12,vega,3927160.0,http://svo2.cab.inta-csic.es/theory/fps/index.php
 NOT,V,,,5389.63,vega,3636940.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_V&&mode=browse&gname=NOT&gname2=ALFOSC#filter,NOT_V.txt
 NOT,R,,,6396.64,vega,3033260.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_R&&mode=browse&gname=NOT&gname2=ALFOSC#filter,NOT_R.txt
 NOT,I,,,8559.6,vega,2309980.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=NOT/ALFOSC.Bes_I&&mode=browse&gname=NOT&gname2=ALFOSC#filter,NOT_I.txt
-Subaru,K',,IRCS,21049.98,vega,693680.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Subaru/IRCS.Kp&&mode=browse&gname=Subaru&gname2=IRCS#filter,
+Subaru,K',,IRCS,21049.98,vega,693680.0,http://svo2.cab.inta-csic.es/theory/fps/index.php?id=Subaru/IRCS.Kp&&mode=browse&gname=Subaru&gname2=IRCS#filter,Subaru.IRCS.Kprime.txt
 Magellan_PANIC,J,,PANIC,12500.0,vega,1594000.0,https://iopscience.iop.org/article/10.1086/376474/pdf for zeropoints,
 Magellan_PANIC,H,,PANIC,16500.0,vega,1024000.0,http://instrumentation.obs.carnegiescience.edu/wirc/wircpaper.pdf for wavelengths,
 Magellan_PANIC,Ks,,PANIC,21600.0,vega,666800.0, used in J1330>have sent email about filter profile>otherwise omit,
@@ -43,9 +43,9 @@ UH88,OPTIC/U,,,3576.21,vega,1693910.0,https://www.ifa.hawaii.edu/88inch/2.2-mete
 UH88,OPTIC/B,,,4322.75,vega,3898270.0,,
 UH88,OPTIC/R,,,6554.66,vega,3022620.0, ,
 UH88,OPTIC/I,,,8356.12,vega,2360270.0, ,
-Herschel,SPIRE_250mu,,,,,,,
-Herschel,SPIRE_350mu,,,,,,,
-Herschel,SPIRE_500mu,,,,,,,
+Herschel,SPIRE_250mu,,,,,,,SPIRE_250mu.txt
+Herschel,SPIRE_350mu,,,,,,,SPIRE_350mu.txt
+Herschel,SPIRE_500mu,,,,,,,SPIRE_500mu.txt
 2MASS,J,,,,,,,J_2mass.res
 2MASS,H,,,,,,,H_2mass.res
 2MASS,K_s,,,,,,,Ks_2mass.res
