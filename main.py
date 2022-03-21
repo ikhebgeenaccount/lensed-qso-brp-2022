@@ -12,7 +12,7 @@ from src.filters import populate_filter_profile_path_column
 if __name__ == '__main__':
     #filterprofiles
     #xml_to_txt('WIYN.B_HARRIS.xml', 'WIYN.B_HARRIS.txt')
-    #tophat(144e-3,48e-3, 'LOFAR.txt',True)
+    #tophat(0.2,0.5, 'CHANDRA_0.2_0.5.txt',freq_Ghz=False, energy_Kev=True)
     #percent_to_fraction('WIYN.U_HARRIS.txt','WIYN.U_HARRIS_fraction.txt')
     
     #photometry
@@ -22,8 +22,8 @@ if __name__ == '__main__':
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
     lqso.plot_spectrum(loglog=True)
     
-   #model_subtraction(lqso)
-    populate_filter_profile_path_column()
+    #model_subtraction(lqso)
+    #populate_filter_profile_path_column()
 
     
     
