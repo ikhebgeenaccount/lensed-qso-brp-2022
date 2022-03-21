@@ -52,9 +52,15 @@ def model_subtraction(lqso):
             list_sub.append( row['flux_total'])
             list_sub_err.append(row['flux_err'])
             
+        #if the entire row is empty
+        elif row['flux_G'] == 0. and row['flux_A'] == 0. and row['flux_B'] == 0.\
+                                and row['flux_C'] == 0. and row['flux_D'] == 0. and row['flux_total']==0:
+            list_sub.append(0)
+            list_sub_err.append(0)
+            
         #if only a total flux is known, we are going to be subtracting the model
         elif row['flux_G'] == 0. and row['flux_A'] == 0. and row['flux_B'] == 0.\
-                                and row['flux_C'] == 0. and row['flux_D'] == 0.:
+                                and row['flux_C'] == 0. and row['flux_D'] == 0. and row['flux_total']!=0:
                                     
             #check if there is a telescope mentioned, otherwise just take closest wavelength value
             if row['telescope']==0:
