@@ -17,9 +17,9 @@ if __name__ == '__main__':
     #photometry
     galaxy = 'J0924+0219'
     lqso = LensedQSO(galaxy)
-    mags_to_fluxes(lqso)
+    #mags_to_fluxes(lqso)
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
-    #lqso.plot_spectrum(loglog=True)
+    lqso.plot_spectrum(loglog=True)
     
    # model_subtraction(lqso)
     
