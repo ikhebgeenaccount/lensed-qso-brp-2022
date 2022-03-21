@@ -107,8 +107,14 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     # print(model_set.head(10))
 
     # Histogram of scores
+    # fig, ax = plt.subplots()
+    # ax.hist(model_set['score'], bins=25)
+
     fig, ax = plt.subplots()
-    ax.hist(model_set['score'].head(25), bins=25)
+    x = range(model_set.shape[0])
+    ax.scatter(x, model_set['score'])
+    ax.set_xticks(x, model_set['name'].values, rotation=90)
+    ax.set_title(f'$\chi^2$ values of models for {lqso.name}_G')
 
     plot_fit(lqso, model_set, save_plots=save_plots, save_location=save_location)
 

@@ -47,6 +47,8 @@ def mags_to_fluxes(lqso, components=None):
         f_fields = []
         fe_fields = []
 
+        no_conv = False
+
         # Calculate fluxes and flux errors for each component
         for comp in components:
             # magnitude 0 means no magnitude given
@@ -57,6 +59,7 @@ def mags_to_fluxes(lqso, components=None):
                 f, fe = mag_to_flux(row.telescope, row['filter'], row[f'mag{comp}'], row[f'mag{comp}_err'])
             except NameError:
                 print(f'No conversion found for {row.telescope} {row["filter"]} filter in data/filter.csv.')
+                no_conv = True
                 continue
 
             # If a G (foreground galaxy) component magnitude is listed, assume all components are and produce a total
@@ -68,6 +71,9 @@ def mags_to_fluxes(lqso, components=None):
 
             f_fields.append(f'flux{comp}' if comp != '' else 'flux_total')
             fe_fields.append(f'flux{comp}_err')
+
+        if no_conv:
+            continue
 
         if total == 1:
             fs.append(sum(fs))
@@ -104,7 +110,7 @@ def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3, componen
     """
     if components is None:
         components = ['_G', '_A', '_B', '_C', '_D']
-    source_is = lqso.mags.loc[lqso.mags.source == ratio_source].index
+    source_is = lqso.mags.loc[(lqso.mags['source'] == ratio_source) & (lqso.mags['mag_G'] > 0)].index
 
     if source_is.shape[0] > lqso.filter_sed().shape[0]:
         raise ValueError('Found more mag filters than filtered SED rows, which cannot be handled.')
@@ -124,14 +130,17 @@ def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3, componen
     # So use lqso.filter_sed() to find wls
     fsed = lqso.filter_sed()
 
+    print(fsed)
+
     for i in source_is:
-        # Select mag based on source, calculate ratios
+        # Select mag based on source
         r = lqso.mags.loc[i]
 
         # Find the wavelength of the used filter
         wlf = get_wavelength(r['telescope'], r['filter'])
 
-        subbed = fsed['wavelength'] - wlf
+        subbed = (fsed['wavelength'] - wlf).values
+        print(subbed)
 
         subbeds.append(np.abs(subbed))
 
@@ -165,11 +174,14 @@ def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3, componen
         for i in dups:
             # Find which of the duplicates is closest to the target wavelength
             fis = np.where(closest_is == i)[0]  # [0] Since np.where returns tuple for dimensions, but only 1D here
+            print(fis)
+            print(np.array(subbeds)[fis][:,i])
             sm = np.argmin(np.array(subbeds)[fis][:,i])
+            print(sm)
 
             # Turn filter indices fis into a list so we can remove the lowest value as that one will remain the same
             fis = list(fis)
-            fis.remove(sm)
+            fis.remove(fis[sm])
 
             # Now find the kth best for the remaining cases
             for cid in fis:
@@ -187,7 +199,7 @@ def mag_ratio_split_total_flux(lqso, ratio_source, max_filter_dist=1e3, componen
 
         # Check dist ok
         if subbeds[ci][closest_is[ci]] > max_filter_dist:
-            print(f'For mag row {ri}, closest row in SED {fsed_lids[closest_is[ci]]} is furhter than allowed max_filter_dist {max_filter_dist}, skipping.')
+            print(f'For mag row {ri}, closest row in SED {fsed_lids[closest_is[ci]]} is further than allowed max_filter_dist {max_filter_dist}, skipping.')
             continue
 
         # Check no _G value yet

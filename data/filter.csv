@@ -28,9 +28,9 @@ UH88,V,,,5510,,,,
 UH88,R,,,6580,,,,
 UH88,I,,,8060,,,,
 UH88,H,,,16300,,,,
-hst,WFC3/F160W,,,15370.34,,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_IR.F160W,HST.WFC3.F160W.txt
-hst,WFC3/F475X,,,4937.39,,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_UVIS2.F475X&&mode=browse&gname=HST&gname2=WFC3_UVIS2#filter,HST.WFC3.F475X.txt
-hst,WFC3/F814W,,,8029.29,,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_UVIS2.F814W,HST.WFC3.F814W.txt
+hst,WFC_3/F160W,,,15370.34,AB,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_IR.F160W,HST.WFC3.F160W.txt
+hst,WFC_3/F475X,,,4937.39,,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_UVIS2.F475X&&mode=browse&gname=HST&gname2=WFC3_UVIS2#filter,HST.WFC3.F475X.txt
+hst,WFC_3/F814W,,,8029.29,,3631000,http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=HST/WFC3_UVIS2.F814W,HST.WFC3.F814W.txt
 CASTLES,F555W,V,WFPC2/PC1,5442.92,,3643250,,HST.CASTLES.F555W.txt
 CASTLES,F160W,H,NICMOS/NIC2,16036.9,vega,1063080,,HST.CASTLES.F160W.txt
 CASTLES,F814W,I,WFPC2/PC1,7995.93,,2455070,,HST.CASTLES.F814W.txt

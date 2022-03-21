@@ -96,20 +96,20 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'J0806+2006'
+    galaxy = 'J1633+3134'
     lqso = LensedQSO(galaxy)
 
     # ned_table_to_sed(lqso, ned_file='ned_wise.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
     # ned_table_to_sed(lqso, ned_file='ned_2mass.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
     # ned_table_to_sed(lqso, ned_file='ned_chandra.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
 
-    mags_to_fluxes(lqso, components=None if galaxy != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
+    # mags_to_fluxes(lqso, components=None if galaxy != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
+    m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
+    mag_ratio_split_total_flux(lqso, 'CASTLES', overwrite=False)
 
-    mag_ratio_split_total_flux(lqso, 'Inada+2006')
+    src.model_sed.fit(lqso, m)
 
-    src.model_sed.fit(lqso)
-
-    lqso.plot_spectrum(loglog=True)
+    lqso.plot_spectrum()
 
 
 def fit_foreground():
@@ -141,10 +141,10 @@ def plot_single_model():
 
 if __name__ == '__main__':
     # all_galaxies()
-    # fit_foreground()
+    fit_foreground()
     # plot_single_model()
     # single_galaxy()
 
-    populate_filter_profile_path_column()
+    # populate_filter_profile_path_column()
 
     plt.show()
