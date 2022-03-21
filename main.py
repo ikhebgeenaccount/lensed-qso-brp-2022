@@ -22,8 +22,7 @@ if __name__ == '__main__':
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
     lqso.plot_spectrum(loglog=True)
     
-    #model_subtraction(lqso)
-    #populate_filter_profile_path_column()
+    model_subtraction(lqso)
 
     
     
