@@ -70,7 +70,7 @@ def model_subtraction(lqso):
                                 and row['flux_C'] == 0. and row['flux_D'] == 0. and row['flux_total']!=0:
                                     
             #check if there is a telescope mentioned, otherwise just take closest wavelength value
-            if row['telescope']==0:
+            if pd.isnull(row['telescope']):
                 print(f'no telescope in sed file for row {i}')
                 list_sub.append( float(row['flux_total']) - scalar * np.interp(row['wavelength'], xp=x_model, fp=y_model))
                 list_sub_err.append(np.sqrt(row['flux_err'] ** 2 + (scalar * error) ** 2)) 
