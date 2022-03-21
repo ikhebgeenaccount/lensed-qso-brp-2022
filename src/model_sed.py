@@ -116,6 +116,9 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     ax.set_xticks(x, model_set['name'].values, rotation=90)
     ax.set_title(f'$\chi^2$ values of models for {lqso.name}_G')
 
+    fig.savefig(os.path.join(save_location, lqso.name, 'models_chisq.pdf'))
+    fig.savefig(os.path.join(save_location, lqso.name, 'models_chisq.jpg'))
+
     plot_fit(lqso, model_set, save_plots=save_plots, save_location=save_location)
 
     return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
