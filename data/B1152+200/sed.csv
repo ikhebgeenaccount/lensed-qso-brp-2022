@@ -1,4 +1,4 @@
-filter,wavelength,flux_total,flux_err,flux_G,flux_G_err,flux_A,flux_A_err,flux_B,flux_B_err,flux_C,flux_C_err,flux_D,flux_D_err,source,upper_limit,observed_passband,flux_sub,flux_sub_err, telescope
+filter,wavelength,flux_total,flux_err,flux_G,flux_G_err,flux_A,flux_A_err,flux_B,flux_B_err,flux_C,flux_C_err,flux_D,flux_D_err,source,upper_limit,observed_passband,flux_sub,flux_sub_err,telescope
 SPIRE_250mu,2500000.0,37.0,10.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,Stacey+2018,0.0,0,37.0,10.0,Herschel
 SPIRE_350mu,3500000.0,30.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,Stacey+2018,1.0,0,30.0,0.0,Herschel
 SPIRE_500mu,5000000.0,32.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,Stacey+2018,1.0,0,32.0,0.0,Herschel
