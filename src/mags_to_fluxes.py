@@ -82,14 +82,14 @@ def mags_to_fluxes(lqso, components=None):
         # If this combination of filter and wavelength does not exist yet in lqso.sed
         if lqso.sed[(lqso.sed['filter'] == row['filter']) & (lqso.sed.source == row.source)].empty:
             # Add it
-            lqso.sed.loc[len(lqso.sed.index), ['filter', 'wavelength', 'source', 'upper_limit'] + f_fields + fe_fields] =\
-                                                        [row['filter'], wavelength, row.source, row.lower_limit] + fs + fes
+            lqso.sed.loc[len(lqso.sed.index), ['filter', 'wavelength', 'source', 'upper_limit', 'telescope'] + f_fields + fe_fields] =\
+                                                        [row['filter'], wavelength, row.source, row.lower_limit, row['telescope']] + fs + fes
         else:
             # It exists, overwrite
             # Find the index of the row with same filter and source
             index = lqso.sed.index[(lqso.sed['filter'] == row['filter']) & (lqso.sed.source == row.source)]
-            lqso.sed.loc[index, ['filter', 'wavelength', 'source', 'upper_limit'] + f_fields + fe_fields] =\
-                                                        [row['filter'], wavelength, row.source, row.lower_limit] + fs + fes
+            lqso.sed.loc[index, ['filter', 'wavelength', 'source', 'upper_limit','telescope'] + f_fields + fe_fields] =\
+                                                        [row['filter'], wavelength, row.source, row.lower_limit,row['telescope']] + fs + fes
 
     lqso.save_sed()
 
