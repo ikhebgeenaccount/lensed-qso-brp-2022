@@ -23,6 +23,8 @@ if __name__ == '__main__':
     
    # model_subtraction(lqso)
     lqso.sed['telescope']=0
+    lqso.save_sed()
+
     
     
     plt.show()
