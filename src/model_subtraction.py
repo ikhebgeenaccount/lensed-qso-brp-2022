@@ -11,6 +11,7 @@ from src.model_sed import interp_fluxes
 import matplotlib.pyplot as plt
 import numpy as np
 from src.filters import get_filename
+import pandas
 
 def model_subtraction(lqso):
     """
@@ -30,7 +31,7 @@ def model_subtraction(lqso):
     #ax.plot(x_model, y_model, label = model_name)
     
     #an empty list to store the fluxes
-    lqso.sed['flux_sub']=0.
+    lqso.sed['flux_sub'] = 0.
     lqso.sed['flux_sub_err'] = 0.
     list_sub=[]
     list_sub_err=[]
@@ -59,16 +60,20 @@ def model_subtraction(lqso):
                 print(f'no telescope in sed file for row {i}')
                 list_sub.append( float(row['flux_total'])- scalar * np.interp(row['wavelength'], xp=x_model, fp=y_model))
                 list_sub_err.append(np.sqrt(row['flux_err']**2+error**2))
+                continue
                 
             #check if the telescope has a name in filters.csv
-            
+            filename = get_filename(row['telescope'], row['filter'])
+            if pandas.isnull(filename):
+                print( 'filename not in filters.csv for', row['telescope'])
+                list_sub.append( float(row['flux_total'])- scalar * np.interp(row['wavelength'], xp=x_model, fp=y_model))
+                list_sub_err.append(np.sqrt(row['flux_err']**2+error**2))
+                continue
             
             #read in the filterprofile
             
             #middel over het filterprofiel
             
-                                    
-                
             list_sub.append( float(row['flux_total'])- scalar * np.interp(row['wavelength'], xp=x_model, fp=y_model))
             list_sub_err.append(np.sqrt(row['flux_err']**2+error**2))
             
