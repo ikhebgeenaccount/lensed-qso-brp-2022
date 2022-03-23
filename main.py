@@ -11,8 +11,8 @@ from src.filters import populate_filter_profile_path_column
 
 if __name__ == '__main__':
     #filterprofiles
-    #xml_to_txt('WIYN.B_HARRIS.xml', 'WIYN.B_HARRIS.txt')
-    tophat(230.609583,0.560, 'IRAM_1.3mm.txt',freq_Ghz=True, energy_Kev=False)
+    xml_to_txt('MCM_Hiltner_I.xml', 'MCM_Hiltner_I.txt')
+    #tophat(230.609583,0.560, 'IRAM_1.3mm.txt',freq_Ghz=True, energy_Kev=False)
     #percent_to_fraction('WIYN.U_HARRIS.txt','WIYN.U_HARRIS_fraction.txt')
     
     #photometry
