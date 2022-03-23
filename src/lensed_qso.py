@@ -73,7 +73,9 @@ class LensedQSO:
         """
         allowed_sources = self.allowed_sources(disallowed_sources)
 
-        compfilter = self.sed[f'flux{component}'] > 0
+        compfilter = np.ones(self.sed.shape[0], dtype=bool)
+        if component is not None:
+            compfilter = self.sed[f'flux{component}'] > 0
 
         errorfilter = np.ones(self.sed.shape[0], dtype=bool)
         if not allow_zero_error:
