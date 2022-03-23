@@ -72,3 +72,5 @@ SCUBA,450mu,,,,,,,JCMT.SCUBA.450.txt
 SPITZER,24mu,,,,,,,SPITZER_mips24.txt
 ATCA,6.08Ghz,,,,,,,ATCA_6.08.txt
 ATCA,8.64Ghz,,,,,,,ATCA_8.64.txt
+IRAM,3mm,,,,,,,IRAM_3mm.txt
+IRAM,1.3mm,,,,,,,IRAM_1.3mm.txt
