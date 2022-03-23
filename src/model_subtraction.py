@@ -31,7 +31,7 @@ def model_subtraction(lqso):
     #The wavelengths of the model
     x_model = mod.MODELS[model_name]['wavelength']* (1 + lqso.props['z_lens'].values[0])
     #The fluxes of the model
-    y_model = scalar * mod.MODELS[model_name]['flux']
+    y_model = mod.MODELS[model_name]['flux']
 
     #how to plot it
     #fig, ax = lqso.plot_spectrum(loglog=True)
@@ -44,7 +44,7 @@ def model_subtraction(lqso):
     list_sub_err=[]
 
     #iterating over the sed file
-    for i, row in lqso.filter_sed().iterrows():
+    for i, row in lqso.filter_sed(component=None).iterrows():
         #if there is an upper limit, print it. Calculated the same way now
         if  row['upper_limit']:
             print(f'upper limit for row {i}')
@@ -104,8 +104,6 @@ def model_subtraction(lqso):
 
             list_sub.append( float(row['flux_total'])- scalar * average_model)
             list_sub_err.append(np.sqrt(row['flux_err']**2 + (error * scalar)**2))
-            continue
-
 
         #if the componentwise data is available, use that instead of subtracting the data
         else:
@@ -113,8 +111,8 @@ def model_subtraction(lqso):
             list_sub_err.append(np.sqrt(row['flux_A_err']**2 +row['flux_B_err']**2 + row['flux_C_err']**2 + row['flux_D_err']**2 ))
 
     #write to the sed
-    lqso.sed.loc[lqso.filter_sed().index, 'flux_sub']=list_sub
-    lqso.sed.loc[lqso.filter_sed().index, 'flux_sub_err']=list_sub_err
+    lqso.sed.loc[lqso.filter_sed(component=None).index, 'flux_sub']=list_sub
+    lqso.sed.loc[lqso.filter_sed(component=None).index, 'flux_sub_err']=list_sub_err
 
 
     fig, ax = lqso.plot_spectrum(component='_sub')
