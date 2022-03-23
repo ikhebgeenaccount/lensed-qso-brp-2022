@@ -8,10 +8,11 @@ from src.tophat import tophat
 from src.model_subtraction import model_subtraction
 from src.percent_to_fraction import percent_to_fraction
 from src.filters import populate_filter_profile_path_column
+from src.AGN_input import AGN_input
 
 if __name__ == '__main__':
     #filterprofiles
-    xml_to_txt('MCM_Hiltner_I.xml', 'MCM_Hiltner_I.txt')
+    #xml_to_txt('MCM_Hiltner_I.xml', 'MCM_Hiltner_I.txt')
     #tophat(230.609583,0.560, 'IRAM_1.3mm.txt',freq_Ghz=True, energy_Kev=False)
     #percent_to_fraction('WIYN.U_HARRIS.txt','WIYN.U_HARRIS_fraction.txt')
     
@@ -26,7 +27,7 @@ if __name__ == '__main__':
     #lqso.save_sed()
 
    # model_subtraction(lqso)
-
+    AGN_input()
     
     
     plt.show()
