@@ -2,7 +2,7 @@ Munoz et al., 2011
 https://ui.adsabs.harvard.edu/abs/2011ApJ...742...67M/abstract
 CASTLES and Hubble data (Hubble: ACS/HRC)
 
-Submillimetre fluxes
+Submillimetre fluxes Barvainis
 https://iopscience.iop.org/article/10.1086/340096/pdf
 
 HST catalog
