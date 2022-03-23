@@ -30,6 +30,9 @@ def AGN_input():
         fil=FILTER_PROPERTIES.filtername.values[i]
         file=FILTER_PROPERTIES.file.values[i]
         
+        if pd.isnull(file):
+            continue
+        
         print(f'    if filters[{tel}_{fil}]:')
         print(f'        files.append({tel}_{fil}_file)')
         print(f'        lambdas.append({tel}_{fil}_lambda)')
@@ -39,8 +42,13 @@ def AGN_input():
     
     for i, row in FILTER_PROPERTIES.iterrows():
         
+        
         tel=FILTER_PROPERTIES.telescope.values[i]
         TEL=tel.upper()
         fil=FILTER_PROPERTIES.filtername.values[i]
         file=FILTER_PROPERTIES.file.values[i]
+        
+        if pd.isnull(file):
+            continue
+        
         print(f'    filters[{tel}_{fil}]=True')
