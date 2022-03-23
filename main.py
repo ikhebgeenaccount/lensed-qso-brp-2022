@@ -12,20 +12,20 @@ from src.filters import populate_filter_profile_path_column
 if __name__ == '__main__':
     #filterprofiles
     #xml_to_txt('WIYN.B_HARRIS.xml', 'WIYN.B_HARRIS.txt')
-    #tophat(0.2,0.5, 'CHANDRA_0.2_0.5.txt',freq_Ghz=False, energy_Kev=True)
+    tophat(230.609583,0.560, 'IRAM_1.3mm.txt',freq_Ghz=True, energy_Kev=False)
     #percent_to_fraction('WIYN.U_HARRIS.txt','WIYN.U_HARRIS_fraction.txt')
     
     #photometry
-    galaxy = 'J1330+1810'
-    lqso = LensedQSO(galaxy)
+#    galaxy = 'B1608+656'
+ #   lqso = LensedQSO(galaxy)
     #mags_to_fluxes(lqso)
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
-    lqso.plot_spectrum(loglog=True)
+  #  lqso.plot_spectrum(loglog=True)
     
     #lqso.sed['telescope']=0
     #lqso.save_sed()
 
-    model_subtraction(lqso)
+   # model_subtraction(lqso)
 
     
     
