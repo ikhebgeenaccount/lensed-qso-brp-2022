@@ -1,9 +1,9 @@
 telescope,filtername,band,instrument,central_wavelength,conversion,zeropoint,source,file
-PanSTARRS,g,,,4810,AB,3631000,,
-PanSTARRS,r,,,6170,AB,3631000,,
-PanSTARRS,i,,,7520,AB,3631000,,
-PanSTARRS,z,,,8660,AB,3631000,,
-PanSTARRS,y,,,9620,AB,3631000,,
+PanSTARRS,g,,,4810,AB,3631000,,panstarrs_g.txt
+PanSTARRS,r,,,6170,AB,3631000,,panstarrs_r.txt
+PanSTARRS,i,,,7520,AB,3631000,,panstarrs_i.txt
+PanSTARRS,z,,,8660,AB,3631000,,panstarrs_z.txt
+PanSTARRS,y,,,9620,AB,3631000,,panstarrs_y.txt
 SDSS,u,,,3551,AB,3631000,,u_SDSS.res
 SDSS,g,,,4686,AB,3631000,,g_SDSS.res
 SDSS,r,,,6166,AB,3631000,,r_SDSS.res
