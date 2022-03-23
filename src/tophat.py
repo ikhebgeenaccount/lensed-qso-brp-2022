@@ -24,7 +24,7 @@ def tophat(central,bandwidth,filtername,freq_Ghz=False,energy_Kev=False,length=3
                        
     #If given in Ghz, transform to Angstrom
     if freq_Ghz:
-        wavelength_array = 2.99e8 * (10 ** 10) / ((x_array)*(10**9) )
+        wavelength_array = 3e8 * (10 ** 10) / ((x_array)*(10**9) )
         x_array = wavelength_array 
         
     #if given in kev, let central be the lower limit and bandwidth be the upper limit

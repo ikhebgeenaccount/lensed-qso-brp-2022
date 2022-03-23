@@ -39,7 +39,7 @@ def model_subtraction(lqso):
     
     #iterating over the sed file
     for i, row in lqso.sed.iterrows(): 
-        print(i)        
+               
         #if there is an upper limit, print it. Calculated the same way now
         if  row['upper_limit']:
             print(f'upper limit for row {i}')
