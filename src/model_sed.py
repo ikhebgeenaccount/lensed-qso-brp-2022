@@ -84,7 +84,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         elif method == 'minimize':
             ff = FitFunction(sed, model)
 
-            res = minimize(ff.chi_squared, [1e-2], method='Powell')
+            res = minimize(ff.chi_squared, [1e-3], method='Powell')
 
             #model_set['score'].iloc[i] = res.fun
             #model_set['mult'].iloc[i] = res.x  # FIXME: x is value on laptop, array on strw pc, numpy version dependent i guess
@@ -114,9 +114,11 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     # fig, ax = plt.subplots()
     # ax.hist(model_set['score'], bins=25)
 
+    model_set['red_chi_sq'] = model_set['score'] / (sed.flux_G.shape[0] - 1)
+
     fig, ax = plt.subplots()
     x = range(model_set.shape[0])
-    ax.scatter(x, model_set['score'] / (sed.flux_G.shape[0] - 1))
+    ax.scatter(x, model_set['red_chi_sq'])
     ax.set_xticks(x, model_set['name'].values, rotation=90)
     ax.set_title(f'Reduced $\chi^2$ values of models for {lqso.name}_G')
 
@@ -126,7 +128,38 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
     plot_fit(lqso, model_set, save_plots=save_plots, save_location=save_location)
 
-    return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
+    print(model_set[['name', 'red_chi_sq', 'mult', 'std']].head(15))
+
+    if model_set['red_chi_sq'].iloc[0] / model_set['red_chi_sq'].iloc[1] <= 0.5:
+        print('Best model is twice as good as next best')
+        return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
+
+    # Combine N models
+    N = 5  # TODO: base amount of models on something
+
+    models_wl = [list(MODELS[row['name']]['wavelength'].values) for i, row in model_set.head(N).iterrows()]
+    models_flux = [MODELS[row['name']]['flux'].values * row['mult'] for i, row in model_set.head(N).iterrows()]
+
+    # Models are not guaranteed to be same length
+    # Take highest starting point (highest np.min of models) as starting point
+    # Take lowest end point as end point
+    start_wl = np.max([np.min(ws) for ws in models_wl])
+    end_wl = np.min([np.max(ws) for ws in models_wl])
+
+    all_wls = np.array([w for wls in models_wl for w in wls])
+
+    # Get all the unique wavelenghts that the models have, so we can interp at those wavelenghts
+    wls = np.unique(all_wls[(all_wls >= all_wls) * (all_wls <= all_wls)])
+    wls = np.sort(wls)
+
+    interp_models_flux = np.stack([np.interp(wls, models_wl[i], models_flux[i]) for i in range(N)])
+    avg_model = np.average(interp_models_flux, axis=0, weights=1. / model_set['red_chi_sq'].head(N))
+
+    # Error seems wrong, way too small? Check std of mult
+    stds = model_set['std'].head(5).values.reshape((5, 1))
+
+    print(avg_model)
+    print(np.linalg.norm(interp_models_flux * stds, axis=0))
 
 
 class FitFunction:

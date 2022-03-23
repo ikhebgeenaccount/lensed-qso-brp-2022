@@ -8,6 +8,7 @@ from src.lensed_qso import LensedQSO
 from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
 from src.ned_to_sed import ned_table_to_sed
 from src.filters import populate_filter_profile_path_column
+from src.model_subtraction import model_subtraction
 
 import src.model_sed
 
@@ -96,7 +97,7 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'J1633+3134'
+    galaxy = 'J1650+4251'
     lqso = LensedQSO(galaxy)
 
     # ned_table_to_sed(lqso, ned_file='ned_wise.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
@@ -105,7 +106,7 @@ def single_galaxy():
 
     # mags_to_fluxes(lqso, components=None if galaxy != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
     m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
-    mag_ratio_split_total_flux(lqso, 'CASTLES', overwrite=False)
+    # mag_ratio_split_total_flux(lqso, 'CASTLES', overwrite=False)
 
     src.model_sed.fit(lqso, m)
 
@@ -123,6 +124,15 @@ def fit_foreground():
             src.model_sed.fit(lqso, method='curve_fit', morph=m)
         else:
             print(f'{g} has {lqso.filter_sed(component="_G").shape[0]} foreground galaxy datapoints, can\'t be fitted.')
+
+        break
+
+
+def fg_subtraction():
+    for g in GALAXIES:
+        lqso = LensedQSO(g)
+
+        model_subtraction(lqso)
 
 
 def plot_single_model():
@@ -142,6 +152,7 @@ def plot_single_model():
 if __name__ == '__main__':
     # all_galaxies()
     fit_foreground()
+    # fg_subtraction()
     # plot_single_model()
     # single_galaxy()
 
