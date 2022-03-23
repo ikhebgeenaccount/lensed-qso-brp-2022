@@ -74,3 +74,7 @@ ATCA,6.08Ghz,,,,,,,ATCA_6.08.txt
 ATCA,8.64Ghz,,,,,,,ATCA_8.64.txt
 IRAM,3mm,,,,,,https://www.aanda.org/articles/aa/pdf/2002/14/aah3193.pdf for bandwidth. chose 560 Mhz and set c=3e8,IRAM_3mm.txt
 IRAM,1.3mm,,,,,,,IRAM_1.3mm.txt
+Hiltner,B,,,,,,,MCM_Hiltner_B.txt
+Hiltner,V,,,,,,,MCM_Hiltner_V.txt
+Hiltner,R,,,,,,,MCM_Hiltner_R.txt
+Hiltner,I,,,,,,,MCM_Hiltner_I.txt
