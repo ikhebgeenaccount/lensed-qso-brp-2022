@@ -39,10 +39,10 @@ hst,ACS_HRC/F435W,,,4323.09,,3980460,,HST.ACS_HRC.F435W.txt
 hst,ACS_HRC/F555W,,,5355.74,,3665220,,HST.ACS_HRC.F555W.txt
 hst,ACS_HRC/F625W,,,6295.19,,3123530,,HST.ACS_HRC.F625W.txt
 hst,ACS_HRC/F814W,,,8100.44,,2436510,,HST.ACS_HRC.F814W.txt
-UH88,OPTIC/U,,,3576.21,vega,1693910,https://www.ifa.hawaii.edu/88inch/2.2-meter-technical.htm   Cant find filterprofiles but is 6 months a year ar WIYN so used that,
-UH88,OPTIC/B,,,4322.75,vega,3898270,,
-UH88,OPTIC/R,,,6554.66,vega,3022620, ,
-UH88,OPTIC/I,,,8356.12,vega,2360270, ,
+UH88,OPTIC/U,,,3576.21,vega,1693910,https://www.ifa.hawaii.edu/88inch/2.2-meter-technical.htm   Cant find filterprofiles but is 6 months a year ar WIYN so used that,WIYN.U_HARRIS_fraction.txt
+UH88,OPTIC/B,,,4322.75,vega,3898270,,WIYN.B_HARRIS_fraction.txt
+UH88,OPTIC/R,,,6554.66,vega,3022620,,WIYN.R_HARRIS_fraction.txt
+UH88,OPTIC/I,,,8356.12,vega,2360270,,WIYN.I_HARRIS_fraction.txt
 Herschel,SPIRE_250mu,,,,,,,SPIRE_250mu.txt
 Herschel,SPIRE_350mu,,,,,,,SPIRE_350mu.txt
 Herschel,SPIRE_500mu,,,,,,,SPIRE_500mu.txt
