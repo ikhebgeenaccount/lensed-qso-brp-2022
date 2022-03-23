@@ -52,6 +52,10 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     sed['wavelength'] = sed['wavelength'] / (1 + lqso.props['z_lens'].values[0])
     sed.sort_values(by='wavelength')  # Doesn't matter
 
+    if sed.flux_G.values.shape[0] == 0:
+        print(f'Not enough foreground data points to fit {lqso.name}.')
+        return -1, -1, -1
+
     model_set_is = MODEL_PROPERTIES.index
 
     if morph == 'spiral':
@@ -112,12 +116,13 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
     fig, ax = plt.subplots()
     x = range(model_set.shape[0])
-    ax.scatter(x, model_set['score'])
-    #ax.set_xticks(x, model_set['name'].values, rotation=90)
-    ax.set_title(f'$\chi^2$ values of models for {lqso.name}_G')
+    ax.scatter(x, model_set['score'] / (sed.flux_G.shape[0] - 1))
+    ax.set_xticks(x, model_set['name'].values, rotation=90)
+    ax.set_title(f'Reduced $\chi^2$ values of models for {lqso.name}_G')
 
-    fig.savefig(os.path.join(save_location, lqso.name, 'models_chisq.pdf'))
-    fig.savefig(os.path.join(save_location, lqso.name, 'models_chisq.jpg'))
+    if save_plots:
+        fig.savefig(os.path.join(save_location, lqso.name, 'models_chisq.pdf'))
+        fig.savefig(os.path.join(save_location, lqso.name, 'models_chisq.jpg'))
 
     plot_fit(lqso, model_set, save_plots=save_plots, save_location=save_location)
 

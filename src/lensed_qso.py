@@ -194,8 +194,8 @@ class LensedQSO:
             ax.set_ylabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
 
         if self.save_all_plots:
-            fig.savefig(os.path.join(self.save_location, 'SED_total.pdf'))
-            fig.savefig(os.path.join(self.save_location, 'SED_total.png'))
+            fig.savefig(os.path.join(self.save_location, f'SED{component if component is not None else "_total"}.pdf'))
+            fig.savefig(os.path.join(self.save_location, f'SED{component if component is not None else "_total"}.png'))
 
         return fig, ax
 

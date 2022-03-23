@@ -12,7 +12,10 @@ def get_wavelength(telescope, tfilter):
     return FILTER_PROPERTIES[(FILTER_PROPERTIES.telescope == telescope) * (FILTER_PROPERTIES.filtername == tfilter)].central_wavelength.values[0]
 
 def get_filename(telescope, tfilter):
-    return FILTER_PROPERTIES[(FILTER_PROPERTIES.telescope == telescope) * (FILTER_PROPERTIES.filtername == tfilter)].file.values[0]
+    try:
+        return FILTER_PROPERTIES[(FILTER_PROPERTIES.telescope == telescope) * (FILTER_PROPERTIES.filtername == tfilter)].file.values[0]
+    except IndexError:
+        print(telescope, tfilter)
 
 def populate_filter_profile_path_column(profiles_dir=None):
     if profiles_dir is None:
