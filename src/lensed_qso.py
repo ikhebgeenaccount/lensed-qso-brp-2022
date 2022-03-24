@@ -240,7 +240,8 @@ class LensedQSO:
             path = os.path.join(os.pardir, 'AGNfitter', 'OUTPUT', str(agnf_id))
 
         if not os.path.isdir(path):
-            print('No results found')
+            print('No results found.')
+            print('This function only works when working from strw/vdesk.')
             return
 
         # TODO: some column names contain spaces? Like log Mstar
