@@ -210,18 +210,41 @@ class LensedQSO:
         :return: str
         """
         # TODO: use split data, model subtraction from total fluxes
-        id = self.name.replace('B', '')
-        id = id.replace('J', '')
-        id = id.replace('+', '')
+        id = self.agn_fitter_id()
 
         header = '# ID redshift [wavelength_angstrom flux_mJy flux_error_mJy]\n'
 
+        l = 2
+
         catalog = header + f'{id} {self.props.z_qso.values[0]} '
-        for i, row in self.filtered_sed.iterrows():
+        for i, row in self.filter_sed(component='_sub').iterrows():
             if not row.upper_limit:
                 catalog += f'{row.wavelength} {row.flux_sub} {row.flux_sub_err} '
             else:
                 # Upper limit has error -99 as flag for AGNfitter
                 catalog += f'{row.wavelength} {row.flux_sub} -99 '
 
-        return catalog
+            l += 3
+
+        return catalog, l
+
+    def agn_fitter_id(self):
+        return self.name.replace('B', '').replace('J', '').replace('+', '')
+
+    def agn_fitter_output(self, rX=False, agnf_id=None):
+        if agnf_id is None:
+            agnf_id = self.agn_fitter_id()
+        if rX:
+            print('rX path not yet')
+        else:
+            path = os.path.join(os.pardir, 'AGNfitter', 'OUTPUT', str(agnf_id))
+
+        if not os.path.isdir(path):
+            print('No results found')
+            return
+
+        # TODO: some column names contain spaces? Like log Mstar
+        result = pd.read_csv(os.path.join(path, f'parameter_outvalues_{agnf_id}.txt'),
+                             delim_whitespace=True, skiprows=3)
+
+        return result
