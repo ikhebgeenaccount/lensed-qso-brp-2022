@@ -6,7 +6,8 @@ import pandas as pd
 import os
 from src.lensed_qso import LensedQSO
 from src.filters import get_filename
-def AGN_input(galaxy=None):
+
+def AGN_input_1():
     FILTER_PROPS_PATH = os.path.join('data', 'filter.csv')
     FILTER_PROPERTIES = pd.read_csv(FILTER_PROPS_PATH)
     
@@ -24,7 +25,8 @@ def AGN_input(galaxy=None):
         print(f"    {tel}_{fil}_lambda,{tel}_{fil}_factor = np.loadtxt({tel}_{fil}_file, usecols=(0,1), unpack = True)")
         print("")
     print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHH')
-    
+
+def AGN_input_2():    
     for i, row in FILTER_PROPERTIES.iterrows():
         
         tel=FILTER_PROPERTIES.telescope.values[i]
@@ -42,6 +44,7 @@ def AGN_input(galaxy=None):
         print('')
     print('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB')
     
+def AGN_input_3(galaxy=None):
     lqso = LensedQSO(galaxy)
     print(lqso.sed[['telescope', 'filter']].values)
     for i, row in FILTER_PROPERTIES.iterrows():
@@ -66,7 +69,7 @@ def AGN_input(galaxy=None):
          #Als je wel een glaxy geeft zet je hem op true wanneer hij er in zit, false als niet   
         else:
             # if [tel,fil] in lqso.sed[['telescope', 'filter']].values:
-            if lqso.sed.loc[(lqso.sed['telescope'] == tel) * (lqso.sed['filter'] == fil)].shape[0] > 0:
+            if lqso.filter_sed().loc[(lqso.filter_sed()['telescope'] == tel) * (lqso.filter_sed()['filter'] == fil)].shape[0] > 0:
                 print(f"    filters['{tel}_{fil}']=True")
             else:
                 print(f"    filters['{tel}_{fil}]=False'") 
