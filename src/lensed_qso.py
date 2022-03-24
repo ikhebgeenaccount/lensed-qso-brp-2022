@@ -219,9 +219,9 @@ class LensedQSO:
         catalog = header + f'{id} {self.props.z_qso.values[0]} '
         for i, row in self.filtered_sed.iterrows():
             if not row.upper_limit:
-                catalog += f'{row.wavelength} {row.flux_total} {row.flux_err} '
+                catalog += f'{row.wavelength} {row.flux_sub} {row.flux_sub_err} '
             else:
                 # Upper limit has error -99 as flag for AGNfitter
-                catalog += f'{row.wavelength} {row.flux_total} -99 '
+                catalog += f'{row.wavelength} {row.flux_sub} -99 '
 
         return catalog
