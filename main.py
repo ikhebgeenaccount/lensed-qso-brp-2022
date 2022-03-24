@@ -12,7 +12,7 @@ from src.AGN_input import AGN_input
 
 if __name__ == '__main__':
     #filterprofiles
-    #xml_to_txt('panstarrs_y.xml', 'panstarrs_y.txt')
+    xml_to_txt('VLT_CONICA_H.xml', 'VLT_CONICA_H.txt')
     #tophat(230.609583,0.560, 'IRAM_1.3mm.txt',freq_Ghz=True, energy_Kev=False)
     #percent_to_fraction('WIYN.U_HARRIS.txt','WIYN.U_HARRIS_fraction.txt')
     
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     #model_subtraction(lqso)
     
     
-    AGN_input('J0806+2006')
+    #AGN_input('J0806+2006')
     
     
     
