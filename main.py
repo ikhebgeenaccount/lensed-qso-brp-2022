@@ -27,9 +27,11 @@ if __name__ == '__main__':
     #model_subtraction(lqso)
     
     
-    #AGN_input()
+    AGN_input('J0806+2006')
+    
+    
+    
     GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']
-
     PLOTS_SAVE = 'plots'
 
     def all_galaxies():
