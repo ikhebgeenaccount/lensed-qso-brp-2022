@@ -126,7 +126,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         fig.savefig(os.path.join(save_location, lqso.name, 'models_chisq.pdf'))
         fig.savefig(os.path.join(save_location, lqso.name, 'models_chisq.jpg'))
 
-    plot_fit(lqso, model_set, save_plots=save_plots, save_location=save_location)
+    ffig, fax = plot_fit(lqso, model_set, save_plots=save_plots, save_location=save_location)
 
     print(model_set[['name', 'red_chi_sq', 'mult', 'std']].head(15))
 
@@ -156,15 +156,26 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     avg_model = np.average(interp_models_flux, axis=0, weights=1. / model_set['red_chi_sq'].head(N))
 
     # Error seems wrong, way too small? Check std of mult
-    stds = model_set['std'].head(5).values.reshape((5, 1))
+    stds = model_set['std'].head(N).values.reshape((N, 1))
 
-    print(avg_model)
-    print(np.linalg.norm(interp_models_flux * stds, axis=0))
+    mult_err_prop = np.linalg.norm(interp_models_flux * stds, axis=0)
+    models_std = np.std(interp_models_flux, axis=0)
+
+    # print(avg_model)
+    # print(mult_err_prop)
+    # print(models_std)
+    # print(np.sqrt(np.power(mult_err_prop, 2.) + np.power(models_std, 2.)))
+
+    fax.plot(wls * (1 + lqso.props['z_lens'].values[0]), avg_model, label='Average model')
+    fax.fill_between(wls * (1 + lqso.props['z_lens'].values[0]), avg_model - models_std, avg_model + models_std)
+    fax.legend()
+
+    print(FitFunction(sed, wls=wls, fluxs=avg_model).chi_squared([1]) / (sed.flux_G.shape[0] - 1))
 
 
 class FitFunction:
 
-    def __init__(self, sed, model, interp=True, component='_G'):
+    def __init__(self, sed, model=None, wls=None, fluxs=None, interp=True, component='_G'):
         """
         Class with function to fit.
         :param sed:
@@ -173,16 +184,24 @@ class FitFunction:
         :param component:
         """
         self.sed = sed
-        self.model = model
         self.interp = interp
         self.component = component
+        if model is not None:
+            self.model = model
+            self.wls = MODELS[model]['wavelength'].values
+            self.fluxs = MODELS[model]['flux'].values
+        elif wls is not None and fluxs is not None:
+            self.wls = wls
+            self.fluxs = fluxs
+        else:
+            raise ValueError('Either model or both wls and fluxs must be given.')
 
     # f is the function that will be used for curve_fit
     def f(self, x, mult):
-        model = self.model
         if self.interp:
-            return mult * interp_fluxes(x, model)
+            return mult * interp_fluxes(x, wls=self.wls, fluxs=self.fluxs)
         else:
+            model = self.model
             cwl = closest_wavelength(x, model)
             return mult * MODELS[model].loc[MODELS[model].wavelength.isin(cwl)].flux
 
@@ -214,6 +233,8 @@ def plot_fit(lqso, models, save_plots=True, save_location='plots', count=5):
         fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit.pdf'))
         fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit.jpg'))
 
+    rfig, rax = fig, ax
+
     # Plot the model on total flux data
     fig, ax = lqso.plot_spectrum(loglog=True)
     ax.plot(MODELS[models['name'].iloc[0]].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[models['name'].iloc[0]].flux * models['mult'].iloc[0], color='black', alpha=.6, label=models['name'].iloc[0])
@@ -222,6 +243,8 @@ def plot_fit(lqso, models, save_plots=True, save_location='plots', count=5):
     if save_plots:
         fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit_full_sed.pdf'))
         fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit_full_sed.jpg'))
+
+    return rfig, rax
 
 
 def closest_wavelength(wl, model):
@@ -249,5 +272,13 @@ def closest_wavelength(wl, model):
                wl.reshape(wl.size, 1)), axis=1)].values
 
 
-def interp_fluxes(wl, model):
-    return np.interp(wl, xp=MODELS[model].wavelength.values, fp=MODELS[model].flux.values)
+def interp_fluxes(wl, model=None, wls=None, fluxs=None):
+    """
+    If wls given, must also have fluxs given. model can be name of model in MODELS dict.
+    """
+    if wls is not None and fluxs is not None:
+        return np.interp(wl, xp=wls, fp=fluxs)
+    elif model is not None:
+        return np.interp(wl, xp=MODELS[model].wavelength.values, fp=MODELS[model].flux.values)
+    else:
+        raise ValueError('Either model, or both wls and fluxs must be given.')
