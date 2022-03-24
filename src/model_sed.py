@@ -172,6 +172,10 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
     print(FitFunction(sed, wls=wls, fluxs=avg_model).chi_squared([1]) / (sed.flux_G.shape[0] - 1))
 
+    # TODO: how to return combined model?
+
+    return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
+
 
 class FitFunction:
 
