@@ -97,7 +97,7 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'J1650+4251'
+    galaxy = 'J0806+2006'
     lqso = LensedQSO(galaxy)
 
     # ned_table_to_sed(lqso, ned_file='ned_wise.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
@@ -112,9 +112,13 @@ def single_galaxy():
 
     lqso.plot_spectrum()
 
+    catalog, length = lqso.sed_to_agn_fitter()
+
+    print(lqso.agn_fitter_output(agnf_id=253698))
+
 
 def fit_foreground():
-    for g in ['B1152+200']:
+    for g in ['B1600+434']:
         lqso = LensedQSO(g)
 
         m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
@@ -151,10 +155,10 @@ def plot_single_model():
 
 if __name__ == '__main__':
     # all_galaxies()
-    fit_foreground()
+    # fit_foreground()
     # fg_subtraction()
     # plot_single_model()
-    # single_galaxy()
+    single_galaxy()
 
     # populate_filter_profile_path_column()
 
