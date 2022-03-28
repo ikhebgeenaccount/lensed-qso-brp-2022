@@ -23,3 +23,7 @@ SUBARU (page with phot=3) since it had no errorbars, we could still add this as 
 sdss
 MIPS,NRAO,some other nameless things
 HST: first page has some more filters
+
+
+model extra datapoints
+https://www.researchgate.net/publication/252285266_A_radio_spectral_line_study_of_the_2_Jy_IRAS-NVSS_sample_i
