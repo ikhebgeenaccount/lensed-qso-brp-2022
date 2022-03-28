@@ -135,7 +135,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
 
     # Combine N models
-    N = 5  # TODO: base amount of models on something
+    N = 2  # TODO: base amount of models on something
 
     models_wl = [list(MODELS[row['name']]['wavelength'].values) for i, row in model_set.head(N).iterrows()]
     models_flux = [MODELS[row['name']]['flux'].values * row['mult'] for i, row in model_set.head(N).iterrows()]
@@ -170,7 +170,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     fax.fill_between(wls * (1 + lqso.props['z_lens'].values[0]), avg_model - models_std, avg_model + models_std)
     fax.legend()
 
-    print(FitFunction(sed, wls=wls, fluxs=avg_model).chi_squared([1]) / (sed.flux_G.shape[0] - 1))
+    print('Avg model red chi sq:', FitFunction(sed, wls=wls, fluxs=avg_model).chi_squared([1]) / (sed.flux_G.shape[0] - 1))
 
     # TODO: how to return combined model?
 
@@ -231,6 +231,11 @@ def plot_fit(lqso, models, save_plots=True, save_location='plots', count=5):
     for i in range(count):
         ax.plot(MODELS[models['name'].iloc[i]].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[models['name'].iloc[i]].flux * models['mult'].iloc[i], color='black' if i == 0 else None, alpha=.6 / count * (count - i), label=models['name'].iloc[i])
 
+    # Plot residuals
+    # sed = lqso.filter_sed(component='_G', allow_zero_error=False)
+    # ax_res = fig.add_axes(rect=[0, 0, 1, 0.33], sharex=ax)
+    # ax_res.errorbar(sed['wavelength'].values, sed['flux_G'].values - np.interp(sed['wavelength'].values, xp=MODELS[models['name'].iloc[i]].wavelength * (1 + lqso.props['z_lens'].values[0]), fp=MODELS[models['name'].iloc[i]].flux * models['mult'].iloc[0]), yerr=sed['flux_G_err'].values, fmt='o')
+
     ax.legend()
 
     if save_plots:
@@ -242,6 +247,14 @@ def plot_fit(lqso, models, save_plots=True, save_location='plots', count=5):
     # Plot the model on total flux data
     fig, ax = lqso.plot_spectrum(loglog=True)
     ax.plot(MODELS[models['name'].iloc[0]].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[models['name'].iloc[0]].flux * models['mult'].iloc[0], color='black', alpha=.6, label=models['name'].iloc[0])
+
+    # TODO: just as a test for now, remove later
+    if lqso.name == 'B1600+434':
+        # These numbers are flux densities for wavelenghts that are longer than model, since lensing galaxy is a spiral it can have radio contribution
+        rax.scatter([60e4, 2.14137e9], [8.17, 38.3], label='radio model', color='fuchsia')
+        rax.legend()
+        ax.scatter([60e4, 2.14137e9], [8.17, 38.3], label='radio model', color='fuchsia')
+
     ax.legend()
 
     if save_plots:
