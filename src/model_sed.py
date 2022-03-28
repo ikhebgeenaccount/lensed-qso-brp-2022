@@ -135,7 +135,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
 
     # Combine N models
-    N = 2  # TODO: base amount of models on something
+    N = 5  # TODO: base amount of models on something
 
     models_wl = [list(MODELS[row['name']]['wavelength'].values) for i, row in model_set.head(N).iterrows()]
     models_flux = [MODELS[row['name']]['flux'].values * row['mult'] for i, row in model_set.head(N).iterrows()]

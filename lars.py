@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from src.AGN_input import AGN_input_3
 from src.lensed_qso import LensedQSO
+from src.latex_output import dataframe_to_latex_table
 from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
 from src.ned_to_sed import ned_table_to_sed
 from src.filters import populate_filter_profile_path_column
@@ -97,7 +99,7 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'J0806+2006'
+    galaxy = 'B1608+656'
     lqso = LensedQSO(galaxy)
 
     # ned_table_to_sed(lqso, ned_file='ned_wise.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
@@ -106,15 +108,22 @@ def single_galaxy():
 
     # mags_to_fluxes(lqso, components=None if galaxy != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
     m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
-    # mag_ratio_split_total_flux(lqso, 'CASTLES', overwrite=False)
+    # mag_ratio_split_total_flux(lqso, 'Inada+2003', overwrite=False)
 
-    src.model_sed.fit(lqso, m)
+    # src.model_sed.fit(lqso, m)
 
     lqso.plot_spectrum()
 
+    #model_subtraction(lqso)
+
     catalog, length = lqso.sed_to_agn_fitter()
 
-    print(lqso.agn_fitter_output(agnf_id=253698))
+    #print(catalog)
+    #print(length)
+
+    #AGN_input_3(galaxy=galaxy)
+
+    print(lqso.agn_fitter_output())
 
 
 def fit_foreground():
@@ -153,12 +162,21 @@ def plot_single_model():
     ax.legend()
 
 
+def latex():
+    dataframe_to_latex_table(src.filters.FILTER_PROPERTIES.loc[src.filters.FILTER_PROPERTIES['conversion'].notnull()],
+                                   usecols=['telescope', 'filtername', 'central_wavelength', 'conversion', 'zeropoint'],
+                                   header=['Telescope', 'Filter', 'Central wavelength ($\\unit{\\angstrom}$)', 'Conversion', 'Zeropoint ($\\unit{\milli\jansky}$)'],
+                                   label='table:filter_conv', caption='All filters for which magnitudes were found, with their respective conversion methods and zeropoints.')
+
+
 if __name__ == '__main__':
     # all_galaxies()
     # fit_foreground()
     # fg_subtraction()
     # plot_single_model()
     single_galaxy()
+
+    # latex()
 
     # populate_filter_profile_path_column()
 

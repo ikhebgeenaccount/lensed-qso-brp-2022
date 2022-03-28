@@ -16,7 +16,7 @@ FILTERED_SOURCES = {
     'B1600+434': ['panstarrs'],
     'B1608+656': [],#['Koopmans+2003' ],
     'J0806+2006': ['panstarrs'],
-    'J0924+0219': ['panstarrs'],
+    'J0924+0219': ['panstarrs', 'faure', 'castles'],
     'J1330+1810': ['panstarrs'],
     'J1455+1447': ['panstarrs'],
     'J1524+4409': ['panstarrs'],
@@ -218,6 +218,10 @@ class LensedQSO:
 
         catalog = header + f'{id} {self.props.z_qso.values[0]} '
         for i, row in self.filter_sed(component='_sub').iterrows():
+            if row['flux_sub'] <= 0:
+                print('Skipping SED row', i)
+                continue
+
             if not row.upper_limit:
                 catalog += f'{row.wavelength} {row.flux_sub} {row.flux_sub_err} '
             else:
@@ -229,7 +233,8 @@ class LensedQSO:
         return catalog, l
 
     def agn_fitter_id(self):
-        return self.name.replace('B', '').replace('J', '').replace('+', '')
+        t = self.name.replace('B', '').replace('J', '').replace('+', '')
+        return t if t[0] != '0' else t[1:]
 
     def agn_fitter_output(self, rX=False, agnf_id=None):
         if agnf_id is None:
