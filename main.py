@@ -12,9 +12,8 @@ from src.AGN_input import AGN_input_1, AGN_input_2, AGN_input_3
 
 if __name__ == '__main__':
     #photometry
-    galaxy = 'J0806+2006'
+    galaxy = 'B1600+434'
     lqso = LensedQSO(galaxy)
-    #mags_to_fluxes(lqso)
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
     #lqso.plot_spectrum(loglog=True)
     
@@ -24,13 +23,12 @@ if __name__ == '__main__':
     #percent_to_fraction('WIYN.U_HARRIS.txt','WIYN.U_HARRIS_fraction.txt')
 
     #model subtraction
-    #model_subtraction(lqso)
-    
+    model_subtraction(lqso)
     
 
     #making the settings for agn fitter
-    print(lqso.sed_to_agn_fitter())
-    AGN_input_1()
+    #print(lqso.sed_to_agn_fitter())
+    #AGN_input_1()
     #AGN_input_2()
     #AGN_input_3(galaxy)
     
