@@ -33,6 +33,14 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
     # Convert units to Jansky
     MODELS[name]['flux'] = MODELS[name]['flux_cgs'] * np.power(MODELS[name]['wavelength'], 2.) / 2.998e18 * 1e26
 
+    #For the one spiral we have, add Herschel data (flux in jansky)
+    if name == 'UGC_12150':
+        print('hoi')
+        new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 5.086e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
+        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.031e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
+        newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0.611e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
+        MODELS[name]=newerest_model
+        print(MODELS[name]['wavelength'])
 # Fitting
 #
 # Duncan+2017 (https://academic.oup.com/mnras/article/473/2/2655/4315948?login=true) uses EAZY
@@ -249,11 +257,11 @@ def plot_fit(lqso, models, save_plots=True, save_location='plots', count=5):
     ax.plot(MODELS[models['name'].iloc[0]].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[models['name'].iloc[0]].flux * models['mult'].iloc[0], color='black', alpha=.6, label=models['name'].iloc[0])
 
     # TODO: just as a test for now, remove later
-    if lqso.name == 'B1600+434':
+    #if lqso.name == 'B1600+434':
         # These numbers are flux densities for wavelenghts that are longer than model, since lensing galaxy is a spiral it can have radio contribution
-        rax.scatter([60e4, 2.14137e9], [8.17, 38.3], label='radio model', color='fuchsia')
-        rax.legend()
-        ax.scatter([60e4, 2.14137e9], [8.17, 38.3], label='radio model', color='fuchsia')
+        #rax.scatter([60e4, 2.14137e9], [8.17, 38.3], label='radio model', color='fuchsia')
+        #rax.legend()
+        #ax.scatter([60e4, 2.14137e9], [8.17, 38.3], label='radio model', color='fuchsia')
 
     ax.legend()
 

@@ -7,6 +7,7 @@
 # Column 3 : Observed wavelength (Angstrom)
 # Column 4 : Source (0 = model, 1 = Optical Spectrum, 2 = Akari, 3 = Spitzer IRS)
 # 
+#In the model_sed code we add 3 datapoints from Herschel, source=4, link = https://ned.ipac.caltech.edu/byname?objname=IRASF22389%2B3359&hconst=67.8&omegam=0.308&omegav=0.692&wmap=4&corr_z=1
    102.05 2.9810e-26    104.23 0 
    103.95 4.3588e-26    106.17 0 
    105.88 6.4769e-26    108.14 0 
