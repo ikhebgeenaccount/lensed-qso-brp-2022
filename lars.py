@@ -11,6 +11,7 @@ from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
 from src.ned_to_sed import ned_table_to_sed
 from src.filters import populate_filter_profile_path_column
 from src.model_subtraction import model_subtraction
+from src.speagle import plot_lqso_in_speagle
 
 import src.model_sed
 
@@ -99,7 +100,7 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'B1608+656'
+    galaxy = 'J0806+2006'
     lqso = LensedQSO(galaxy)
 
     # ned_table_to_sed(lqso, ned_file='ned_wise.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
@@ -112,18 +113,20 @@ def single_galaxy():
 
     # src.model_sed.fit(lqso, m)
 
-    lqso.plot_spectrum()
+    # lqso.plot_spectrum()
 
-    #model_subtraction(lqso)
+    # model_subtraction(lqso)
 
-    catalog, length = lqso.sed_to_agn_fitter()
+    # catalog, length = lqso.sed_to_agn_fitter()
 
-    #print(catalog)
-    #print(length)
+    # print(catalog)
+    # print(length)
 
-    #AGN_input_3(galaxy=galaxy)
+    # AGN_input_3(galaxy=galaxy)
 
     print(lqso.agn_fitter_output())
+    print(lqso.agn_fitter_output()[['tau', 'age', 'LIR(8-1000)', 'SFR_IR', 'SFR_opt', 'logMstar']])
+    plot_lqso_in_speagle(lqso)
 
 
 def fit_foreground():

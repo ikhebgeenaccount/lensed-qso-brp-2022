@@ -15,7 +15,7 @@ FILTERED_SOURCES = {
     'B1152+200': ['panstarrs'],
     'B1600+434': ['panstarrs'],
     'B1608+656': [],#['Koopmans+2003' ],
-    'J0806+2006': ['panstarrs'],
+    'J0806+2006': ['panstarrs', 'chandra'],
     'J0924+0219': ['panstarrs', 'faure', 'castles'],
     'J1330+1810': ['panstarrs'],
     'J1455+1447': ['panstarrs'],
@@ -251,6 +251,6 @@ class LensedQSO:
 
         # TODO: some column names contain spaces? Like log Mstar
         result = pd.read_csv(os.path.join(path, f'parameter_outvalues_{agnf_id}.txt'),
-                             delim_whitespace=True, skiprows=3)
+                             delim_whitespace=True, skiprows=4, header=None, names=['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like'])
 
         return result
