@@ -30,17 +30,16 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
     except IndexError:
         continue
     MODELS[name] = pandas.read_csv(sed_file, delim_whitespace=True, comment='#', names=['wavelength', 'flux_cgs', 'observed_wavelength', 'source'])
-    # Convert units to Jansky
+    # Convert units to milliJansky
     MODELS[name]['flux'] = MODELS[name]['flux_cgs'] * np.power(MODELS[name]['wavelength'], 2.) / 2.998e18 * 1e26
 
-    #For the one spiral we have, add Herschel data (flux in jansky)
+    #For the one spiral we have, add Herschel data (flux in millijansky)
     if name == 'UGC_12150':
-        print('hoi')
         new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 5.086e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
         newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.031e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
         newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0.611e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
         MODELS[name]=newerest_model
-        print(MODELS[name]['wavelength'])
+        #Sorry Lars voor deze code xoxo
 # Fitting
 #
 # Duncan+2017 (https://academic.oup.com/mnras/article/473/2/2655/4315948?login=true) uses EAZY
@@ -127,7 +126,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     fig, ax = plt.subplots()
     x = range(model_set.shape[0])
     ax.scatter(x, model_set['red_chi_sq'])
-    ax.set_xticks(x, model_set['name'].values, rotation=90)
+    #ax.set_xticks(x, model_set['name'].values, rotation=90)
     ax.set_title(f'Reduced $\chi^2$ values of models for {lqso.name}_G')
 
     if save_plots:
