@@ -13,7 +13,7 @@ import warnings
 
 FILTERED_SOURCES = {
     'B1152+200': ['panstarrs', 'chandra', 'luichies'],
-    'B1600+434': ['panstarrs', 'chandra', 'luichies', 'munoz'],
+    'B1600+434': ['panstarrs', 'chandra', 'luichies'],
     'B1608+656': ['chandra', 'luichies'],#['Koopmans+2003' ],
     'J0806+2006': ['panstarrs', 'chandra', 'luichies'],
     'J0924+0219': ['panstarrs', 'faure', 'castles', 'chandra', 'luichies'],
@@ -266,7 +266,7 @@ class LensedQSO:
 
         return outstr
 
-    def agn_fitter_output(self, rX=False, agnf_id=None):
+    def agn_fitter_output(self, rX=False, agnf_id=None, copy=False):
         if agnf_id is None:
             agnf_id = self.agn_fitter_id()
         if rX:
@@ -279,7 +279,8 @@ class LensedQSO:
             print('This function only works when working from strw/vdesk.')
             return
 
-        distutils.dir_util.copy_tree(path, os.path.join('data', self.name, 'agnfitter'))
+        if copy:
+            distutils.dir_util.copy_tree(path, os.path.join('data', self.name, 'agnfitter'))
 
         # TODO: some column names contain spaces? Like log Mstar
         result = pd.read_csv(os.path.join(path, f'parameter_outvalues_{agnf_id}.txt'),
