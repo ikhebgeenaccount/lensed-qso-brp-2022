@@ -36,7 +36,7 @@ def all_galaxies():
 
         model_subtraction(lqso)
 
-        if lqso.agn_fitter_output() is not None:
+        if lqso.agn_fitter_output(copy=False) is not None:
             if ax is None:
                 fig, ax = plot_lqso_in_speagle(lqso)
             else:
@@ -83,25 +83,11 @@ def single_galaxy():
 
     print(catalog)
 
-    print(lqso.agn_settings())
+    #print(lqso.agn_settings())
 
     print(lqso.agn_fitter_output())
     print(lqso.agn_fitter_output()[['tau', 'age', 'LIR(8-1000)', 'SFR_IR', 'SFR_opt', 'logMstar']])
     plot_lqso_in_speagle(lqso)
-
-
-def plot_single_model():
-    fig, ax = plt.subplots()
-    model = 'UGC_08335_NW'
-
-    m = src.model_sed.MODELS[model]
-
-    ax.plot(m.wavelength, m.flux, label='Brown')
-    ax.plot(m.wavelength, np.abs(m.flux), label='LSST repo')
-    ax.set_title(model)
-    ax.set_yscale('log')
-    ax.set_xscale('log')
-    ax.legend()
 
 
 def latex():
