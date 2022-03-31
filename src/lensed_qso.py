@@ -1,5 +1,5 @@
 import os
-
+import distutils.dir_util
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -12,16 +12,16 @@ import warnings
 
 
 FILTERED_SOURCES = {
-    'B1152+200': ['panstarrs'],
-    'B1600+434': ['panstarrs'],
-    'B1608+656': [],#['Koopmans+2003' ],
-    'J0806+2006': ['panstarrs', 'chandra'],
-    'J0924+0219': ['panstarrs', 'faure', 'castles'],
-    'J1330+1810': ['panstarrs'],
-    'J1455+1447': ['panstarrs'],
-    'J1524+4409': ['panstarrs'],
-    'J1633+3134': ['panstarrs'],
-    'J1650+4251': ['panstarrs']
+    'B1152+200': ['panstarrs', 'chandra', 'luichies'],
+    'B1600+434': ['panstarrs', 'chandra', 'luichies'],
+    'B1608+656': ['chandra', 'luichies'],#['Koopmans+2003' ],
+    'J0806+2006': ['panstarrs', 'chandra', 'luichies'],
+    'J0924+0219': ['panstarrs', 'faure', 'castles', 'chandra', 'luichies'],
+    'J1330+1810': ['panstarrs', 'chandra', 'luichies'],
+    'J1455+1447': ['panstarrs', 'chandra', 'luichies'],
+    'J1524+4409': ['panstarrs', 'chandra', 'luichies'],
+    'J1633+3134': ['panstarrs', 'chandra', 'luichies'],
+    'J1650+4251': ['panstarrs', 'chandra', 'luichies']
 }
 
 
@@ -248,6 +248,8 @@ class LensedQSO:
             print('No results found.')
             print('This function only works when working from strw/vdesk.')
             return
+
+        distutils.dir_util.copy_tree(path, os.path.join('data', self.name, 'agnfitter'))
 
         # TODO: some column names contain spaces? Like log Mstar
         result = pd.read_csv(os.path.join(path, f'parameter_outvalues_{agnf_id}.txt'),

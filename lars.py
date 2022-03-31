@@ -67,6 +67,7 @@ def sdss_panstarrs_flux_discrepancy():
 
 
 def all_galaxies():
+    ax = None
     for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
         lqso = LensedQSO(g)
         lqso.plot_spectrum(loglog=True)
@@ -79,6 +80,14 @@ def all_galaxies():
         # telescope = 'Magellan'
         # if lqso.mags.loc[lqso.mags.telescope == telescope].shape[0] > 0:
             # print(g, 'has', telescope)
+
+        model_subtraction(lqso)
+
+        if lqso.agn_fitter_output() is not None:
+            if ax is None:
+                fig, ax = plot_lqso_in_speagle(lqso)
+            else:
+                plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
 
 
 def big_plot():
@@ -100,7 +109,7 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'J0806+2006'
+    galaxy = 'B1600+434'
     lqso = LensedQSO(galaxy)
 
     # ned_table_to_sed(lqso, ned_file='ned_wise.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
@@ -117,12 +126,12 @@ def single_galaxy():
 
     # model_subtraction(lqso)
 
-    # catalog, length = lqso.sed_to_agn_fitter()
+    catalog, length = lqso.sed_to_agn_fitter()
 
-    # print(catalog)
-    # print(length)
+    print(catalog)
+    print(length)
 
-    # AGN_input_3(galaxy=galaxy)
+    AGN_input_3(galaxy=galaxy)
 
     print(lqso.agn_fitter_output())
     print(lqso.agn_fitter_output()[['tau', 'age', 'LIR(8-1000)', 'SFR_IR', 'SFR_opt', 'logMstar']])
@@ -173,11 +182,11 @@ def latex():
 
 
 if __name__ == '__main__':
-    # all_galaxies()
+    all_galaxies()
     # fit_foreground()
     # fg_subtraction()
     # plot_single_model()
-    single_galaxy()
+    # single_galaxy()
 
     # latex()
 
