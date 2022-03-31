@@ -35,12 +35,12 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
 
     #For the one spiral we have, add Herschel data (flux in jansky)
     if name == 'UGC_12150':
-        print('hoi')
         new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 5.086e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
         newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.031e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
         newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0.611e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
         MODELS[name]=newerest_model
-        print(MODELS[name]['wavelength'])
+
+
 # Fitting
 #
 # Duncan+2017 (https://academic.oup.com/mnras/article/473/2/2655/4315948?login=true) uses EAZY
