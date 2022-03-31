@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from src.AGN_input import AGN_input_3
 from src.lensed_qso import LensedQSO
 from src.latex_output import dataframe_to_latex_table
 from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
@@ -18,52 +17,6 @@ import src.model_sed
 GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']
 
 PLOTS_SAVE = 'plots'
-
-
-def sdss_panstarrs_flux_discrepancy():
-    SDSS_V_PANSTARRS_GS = ['B1152+200', 'B1600+434', 'J0806+2006', 'J1633+3134', 'J1455+1447', 'J1524+4409']
-    flux_discrepancy = pd.DataFrame(columns=['galaxy', 'filter', 'sdss', 'panstarrs', 'ratio', 'diff'])
-
-    ratios = []
-    diffs = []
-
-    panstarrs_mag = 'ap'
-
-    for g in SDSS_V_PANSTARRS_GS:
-        try:
-            mags_to_fluxes(g)
-        except FileNotFoundError:
-            continue
-
-        print(f'{g}, PanSTARRS mag choice: {panstarrs_mag}')
-
-        lqso = LensedQSO(g)
-        # lqso.plot_spectrum()
-        lqso.plot_spectrum(loglog=True)
-        lqso.plot_spectrum(mags=True)
-
-        for i, r in lqso.sed.iterrows():
-            if 'SDSS' not in r['source'] and panstarrs_mag not in r['source']:
-                continue
-            if r['filter'] in ['g', 'r', 'i', 'z']:
-                source = 'sdss' if 'SDSS' in r.source else 'panstarrs'
-                flux_discrepancy.loc[r['filter'], source] = r.flux_total
-
-        flux_discrepancy['ratio'] = flux_discrepancy.sdss.div(flux_discrepancy.panstarrs.where(flux_discrepancy.panstarrs != 0, np.nan))
-        # Make all ratios > 1 so we can compare['B1600+434']
-        flux_discrepancy['ratio'] = flux_discrepancy['ratio'].apply(lambda r: 1. / r if r < 1  else r)
-        flux_discrepancy['diff'] = flux_discrepancy['sdss'] - flux_discrepancy['panstarrs']
-        print(flux_discrepancy)
-        print()
-
-        ratios.append(list(flux_discrepancy['ratio']))
-        diffs.append(list(flux_discrepancy['diff']))
-
-    ratios = np.array(ratios).flatten()
-    diffs= np.array(diffs).flatten()
-
-    print(f'ratio avg: {np.nanmean(ratios)}, ratio std: {np.nanstd(ratios)}')
-    print(f'diff avg: {np.nanmean(diffs)}, diff std: {np.nanstd(diffs)}')
 
 
 def all_galaxies():
@@ -129,35 +82,12 @@ def single_galaxy():
     catalog, length = lqso.sed_to_agn_fitter()
 
     print(catalog)
-    print(length)
 
-    AGN_input_3(galaxy=galaxy)
+    print(lqso.agn_settings())
 
     print(lqso.agn_fitter_output())
     print(lqso.agn_fitter_output()[['tau', 'age', 'LIR(8-1000)', 'SFR_IR', 'SFR_opt', 'logMstar']])
     plot_lqso_in_speagle(lqso)
-
-
-def fit_foreground():
-    for g in ['B1600+434']:
-        lqso = LensedQSO(g)
-
-        m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
-
-        if lqso.filter_sed(component='_G').shape[0] > 1:
-             # src.model_sed.fit(lqso, method='minimize', morph=m)
-            src.model_sed.fit(lqso, method='curve_fit', morph=m)
-        else:
-            print(f'{g} has {lqso.filter_sed(component="_G").shape[0]} foreground galaxy datapoints, can\'t be fitted.')
-
-        break
-
-
-def fg_subtraction():
-    for g in GALAXIES:
-        lqso = LensedQSO(g)
-
-        model_subtraction(lqso)
 
 
 def plot_single_model():
@@ -182,11 +112,11 @@ def latex():
 
 
 if __name__ == '__main__':
-    all_galaxies()
+    # all_galaxies()
     # fit_foreground()
     # fg_subtraction()
     # plot_single_model()
-    # single_galaxy()
+    single_galaxy()
 
     # latex()
 
