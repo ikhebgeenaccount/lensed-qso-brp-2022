@@ -1,27 +1,27 @@
 import os
-
+import distutils.dir_util
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 from matplotlib.legend_handler import HandlerTuple
 
-from src.filters import get_wavelength
+from src.filters import get_wavelength, FILTER_PROPERTIES
 
 import warnings
 
 
 FILTERED_SOURCES = {
-    'B1152+200': ['panstarrs'],
-    'B1600+434': ['panstarrs'],
-    'B1608+656': [],#['Koopmans+2003' ],
-    'J0806+2006': ['panstarrs', 'chandra'],
-    'J0924+0219': ['panstarrs', 'faure', 'castles'],
-    'J1330+1810': ['panstarrs'],
-    'J1455+1447': ['panstarrs'],
-    'J1524+4409': ['panstarrs'],
-    'J1633+3134': ['panstarrs'],
-    'J1650+4251': ['panstarrs']
+    'B1152+200': ['panstarrs', 'chandra', 'luichies'],
+    'B1600+434': ['panstarrs', 'chandra', 'luichies'],
+    'B1608+656': ['chandra', 'luichies'],#['Koopmans+2003' ],
+    'J0806+2006': ['panstarrs', 'chandra', 'luichies'],
+    'J0924+0219': ['panstarrs', 'faure', 'castles', 'chandra', 'luichies'],
+    'J1330+1810': ['panstarrs', 'chandra', 'luichies'],
+    'J1455+1447': ['panstarrs', 'chandra', 'luichies'],
+    'J1524+4409': ['panstarrs', 'chandra', 'luichies'],
+    'J1633+3134': ['panstarrs', 'chandra', 'luichies'],
+    'J1650+4251': ['panstarrs', 'chandra', 'luichies']
 }
 
 
@@ -236,7 +236,37 @@ class LensedQSO:
         t = self.name.replace('B', '').replace('J', '').replace('+', '')
         return t if t[0] != '0' else t[1:]
 
-    def agn_fitter_output(self, rX=False, agnf_id=None):
+    def agn_settings(self):
+        return settings_template.format(**{
+            'length': self.sed_to_agn_fitter()[1],
+            'length + 1': self.sed_to_agn_fitter()[1] + 1,
+            'length + 2': self.sed_to_agn_fitter()[1] + 2,
+            'name': self.name,
+            'redshift': self.props.z_qso.values[0],
+            'filters': self.agn_fitter_input_filters()
+        })
+
+    def agn_fitter_input_filters(self):
+        outstr = ''
+
+        # Iterate over each row to get the dictionary settings
+        for i, row in FILTER_PROPERTIES.iterrows():
+
+            tel = FILTER_PROPERTIES.telescope.values[i]
+            fil = FILTER_PROPERTIES.filtername.values[i]
+
+            # if [tel,fil] in lqso.sed[['telescope', 'filter']].values:
+            if self.filter_sed(component='_sub').loc[(self.filter_sed(component='_sub')['telescope'] == tel) * (
+                    self.filter_sed(component='_sub')['filter'] == fil)].shape[0] > 0:
+                f = fil.replace("'", 'prime').replace('-', 'dash').replace('/', 'slash').replace('.', 'dot')
+                outstr += f"    filters['_{tel.replace(' ', 'space')}_{f}']=True\n"
+            else:
+                f = fil.replace("'", 'prime').replace('-', 'dash').replace('/', 'slash').replace('.', 'dot')
+                outstr += f"    filters['_{tel.replace(' ', 'space')}_{f}']=False\n"
+
+        return outstr
+
+    def agn_fitter_output(self, rX=False, agnf_id=None, copy=False):
         if agnf_id is None:
             agnf_id = self.agn_fitter_id()
         if rX:
@@ -249,8 +279,174 @@ class LensedQSO:
             print('This function only works when working from strw/vdesk.')
             return
 
+        if copy:
+            distutils.dir_util.copy_tree(path, os.path.join('data', self.name, 'agnfitter'))
+
         # TODO: some column names contain spaces? Like log Mstar
         result = pd.read_csv(os.path.join(path, f'parameter_outvalues_{agnf_id}.txt'),
                              delim_whitespace=True, skiprows=4, header=None, names=['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like'])
 
         return result
+
+
+settings_template = "'''\n" +\
+"AGNfitter setting file:\n" +\
+"\n" +\
+"required:\n" +\
+"  CATALOG_settings\n" +\
+"  FILTERS_settings\n" +\
+"  MCMC_settings\n" +\
+"  OUTPUT_settings\n" +\
+"\n" +\
+"For default use (test example with 2 redshifts and default filter set)\n" +\
+"\n" +\
+"Change only the functions which state\n" +\
+"***USER INPUT NEEDED***.\n" +\
+"'''\n" +\
+"\n" +\
+"def CATALOG_settings():\n" +\
+"\n" +\
+"    '''==================================\n" +\
+"    ***USER INPUT NEEDED***\n" +\
+"\n" +\
+"    Set the right values to be able to read your catalog's format.\n" +\
+"    FITS option is not available yet.\n" +\
+"    =================================='''\n" +\
+"\n" +\
+"\n" +\
+"    cat = dict()\n" +\
+"\n" +\
+"\n" +\
+"    ##GENERAL\n" +\
+"    cat['path'] ='/data2/bach1/abbo/brp/AGNfitter/'  #path to the AGNfitter code\n" +\
+"\n" +\
+"\n" +\
+"    cat['filename'] = cat['path']+'data/{name}.txt'\n" +\
+"    cat['filetype'] = 'ASCII' ## catalog file type: 'ASCII' or 'FITS'.\n" +\
+"                              ## FITS option not available yet.\n" +\
+"\n" +\
+"    cat['name'] = 0#'ID'            ## If ASCII: Column index (int) of source IDs\n" +\
+"                                        ## If FITS: not yet\n" +\
+"    cat['redshift'] = 1#'z'              ## If ASCII:  Column index(int) of redshift\n" +\
+"                                        ## If FITS: not yet\n" +\
+"\n" +\
+"    ##FREQUENCIES/WAVELENGTHS\n" +\
+"    ## if ASCII specify 'freq/wl_list', if FITS specify 'freq/wl_suffix'\n" +\
+"    cat['freq/wl_list'] = np.arange(2,{length},3).tolist()\n" +\
+"                                        ## If ASCII: List of column indexes (int),\n" +\
+"                                        ##           corresponding to freq/wl.\n" +\
+"    #cat['freq/wl_suffix'] = '_wl'      ## If FITS: common ending to wavelength column names\n" +\
+"    cat['freq/wl_format'] = 'wavelength' ## Gives your catalog *observed*\n" +\
+"                                         ## 'frequency' or 'wavelength'?\n" +\
+"    cat['freq/wl_unit'] = u.Angstrom       ## Astropy unit of freq or wavelength\n" +\
+"\n" +\
+"    ##FLUXES\n" +\
+"    ## if ASCII specify 'freq/wl_list', if FITS specify 'freq/wl_suffix'\n" +\
+"    cat['flux_unit'] = u.mJy             ## Astropy unit of *flux* (astropy-units)\n" +\
+"    cat['flux_list'] = np.arange(3,{length + 1},3).tolist()\n" +\
+"                                        ## If ASCII: List of column indexes (int)\n" +\
+"    #cat['flux_suffix'] = '_f'          ## If FITS: Common ending of all flux column names (str)\n" +\
+"\n" +\
+"    cat['fluxerr_list'] = np.arange(4,{length + 2},3).tolist()\n" +\
+"                                        ## If ASCII: List of column indexes (int)\n" +\
+"    #cat['fluxerr_suffix'] = '_e'       ## If FITS: common ending to fluxerr column names (str)\n" +\
+"\n" +\
+"    ##NON-DETECTIONS\n" +\
+"    cat['ndflag_bool'] = False          ## Does you catalog has columns with flags 1(0) for\n" +\
+"                                        ## detections (nondetections)?\n" +\
+"    cat['ndflag_list'] = 'list'         ## If ASCII: List of column indexes (int)\n" +\
+"                                        ## If FITS: List of column names (str)\n" +\
+"\n" +\
+"    ## COSTUMIZED WORKING PATHS\n" +\
+"    cat['workingpath'] = cat['path']  # Allows for a working path other than the AGNfitter code path.\n" +\
+"                                      # Will include:\n" +\
+"                                            # dictionary of models\n" +\
+"                                            # SETTINGS_AGNFitter.py file\n" +\
+"                                            # OUTPUT\n" +\
+"                                      # Specially needed in order not to alter git original repository\n" +\
+"                                      # and when using an external processor.\n" +\
+"                                      # Default: cat['path'] (same as AGNfitter code path)\n" +\
+"\n" +\
+"    cat['output_folder'] =  cat['workingpath'] +'OUTPUT/' #if no special OUTPUT folder, leave default\n" +\
+"    cat['dict_path'] = cat['workingpath'] + 'models/MODELSDICT_default'\n" +\
+"\n" +\
+"\n" +\
+"    return cat\n" +\
+"\n" +\
+"\n" +\
+"def FILTERS_settings():\n" +\
+"\n" +\
+"    '''==================================\n" +\
+"    Set the photometric bands included in your catalog,\n" +\
+"    in order to integrate the models over their response curves.\n" +\
+"    =================================='''\n" +\
+"\n" +\
+"    filters = dict()\n" +\
+"\n" +\
+"    filters['dict_zarray'] =np.array([{redshift}])  # The grid of redshifts needed to fit your catalog\n" +\
+"    filters['Bandset'] = 'BANDSET_settings' # OPTIONS:\n" +\
+"                                           # 'BANDSET_default' (for testing)\n" +\
+"                                           # 'BANDSET_settings' (choosing relevant filters below, as given by your catalog)\n" +\
+"                                           # if your filter is not included, go to DICTIONARIES_AGNfitter to add.\n" +\
+"\n" +\
+"{filters}\n" +\
+"    return filters\n" +\
+"\n" +\
+"def MCMC_settings():\n" +\
+"\n" +\
+"    '''==================================\n" +\
+"    Set your preferences for the MCMC sampling.\n" +\
+"    =================================='''\n" +\
+"\n" +\
+"    mc = dict()\n" +\
+"\n" +\
+"    mc['Nwalkers'] = 100  ## number of walkers\n" +\
+"    mc['Nburnsets']= 2   ## number of burn-in sets\n" +\
+"    mc['Nburn'] = 4000 ## length of each burn-in sets\n" +\
+"    mc['Nmcmc'] = 10000  ## length of each burn-in sets\n" +\
+"    mc['iprint'] = 1000 ## show progress in terminal in steps of this many samples\n" +\
+"\n" +\
+"    return mc\n" +\
+"\n" +\
+"def OUTPUT_settings():\n" +\
+"\n" +\
+"    '''==================================\n" +\
+"    Set your preferences for the production of OUTPUT files.\n" +\
+"    =================================='''\n" +\
+"\n" +\
+"    out = dict()\n" +\
+"\n" +\
+"    out['plot_format'] = 'pdf'\n" +\
+"\n" +\
+"    #CHAIN TRACES\n" +\
+"    out['plot_tracesburn-in'] = False\n" +\
+"    out['plot_tracesmcmc'] = True\n" +\
+"\n" +\
+"    #BASIC OUTPUT\n" +\
+"    out['Nsample'] = 1000 ## out['Nsample'] * out['Nthinning'] <= out['Nmcmc']\n" +\
+"    out['Nthinning'] = 10 ## This describes thinning of the chain to sample\n" +\
+"    out['writepar_meanwitherrors'] = True ##Write output values for all parameters in a file.\n" +\
+"    out['plot_posteriortriangle'] = False ##Plot triangle with all parameters' PDFs?\n" +\
+"\n" +\
+"    #INTEGRATED LUMINOSITIES\n" +\
+"    out['calc_intlum'] = True\n" +\
+"    out['realizations2int'] = 100 #This process is very time consuming.\n" +\
+"                                #Around 100-1000 is recomendend for computational reasons.\n" +\
+"                                #If you want to plot posterior triangles of\n" +\
+"                                #the integrated luminosities, should be > 1000.\n" +\
+"    out['plot_posteriortrianglewithluminosities'] = False  # requires out['calc_intlum']=True\n" +\
+"\n" +\
+"    #INTEGRATION RANGES\n" +\
+"    out['intlum_models'] = ['sb','bbb', 'bbbdered', 'gal', 'tor','sb']  #leave 'sb' always\n" +\
+"                                                                        #as first element\n" +\
+"    out['intlum_freqranges_unit'] = u.micron   #Astropy unit\n" +\
+"    out['intlum_freqranges'] = np.array([[8.,1000.],[0.1,1.],[0.1,1.],[0.1,1.],[1.,30.],[1.,30.]])\n" +\
+"    out['intlum_names'] = ['LIR(8-1000)','Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)','Lsb(1-30)']\n" +\
+"\n" +\
+"    #SED PLOTTING\n" +\
+"    out['realizations2plot'] = 10\n" +\
+"\n" +\
+"    out['plotSEDrealizations'] = True\n" +\
+"\n" +\
+"    return out\n" +\
+""

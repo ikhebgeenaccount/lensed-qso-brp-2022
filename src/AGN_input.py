@@ -47,33 +47,4 @@ def AGN_input_2():
         print(f"            lambdas.append(_{tel}_{fil}_lambda)")
         print(f"            factors.append(_{tel}_{fil}_factor)")
         print('')
-    print('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB')
 
-
-def AGN_input_3(galaxy=None):
-    lqso = LensedQSO(galaxy)
-
-    # Iterate over each row to get the dictionary settings
-    for i, row in FILTER_PROPERTIES.iterrows():
-
-        tel = FILTER_PROPERTIES.telescope.values[i]
-        fil = FILTER_PROPERTIES.filtername.values[i]
-        file = FILTER_PROPERTIES.file.values[i]
-
-        # als je geen galaxy geeft zet ze allemaal op nul
-        if galaxy is None:
-            if pd.isnull(file):
-                continue
-
-            print(f'    filters[_{tel}_{fil}]=True')
-
-        # Als je wel een glaxy geeft zet je hem op true wanneer hij er in zit, false als niet
-        else:
-            # if [tel,fil] in lqso.sed[['telescope', 'filter']].values:
-            if lqso.filter_sed(component='_sub').loc[(lqso.filter_sed(component='_sub')['telescope'] == tel) * (
-                    lqso.filter_sed(component='_sub')['filter'] == fil)].shape[0] > 0:
-                f = fil.replace("'", 'prime').replace('-', 'dash').replace('/', 'slash').replace('.', 'dot')
-                print(f"    filters['_{tel.replace(' ', 'space')}_{f}']=True")
-            else:
-                f = fil.replace("'", 'prime').replace('-', 'dash').replace('/', 'slash').replace('.', 'dot')
-                print(f"    filters['_{tel.replace(' ', 'space')}_{f}']=False")
