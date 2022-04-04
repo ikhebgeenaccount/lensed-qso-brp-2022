@@ -77,6 +77,14 @@ filters: http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gnam
 magnitude uncertainties: http://skyserver.sdss.org/dr14/en/tools/explore/Summary.aspx?id=1237668297664692248 
 2 filters with sigma=0, used code for calculating fluxes.
 maybe method a bit too difficult, but hardly a difference with simple method
+r filter 0.00 error, changed to 0.001
+
+Split SDSS r with F555W
+      SDSS i with F814W
+      2MASS H with F160W
+
+CASTLES mags ar enot in mag file since two components for foreground were listed (G, G')
+Splitting done by hand
 
 panstarrs:
 catalogue:https://outerspace.stsci.edu/display/PANSTARRS
