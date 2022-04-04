@@ -8,11 +8,10 @@ from src.tophat import tophat
 from src.model_subtraction import model_subtraction
 from src.percent_to_fraction import percent_to_fraction
 from src.filters import populate_filter_profile_path_column
-from src.AGN_input import AGN_input_1, AGN_input_2, AGN_input_3
 
 if __name__ == '__main__':
     #photometry
-    galaxy = 'J0806+2006'
+    galaxy = 'B1600+434'
     lqso = LensedQSO(galaxy)
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
     lqso.plot_spectrum(loglog=True)
@@ -23,7 +22,7 @@ if __name__ == '__main__':
     #percent_to_fraction('WIYN.U_HARRIS.txt','WIYN.U_HARRIS_fraction.txt')
 
     #model subtraction
-    #model_subtraction(lqso)
+    model_subtraction(lqso)
     
 
     #making the settings for agn fitter

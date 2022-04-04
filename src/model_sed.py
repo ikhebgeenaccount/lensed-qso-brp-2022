@@ -39,7 +39,25 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
         newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.031e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
         newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0.611e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
         MODELS[name]=newerest_model
-
+#nog meer sorry Lars voor de code die nu gaat komen
+        
+    if name == 'NGC_5104':
+        new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 5.266e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
+        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.0051e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
+        newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0.658e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
+        MODELS[name]=newerest_model
+        
+    if name == 'NGC_5033':
+        new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 40.78e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
+        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 18.221e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
+        newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 6.474e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
+        MODELS[name]=newerest_model
+    
+    if name == 'NGC_4594':
+        new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 25.6e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
+        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 12.1e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
+        newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 5.56e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
+        MODELS[name]=newerest_model
 
 # Fitting
 #
