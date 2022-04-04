@@ -182,6 +182,17 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
     # TODO: how to return combined model?
 
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    for i in range(model_set.shape[0]):
+        models_flux = [MODELS[row['name']]['flux'].values * row['mult'] for j, row in model_set.head(i + 1).iterrows()]
+        models_wl = [list(MODELS[row['name']]['wavelength'].values) for i, row in model_set.head(i + 1).iterrows()]
+        interp_models_flux = np.stack([np.interp(wls, models_wl[i], models_flux[i]) for i in range(i + 1)])
+        t_model = np.average(interp_models_flux, axis=0, weights=1. / model_set['red_chi_sq'].head(i + 1))
+
+        ax.plot3D([i] * len(wls), np.log10(wls), np.log10(t_model))
+
     return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
 
 
