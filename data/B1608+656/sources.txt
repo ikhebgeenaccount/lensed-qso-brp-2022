@@ -42,6 +42,9 @@ Ignored for now as the foreground galaxy models don't have radio anyway.
 Chandra: 
 doubles so added together by hand
 
+Panstarrs aperture mag is chosen
+Koopmans, Sluse CASTLES data is used to split
+
 
 
 NED:
