@@ -5,6 +5,7 @@ Stacey+2018: no upper limits
 Oguri 2008:
 -uh88 skipped since lensprofile unavailable
 -magellan panic> used wavelengths found in 	http://instrumentation.obs.carnegiescience.edu/wirc/wircpaper.pdf and 2mass zeropoints https://iopscience.iop.org/article/10.1086/376474/pdf , these are useful for model plotting but maybe not for agnfitter
+- Magellan PANIC used to split 2MASS, except for K' filter which is already split for Rusu 2016 Subaru
 -ARC telescope was left out since we already have Hband from PANIC and from 2mass. Mochten we weinig andere data vinden kan dit altijd nog toegepast worden
 source:https://ui.adsabs.harvard.edu/abs/2008MNRAS.391.1973O/abstract 
 
@@ -23,7 +24,7 @@ source:https://ui.adsabs.harvard.edu/abs/2016MNRAS.458....2R/abstract
 
 Shajib, 2019:
 No castles data is available, but this paper does give some componental hst data, so nice
-converted as other hst data
+Used to split SDSS, F160W not used
 source:https://ui.adsabs.harvard.edu/abs/2019MNRAS.483.5649S/abstract
 
 NED:
