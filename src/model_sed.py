@@ -140,7 +140,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
     if model_set['red_chi_sq'].iloc[0] / model_set['red_chi_sq'].iloc[1] <= 0.5:
         print('Best model is twice as good as next best')
-        return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
+        #return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
 
     # Combine N models
     N = 5  # TODO: base amount of models on something
@@ -185,13 +185,18 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
+    models_flux = [MODELS[row['name']]['flux'].values * row['mult'] for j, row in model_set.iterrows()]
+    models_wl = [list(MODELS[row['name']]['wavelength'].values) for j, row in model_set.iterrows()]
+    interp_models_flux = np.stack([np.interp(wls, models_wl[j], models_flux[j]) for j in range(model_set.shape[0])])
+
     for i in range(model_set.shape[0]):
-        models_flux = [MODELS[row['name']]['flux'].values * row['mult'] for j, row in model_set.head(i + 1).iterrows()]
-        models_wl = [list(MODELS[row['name']]['wavelength'].values) for i, row in model_set.head(i + 1).iterrows()]
-        interp_models_flux = np.stack([np.interp(wls, models_wl[i], models_flux[i]) for i in range(i + 1)])
-        t_model = np.average(interp_models_flux, axis=0, weights=1. / model_set['red_chi_sq'].head(i + 1))
+        t_model = np.average(interp_models_flux[0:i + 1], axis=0, weights=1. / model_set['red_chi_sq'].head(i + 1).values)
 
         ax.plot3D([i] * len(wls), np.log10(wls), np.log10(t_model))
+
+    ax.set_xlabel('Model count')
+    ax.set_ylabel('$\mathit{Wavelength}\ (\mathrm{\AA})$')
+    ax.set_zlabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
 
     return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
 
