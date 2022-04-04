@@ -5,8 +5,8 @@ PanSTARRS,i,,17.28,0.005,,,,,,,,,,,Panstarrs+DR2-psf,0
 PanSTARRS,z,,17.26,0.002,,,,,,,,,,,Panstarrs+DR2-psf,0
 PanSTARRS,y,,17.26,0.02,,,,,,,,,,,Panstarrs+DR2-psf,0
 SDSS,u,,17.56,0.01,,,,,,,,,,,SDSS+DR14,0
-SDSS,g,,17.29,0.00,,,,,,,,,,,SDSS+DR14,0
-SDSS,r,,17.16,0.0,,,,,,,,,,,SDSS+DR14,0
+SDSS,g,,17.29,0.004438,,,,,,,,,,,SDSS+DR14,0
+SDSS,r,,17.16,0.004686733,,,,,,,,,,,SDSS+DR14,0
 SDSS,i,,16.94,0.01,,,,,,,,,,,SDSS+DR14,0
 SDSS,z,,16.93,0.01,,,,,,,,,,,SDSS+DR14,0
 CASTLES,F160W,,,,16.80,0.062,15.78,0.03,17.23,0.02,,,,,CASTLES,0
