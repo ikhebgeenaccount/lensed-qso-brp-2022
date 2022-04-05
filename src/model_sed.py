@@ -13,12 +13,12 @@ LQSO_NO_MODELS = {
     'J0924+0219': 2,
     'B1152+200': 4,
     'J1330+1810': 0,
-    'J1455+1447': 1,
+    'J1455+1447': 5,
     'J1524+4409': 0,
     'B1600+434': 5,
     'B1608+656': 3,
     'J1633+3134': 1,
-    'J1650+4251': 0
+    'J1650+4251': 5
 }
 
 # Load model properties
@@ -52,8 +52,6 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
         newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.031e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
         newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0.611e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
         MODELS[name]=newerest_model
-
-#nog meer sorry Lars voor de code die nu gaat komen
 
     if name == 'NGC_5104':
         new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 5.266e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
@@ -109,6 +107,15 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     chisqs = []
     stds = []
     mults = []
+
+    single_g = False
+    if lqso.name in ['J1650+4251', 'J1455+1447']:
+        # Fit only selection of models
+        models = ['NGC_3265', 'NGC_0855', 'NGC_4621', 'NGC_4660', 'NGC_4458']
+
+        model_set_is = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['name'].isin(models)].index
+
+        single_g = True
 
     for i, label_index in enumerate(model_set_is):
         m = MODEL_PROPERTIES.loc[label_index]
@@ -198,7 +205,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         wls = np.sort(wls)
 
         interp_models_flux = np.stack([np.interp(wls, models_wl[i], models_flux[i]) for i in range(N)])
-        avg_model = np.average(interp_models_flux, axis=0, weights=1. / model_set['red_chi_sq'].head(N))
+        avg_model = np.average(interp_models_flux, axis=0, weights=1. / model_set['red_chi_sq'].head(N) if not single_g else None)
 
         # Error seems wrong, way too small? Check std of mult
         stds = model_set['std'].head(N).values.reshape((N, 1))
@@ -293,6 +300,7 @@ class FitFunction:
 
 
 def plot_fit(lqso, models, save_plots=True, save_location='plots', count=5):
+    # TODO: change to average model for total plot
 
     # Plot the model on just the foreground galaxy data
     fig, ax = lqso.plot_spectrum(loglog=True, component='_G')
