@@ -8,6 +8,19 @@ from matplotlib import pyplot as plt
 
 from scipy.optimize import curve_fit, minimize
 
+LQSO_NO_MODELS = {
+    'J0806+2006': 2,
+    'J0924+0219': 2,
+    'B1152+200': 4,
+    'J1330+1810': 0,
+    'J1455+1447': 1,
+    'J1524+4409': 0,
+    'B1600+434': 5,
+    'B1608+656': 3,
+    'J1633+3134': 1,
+    'J1650+4251': 0
+}
+
 # Load model properties
 MODEL_PROPERTIES = pandas.read_csv(os.path.join('data', 'brown_seds', 'sed_properties.dat'), delimiter='|',
                                names=['name', 'ra_dec', 'morph', 'type', 'bpt_class'], usecols=[0, 1, 2, 3, 4])
@@ -40,19 +53,19 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
         newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0.611e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
         MODELS[name]=newerest_model
 #nog meer sorry Lars voor de code die nu gaat komen
-        
+
     if name == 'NGC_5104':
         new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 5.266e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
         newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.0051e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
         newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0.658e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
         MODELS[name]=newerest_model
-        
+
     if name == 'NGC_5033':
         new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 40.78e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
         newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 18.221e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
         newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 6.474e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
         MODELS[name]=newerest_model
-    
+
     if name == 'NGC_4594':
         new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 25.6e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
         newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 12.1e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
@@ -72,9 +85,9 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     Fits a Brown SED to the foreground galaxy data points of given LensedQSO using scipy.optimize.curve_fit.
     :param lqso:
     :param morph: type of allowed morphologies, valid values are 'all', 'spiral', 'elliptical'
-    :return:
+    :return: three 1D arrays, wavelengths, fluxes, errors for each flux at each wavelength
     """
-    sed = lqso.filter_sed(component='_G', allow_zero_error=False).copy()  # Copy such that changing the wavelength doesn't affect the original
+    sed = lqso.filter_sed(component='_G', allow_zero_error=lqso.name == 'J1650+4251').copy()  # Copy such that changing the wavelength doesn't affect the original
     sed['wavelength'] = sed['wavelength'] / (1 + lqso.props['z_lens'].values[0])
     sed.sort_values(by='wavelength')  # Doesn't matter
 
@@ -101,7 +114,8 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         if method == 'curve_fit':
             ff = FitFunction(sed, model)
 
-            popt, pcov = curve_fit(ff.f, sed.wavelength.values, sed.flux_G.values, sigma=sed.flux_G_err.values, p0=[1e-2])
+            # TODO: 1650 enter no errors since only one datapoint since error of single datapoint is zero
+            popt, pcov = curve_fit(ff.f, sed.wavelength.values, sed.flux_G.values, sigma=None if lqso.name == 'J1650+4251' else sed.flux_G_err.values, p0=[1e-2])
 
             # Keep track of scores and multiplication factors
             chisqs.append(ff.chi_squared(popt))
@@ -161,62 +175,73 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         #return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
 
     # Combine N models
-    N = 5  # TODO: base amount of models on something
+    N = LQSO_NO_MODELS[lqso.name]
 
-    models_wl = [list(MODELS[row['name']]['wavelength'].values) for i, row in model_set.head(N).iterrows()]
-    models_flux = [MODELS[row['name']]['flux'].values * row['mult'] for i, row in model_set.head(N).iterrows()]
+    if N != 0:
 
-    # Models are not guaranteed to be same length
-    # Take highest starting point (highest np.min of models) as starting point
-    # Take lowest end point as end point
-    start_wl = np.max([np.min(ws) for ws in models_wl])
-    end_wl = np.min([np.max(ws) for ws in models_wl])
+        models_wl = [list(MODELS[row['name']]['wavelength'].values) for i, row in model_set.head(N).iterrows()]
+        models_flux = [MODELS[row['name']]['flux'].values * row['mult'] for i, row in model_set.head(N).iterrows()]
 
-    all_wls = np.array([w for wls in models_wl for w in wls])
+        # Models are not guaranteed to be same length
+        # Take highest starting point (highest np.min of models) as starting point
+        # Take lowest end point as end point
+        start_wl = np.max([np.min(ws) for ws in models_wl])
+        end_wl = np.min([np.max(ws) for ws in models_wl])
 
-    # Get all the unique wavelenghts that the models have, so we can interp at those wavelenghts
-    wls = np.unique(all_wls[(all_wls >= all_wls) * (all_wls <= all_wls)])
-    wls = np.sort(wls)
+        all_wls = np.array([w for wls in models_wl for w in wls])
 
-    interp_models_flux = np.stack([np.interp(wls, models_wl[i], models_flux[i]) for i in range(N)])
-    avg_model = np.average(interp_models_flux, axis=0, weights=1. / model_set['red_chi_sq'].head(N))
+        # Get all the unique wavelenghts that the models have, so we can interp at those wavelenghts
+        wls = np.unique(all_wls[(all_wls >= all_wls) * (all_wls <= all_wls)])
+        wls = np.sort(wls)
 
-    # Error seems wrong, way too small? Check std of mult
-    stds = model_set['std'].head(N).values.reshape((N, 1))
+        interp_models_flux = np.stack([np.interp(wls, models_wl[i], models_flux[i]) for i in range(N)])
+        avg_model = np.average(interp_models_flux, axis=0, weights=1. / model_set['red_chi_sq'].head(N))
 
-    mult_err_prop = np.linalg.norm(interp_models_flux * stds, axis=0)
-    models_std = np.std(interp_models_flux, axis=0)
+        # Error seems wrong, way too small? Check std of mult
+        stds = model_set['std'].head(N).values.reshape((N, 1))
 
-    # print(avg_model)
-    # print(mult_err_prop)
-    # print(models_std)
-    # print(np.sqrt(np.power(mult_err_prop, 2.) + np.power(models_std, 2.)))
+        mult_err_prop = np.linalg.norm(interp_models_flux * stds, axis=0)
+        models_std = np.std(interp_models_flux, axis=0)
 
-    fax.plot(wls * (1 + lqso.props['z_lens'].values[0]), avg_model, label='Average model')
-    fax.fill_between(wls * (1 + lqso.props['z_lens'].values[0]), avg_model - models_std, avg_model + models_std)
-    fax.legend()
+        fax.plot(wls * (1 + lqso.props['z_lens'].values[0]), avg_model, label='Average model')
+        fax.fill_between(wls * (1 + lqso.props['z_lens'].values[0]), avg_model - models_std, avg_model + models_std)
+        fax.legend()
 
-    print('Avg model red chi sq:', FitFunction(sed, wls=wls, fluxs=avg_model).chi_squared([1]) / (sed.flux_G.shape[0] - 1))
+        print('Avg model red chi sq:', FitFunction(sed, wls=wls, fluxs=avg_model).chi_squared([1]) / (sed.flux_G.shape[0] - 1))
 
     # TODO: how to return combined model?
 
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
-    models_flux = [MODELS[row['name']]['flux'].values * row['mult'] for j, row in model_set.iterrows()]
-    models_wl = [list(MODELS[row['name']]['wavelength'].values) for j, row in model_set.iterrows()]
-    interp_models_flux = np.stack([np.interp(wls, models_wl[j], models_flux[j]) for j in range(model_set.shape[0])])
+    fig = plt.figure()
+    moax = fig.add_subplot(111, projection='3d')
+
+    models_flux = [MODELS[row['name']]['flux'].values * row['mult'] for _, row in model_set.iterrows()]
+    models_wl = [list(MODELS[row['name']]['wavelength'].values) for _, row in model_set.iterrows()]
+
+    all_wls = np.array([w for wls in models_wl for w in wls])
+
+    # Get all the unique wavelenghts that the models have, so we can interp at those wavelenghts
+    mwls = np.unique(all_wls[(all_wls >= all_wls) * (all_wls <= all_wls)])
+    mwls = np.sort(mwls)
+    interp_models_flux = np.stack([np.interp(mwls, models_wl[j], models_flux[j]) for j in range(model_set.shape[0])])
 
     for i in range(model_set.shape[0]):
         t_model = np.average(interp_models_flux[0:i + 1], axis=0, weights=1. / model_set['red_chi_sq'].head(i + 1).values)
 
-        ax.plot3D([i] * len(wls), np.log10(wls), np.log10(t_model))
+        moax.plot3D([i] * len(mwls), np.log10(wls), np.log10(interp_models_flux[i]))
+        ax.plot3D([i] * len(mwls), np.log10(wls), np.log10(t_model))
 
     ax.set_xlabel('Model count')
     ax.set_ylabel('$\mathit{Wavelength}\ (\mathrm{\AA})$')
     ax.set_zlabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
 
-    return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
+    if N == 0:
+        print(f'N = 0 for {lqso.name}.')
+        return None
+
+    return wls, avg_model, models_std
 
 
 class FitFunction:

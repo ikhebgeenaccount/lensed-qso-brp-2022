@@ -97,12 +97,12 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None):
     yerr_opt = yerr_opt / (sfr_opt * np.log(10.))  # Calculate error in log SFR from SFR
 
     # Plot galaxy
-    ax.errorbar(log_m_star - np.log10(mu), np.log10(sfr_ir/mu), xerr=xerr, yerr=yerr_ir, label=f'{lqso.name} SFR_IR, z={lqso.props.z_qso.values[0]}', fmt='o', capsize=4)
-    ax.errorbar(log_m_star - np.log10(mu), np.log10(sfr_opt/mu), xerr=xerr, yerr=yerr_opt, label=f'{lqso.name} SFR_opt, z={lqso.props.z_qso.values[0]}', fmt='o', capsize=4)
+    ax.errorbar(log_m_star - np.log10(mu), np.log10(sfr_ir/mu), xerr=xerr, yerr=yerr_ir, label=f'{lqso.name} SFR_IR, z={lqso.props.z_qso.values[0]:.3e}', fmt='o', capsize=4)
+    ax.errorbar(log_m_star - np.log10(mu), np.log10(sfr_opt/mu), xerr=xerr, yerr=yerr_opt, label=f'{lqso.name} SFR_opt, z={lqso.props.z_qso.values[0]:.3e}', fmt='o', capsize=4)
 
     ax.legend()
 
     fig.savefig(os.path.join('plots', f'speagle.pdf'))
-    fig.savefig(os.path.join('plots', f'speagle.jpg'))
+    fig.savefig(os.path.join('plots', f'speagle.svg'))
 
     return fig, ax
