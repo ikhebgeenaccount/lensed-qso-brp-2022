@@ -62,7 +62,7 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'B1600+434'
+    galaxy = 'J1455+1447'
     lqso = LensedQSO(galaxy)
 
     # ned_table_to_sed(lqso, ned_file='ned_wise.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
@@ -71,22 +71,22 @@ def single_galaxy():
 
     # mags_to_fluxes(lqso, components=None if galaxy != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
     m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
-    # mag_ratio_split_total_flux(lqso, 'Inada+2003', overwrite=False)
+    # mag_ratio_split_total_flux(lqso, 'Koopmans+2003', overwrite=True,  components=None if galaxy != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
 
-    # src.model_sed.fit(lqso, m)
+    src.model_sed.fit(lqso, m)
 
     # lqso.plot_spectrum()
 
     # model_subtraction(lqso)
 
-    catalog, length = lqso.sed_to_agn_fitter()
+    #catalog, length = lqso.sed_to_agn_fitter()
 
-    print(catalog)
+    #print(catalog)
 
     #print(lqso.agn_settings())
 
-    print(lqso.agn_fitter_output())
-    print(lqso.agn_fitter_output()[['tau', 'age', 'LIR(8-1000)', 'SFR_IR', 'SFR_opt', 'logMstar']])
+    #print(lqso.agn_fitter_output())
+    #print(lqso.agn_fitter_output()[['tau', 'age', 'LIR(8-1000)', 'SFR_IR', 'SFR_opt', 'logMstar']])
     plot_lqso_in_speagle(lqso)
 
 
@@ -97,8 +97,26 @@ def latex():
                                    label='table:filter_conv', caption='All filters for which magnitudes were found, with their respective conversion methods and zeropoints.')
 
 
+def plot_ell_models():
+    fig, ax = plt.subplots()
+    models = [3265, '0855', 4621, 4660, 4458]
+
+    for mn in models:
+        model = f'NGC_{mn}'
+        m = src.model_sed.MODELS[model]
+
+        #ax.plot(m.wavelength, m.flux, label='Brown')
+        ax.plot(m.wavelength, np.abs(m.flux), label=model)
+
+    # ax.set_title(model)
+    ax.set_yscale('log')
+    ax.set_xscale('log')
+    ax.legend()
+
+
 if __name__ == '__main__':
     # all_galaxies()
+    # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
     # plot_single_model()
