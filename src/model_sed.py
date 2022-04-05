@@ -52,6 +52,7 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
         newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.031e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
         newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0.611e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
         MODELS[name]=newerest_model
+
 #nog meer sorry Lars voor de code die nu gaat komen
 
     if name == 'NGC_5104':
@@ -71,6 +72,8 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
         newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 12.1e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
         newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 5.56e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
         MODELS[name]=newerest_model
+
+
 
 # Fitting
 #
@@ -172,7 +175,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
     if model_set['red_chi_sq'].iloc[0] / model_set['red_chi_sq'].iloc[1] <= 0.5:
         print('Best model is twice as good as next best')
-        #return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
+        return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
 
     # Combine N models
     N = LQSO_NO_MODELS[lqso.name]
@@ -191,7 +194,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         all_wls = np.array([w for wls in models_wl for w in wls])
 
         # Get all the unique wavelenghts that the models have, so we can interp at those wavelenghts
-        wls = np.unique(all_wls[(all_wls >= all_wls) * (all_wls <= all_wls)])
+        wls = np.unique(all_wls[(all_wls >= start_wl) & (all_wls <= end_wl)])
         wls = np.sort(wls)
 
         interp_models_flux = np.stack([np.interp(wls, models_wl[i], models_flux[i]) for i in range(N)])
@@ -200,7 +203,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         # Error seems wrong, way too small? Check std of mult
         stds = model_set['std'].head(N).values.reshape((N, 1))
 
-        mult_err_prop = np.linalg.norm(interp_models_flux * stds, axis=0)
+        # mult_err_prop = np.linalg.norm(interp_models_flux * stds, axis=0)
         models_std = np.std(interp_models_flux, axis=0)
 
         fax.plot(wls * (1 + lqso.props['z_lens'].values[0]), avg_model, label='Average model')
@@ -208,8 +211,6 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         fax.legend()
 
         print('Avg model red chi sq:', FitFunction(sed, wls=wls, fluxs=avg_model).chi_squared([1]) / (sed.flux_G.shape[0] - 1))
-
-    # TODO: how to return combined model?
 
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -223,7 +224,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     all_wls = np.array([w for wls in models_wl for w in wls])
 
     # Get all the unique wavelenghts that the models have, so we can interp at those wavelenghts
-    mwls = np.unique(all_wls[(all_wls >= all_wls) * (all_wls <= all_wls)])
+    mwls = np.unique(all_wls[(all_wls >= all_wls) & (all_wls <= all_wls)])
     mwls = np.sort(mwls)
     interp_models_flux = np.stack([np.interp(mwls, models_wl[j], models_flux[j]) for j in range(model_set.shape[0])])
 
