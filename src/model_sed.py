@@ -39,6 +39,7 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
         newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.031e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
         newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0.611e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
         MODELS[name]=newerest_model
+        
 #nog meer sorry Lars voor de code die nu gaat komen
         
     if name == 'NGC_5104':
@@ -58,6 +59,8 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
         newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 12.1e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
         newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 5.56e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
         MODELS[name]=newerest_model
+        
+        
 
 # Fitting
 #
@@ -158,7 +161,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
     if model_set['red_chi_sq'].iloc[0] / model_set['red_chi_sq'].iloc[1] <= 0.5:
         print('Best model is twice as good as next best')
-        #return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
+        return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
 
     # Combine N models
     N = 5  # TODO: base amount of models on something
@@ -199,22 +202,6 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     print('Avg model red chi sq:', FitFunction(sed, wls=wls, fluxs=avg_model).chi_squared([1]) / (sed.flux_G.shape[0] - 1))
 
     # TODO: how to return combined model?
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-
-    models_flux = [MODELS[row['name']]['flux'].values * row['mult'] for j, row in model_set.iterrows()]
-    models_wl = [list(MODELS[row['name']]['wavelength'].values) for j, row in model_set.iterrows()]
-    interp_models_flux = np.stack([np.interp(wls, models_wl[j], models_flux[j]) for j in range(model_set.shape[0])])
-
-    for i in range(model_set.shape[0]):
-        t_model = np.average(interp_models_flux[0:i + 1], axis=0, weights=1. / model_set['red_chi_sq'].head(i + 1).values)
-
-        ax.plot3D([i] * len(wls), np.log10(wls), np.log10(t_model))
-
-    ax.set_xlabel('Model count')
-    ax.set_ylabel('$\mathit{Wavelength}\ (\mathrm{\AA})$')
-    ax.set_zlabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
 
     return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
 
