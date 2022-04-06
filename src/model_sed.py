@@ -72,18 +72,18 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
         newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 5.56e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
         MODELS[name]=newerest_model
 
-    #we do the same in order to check if we can make this assumption for ellipticals
-    if name == 'NGC_4473':
-        new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 0.2, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
-        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.5, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
-        newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
-        MODELS[name]=newerest_model
-        
-    if name == 'NGC_3265':
-        new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 1.24e-3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
-        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 0.55e-3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
-        newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0.238e-3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
-        MODELS[name]=newerest_model
+    #we do the same in order to check if we can make this assumption for ellipticals>we can
+#    if name == 'NGC_4473':
+#        new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 0.2, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
+#        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.5, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
+#        newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
+#        MODELS[name]=newerest_model
+#        
+#    if name == 'NGC_3265':
+#        new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 1.24e-3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
+#        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 0.55e-3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
+#        newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0.238e-3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
+#        MODELS[name]=newerest_model
 
 # Fitting
 #
