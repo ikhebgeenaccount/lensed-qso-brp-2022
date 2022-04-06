@@ -16,7 +16,7 @@ import warnings
 # Perhaps filter add argument to filter_sed to only find within certain wavelength range?
 FILTERED_SOURCES = {
     'B1152+200': ['panstarrs', 'chandra', 'luichies'],
-    'B1600+434': ['panstarrs', 'chandra', 'luichies'],
+    'B1600+434': ['panstarrs', 'chandra', 'luichies', 'Munoz'],
     'B1608+656': ['chandra', 'luichies'],#['Koopmans+2003' ],
     'J0806+2006': ['panstarrs', 'chandra', 'luichies'],
     'J0924+0219': ['panstarrs', 'faure', 'castles', 'chandra', 'luichies'],
