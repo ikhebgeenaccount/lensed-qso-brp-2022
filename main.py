@@ -11,7 +11,7 @@ from src.filters import populate_filter_profile_path_column
 
 if __name__ == '__main__':
     #photometry
-    galaxy = 'B1608+656'
+    galaxy = 'B1152+200'
     lqso = LensedQSO(galaxy)
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
     #lqso.plot_spectrum(loglog=True)
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     #percent_to_fraction('WIYN.U_HARRIS.txt','WIYN.U_HARRIS_fraction.txt')
 
     #model subtraction
-    #model_subtraction(lqso)
+    model_subtraction(lqso)
     
 
     #making the settings for agn fitter
@@ -45,6 +45,6 @@ if __name__ == '__main__':
             #lqso.plot_spectrum(loglog=True)
             model_subtraction(lqso)
     
-    all_galaxies()    
+    #all_galaxies()    
 
     plt.show()
