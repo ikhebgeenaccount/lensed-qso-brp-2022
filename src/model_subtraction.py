@@ -14,7 +14,7 @@ from src.filters import get_filename
 import pandas as pd
 import os
 
-def model_subtraction_average(lqso):
+def model_subtraction(lqso):
     """
     lqso is the class of the galaxy on which we are working
     model is the name of the model that we wish to subtract
@@ -93,7 +93,11 @@ def model_subtraction_average(lqso):
             
             #Neem het weighted average = de waarden van je model op de filterrange
             average_model = np.average (y_model_range, weights=weights_filter)
-            average_error = np.average (error_range, weights=weights_filter)
+            #average_error = np.average (error_range, weights=weights_filter)
+            
+            average_error = (1 / len(weights_filter)*np.sum(weights_filter)) * \
+                np.sqrt (np.sum (np.square(weights_filter * error_range)))
+
 
             list_sub.append( float(row['flux_total']) -  average_model)
             list_sub_err.append(np.sqrt(row['flux_err']**2 + (average_error)**2))
