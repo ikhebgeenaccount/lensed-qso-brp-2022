@@ -24,7 +24,7 @@ def model_subtraction(lqso):
 
     #Fitting gives the model> see model_sed for details
     wavelength, flux, flux_error = fit(lqso, morph = morph)
-
+    print( flux, 'hoi')
     #The wavelengths of the model are returned already in restframe by model_sed
 
     #an empty list to store the fluxes, and new column in the sed
