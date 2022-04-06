@@ -116,5 +116,5 @@ def model_subtraction(lqso):
     fig.savefig(os.path.join('plots', lqso.name, f'{lqso.name}_sub.pdf'))
     plt.vlines(np.max(wavelength), 0.9*np.min(list_sub), np.max(lqso.sed['flux_total']), alpha=0.5)
     plt.vlines(np.min(wavelength), 0.9*np.min(list_sub), np.max(lqso.sed['flux_total']), alpha=0.5, label='model boundary')
-    plt.legend()
+    #plt.legend()
     lqso.save_sed()
