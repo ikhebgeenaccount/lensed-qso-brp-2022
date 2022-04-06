@@ -275,9 +275,12 @@ class LensedQSO:
             path = os.path.join(os.pardir, 'AGNfitter', 'OUTPUT', str(agnf_id))
 
         if not os.path.isdir(path):
-            print('No results found.')
-            print('This function only works when working from strw/vdesk.')
-            return
+            if not os.path.isdir(os.path.join(os.pardir, 'lensed-qso-brp-2022', 'data', f'{self.name}', 'agnfitter')):
+                print('Are you working on vdesk? If not, then this output has not been copied to our github repo')
+                return
+            else:
+                path=os.path.join(os.pardir, 'lensed-qso-brp-2022', 'data', f'{self.name}', 'agnfitter')
+                
 
         if copy:
             distutils.dir_util.copy_tree(path, os.path.join('data', self.name, 'agnfitter'))
