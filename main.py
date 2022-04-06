@@ -6,6 +6,7 @@ from src.ned_to_sed import ned_table_to_sed
 from src.xml_to_txt import xml_to_txt
 from src.tophat import tophat
 from src.model_subtraction import model_subtraction
+from src.speagle import plot_lqso_in_speagle
 from src.percent_to_fraction import percent_to_fraction
 from src.filters import populate_filter_profile_path_column
 
@@ -22,8 +23,8 @@ if __name__ == '__main__':
     #percent_to_fraction('WIYN.U_HARRIS.txt','WIYN.U_HARRIS_fraction.txt')
 
     #model subtraction
-    model_subtraction(lqso)
-    
+    #model_subtraction(lqso)
+    plot_lqso_in_speagle(lqso)
 
     #making the settings for agn fitter
     #print(lqso.sed_to_agn_fitter())
@@ -43,8 +44,14 @@ if __name__ == '__main__':
         for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
             lqso = LensedQSO(g)
             #lqso.plot_spectrum(loglog=True)
-            model_subtraction(lqso)
+            #model_subtraction(lqso)
+
+            if lqso.agn_fitter_output(copy=False) is not None:
+                if ax is None:
+                    fig, ax = plot_lqso_in_speagle(lqso)
+                else:
+                    plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
     
-    #all_galaxies()    
+    #all_galaxies()
 
     plt.show()
