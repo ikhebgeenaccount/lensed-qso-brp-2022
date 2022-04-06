@@ -6,7 +6,6 @@ from src.ned_to_sed import ned_table_to_sed
 from src.xml_to_txt import xml_to_txt
 from src.tophat import tophat
 from src.model_subtraction import model_subtraction
-from src.model_subtraction_average import model_subtraction_average
 from src.percent_to_fraction import percent_to_fraction
 from src.filters import populate_filter_profile_path_column
 
@@ -23,7 +22,7 @@ if __name__ == '__main__':
     #percent_to_fraction('WIYN.U_HARRIS.txt','WIYN.U_HARRIS_fraction.txt')
 
     #model subtraction
-    model_subtraction_average(lqso)
+    model_subtraction(lqso)
     
 
     #making the settings for agn fitter
