@@ -16,7 +16,7 @@ LQSO_NO_MODELS = {
     'J1330+1810': 5, #not clear, made guess
     'J1455+1447': 5, #1 datapoint
     'J1524+4409': 5, #not clear, made guess
-    'B1600+434': 5, #spiral>take best 5
+    'B1600+434': 4, #spiral>take best 5, changed to 4 since 4/5 best models have Herschel data
     'B1608+656': 3, #semi clear
     'J1633+3134': 1, #very clear
     'J1650+4251': 5 #1 datapoint
@@ -78,7 +78,7 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
 #        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.5, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
 #        newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
 #        MODELS[name]=newerest_model
-#        
+#
 #    if name == 'NGC_3265':
 #        new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 1.24e-3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
 #        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 0.55e-3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
@@ -120,7 +120,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     stds = []
     mults = []
 
-    single_g = False
+    single_g = False        # TODO: some column names contain spaces? Like log Mstar
     if lqso.name in ['J1650+4251', 'J1455+1447']:
         # Fit only selection of models
         models = ['NGC_3265', 'NGC_0855', 'NGC_4621', 'NGC_4660', 'NGC_4458']
@@ -128,6 +128,12 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         model_set_is = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['name'].isin(models)].index
 
         single_g = True
+
+    if lqso.name == 'B1600+434':
+        # Only fit good fitting spiral models with Herschel data
+        models = ['UGC_12150', 'NGC_5104', 'NGC_5033', 'NGC_4594']
+
+        model_set_is = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['name'].isin(models)].index
 
     for i, label_index in enumerate(model_set_is):
         m = MODEL_PROPERTIES.loc[label_index]

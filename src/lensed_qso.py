@@ -314,16 +314,15 @@ class LensedQSO:
                 return
             else:
                 path=os.path.join(os.pardir, 'lensed-qso-brp-2022', 'data', f'{self.name}', 'agnfitter')
-                
 
         if copy:
             distutils.dir_util.copy_tree(path, os.path.join('data', self.name, 'agnfitter'))
 
-        # TODO: some column names contain spaces? Like log Mstar
         result = pd.read_csv(os.path.join(path, f'parameter_outvalues_{agnf_id}.txt'),
                              delim_whitespace=True, skiprows=4, header=None, names=['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like'])
 
         return result
+
 
 settings_template_rX = "'''\n" +\
 "AGNfitter setting file:\n" +\
