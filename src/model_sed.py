@@ -183,7 +183,6 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
     if model_set['red_chi_sq'].iloc[0] / model_set['red_chi_sq'].iloc[1] <= 0.5:
         print('Best model is twice as good as next best')
-        return model_set.iloc[[0]]["name"].values[0], model_set.iloc[[0]]["mult"].values[0], model_set.iloc[[0]]["std"].values[0]
 
     # Combine N models
     N = LQSO_NO_MODELS[lqso.name]
