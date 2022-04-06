@@ -10,16 +10,16 @@ from mpl_toolkits.mplot3d import Axes3D
 from scipy.optimize import curve_fit, minimize
 
 LQSO_NO_MODELS = {
-    'J0806+2006': 2,
-    'J0924+0219': 2,
-    'B1152+200': 4,
-    'J1330+1810': 5,
-    'J1455+1447': 5,
-    'J1524+4409': 5,
-    'B1600+434': 5,
-    'B1608+656': 3,
-    'J1633+3134': 1,
-    'J1650+4251': 5
+    'J0806+2006': 2, #very clear
+    'J0924+0219': 2, #very clear
+    'B1152+200': 4, #semi clear
+    'J1330+1810': 5, #not clear, made guess
+    'J1455+1447': 5, #1 datapoint
+    'J1524+4409': 5, #not clear, made guess
+    'B1600+434': 5, #spiral>take best 5
+    'B1608+656': 3, #semi clear
+    'J1633+3134': 1, #very clear
+    'J1650+4251': 5 #1 datapoint
 }
 
 # Load model properties
