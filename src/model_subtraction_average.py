@@ -90,9 +90,9 @@ def model_subtraction_average(lqso):
                 delim_whitespace=True, header=None,usecols=[ 0,1], names=['wavelength', 'transmission'])
 
             #middel over het filterprofiel: neem het stukje model op je filterprofiel
-            x_model_range=x_model[(x_model >= min(filterprofile['wavelength'])) * (x_model <= max(filterprofile['wavelength']))]
-            y_model_range=flux[(x_model >= min(filterprofile['wavelength'])) * (x_model <= max(filterprofile['wavelength']))]
-            error_range = flux_error[(x_model >= min(filterprofile['wavelength'])) * (x_model <= max(filterprofile['wavelength']))]
+            x_model_range=x_model[(x_model >= min(filterprofile['wavelength'])) & (x_model <= max(filterprofile['wavelength']))]
+            y_model_range=flux[(x_model >= min(filterprofile['wavelength'])) & (x_model <= max(filterprofile['wavelength']))]
+            error_range = flux_error[(x_model >= min(filterprofile['wavelength'])) & (x_model <= max(filterprofile['wavelength']))]
             #Neem de weights = de waarden van je filterprofiel op de range van je model
             weights_filter = np.interp(x_model_range, xp=filterprofile['wavelength'], fp=filterprofile['transmission'])
             #Neem het weighted average = de waarden van je model op de filterrange
