@@ -177,8 +177,6 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         fig.savefig(os.path.join(save_location, lqso.name, 'models_chisq.pdf'))
         fig.savefig(os.path.join(save_location, lqso.name, 'models_chisq.jpg'))
 
-    ffig, fax = plot_fit(lqso, model_set, save_plots=save_plots, save_location=save_location)
-
     print(model_set[['name', 'red_chi_sq', 'mult', 'std']].head(15))
 
     if model_set['red_chi_sq'].iloc[0] / model_set['red_chi_sq'].iloc[1] <= 0.5:
@@ -211,10 +209,6 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
         # mult_err_prop = np.linalg.norm(interp_models_flux * stds, axis=0)
         models_std = np.std(interp_models_flux, axis=0)
-
-        fax.plot(wls * (1 + lqso.props['z_lens'].values[0]), avg_model, label='Average model')
-        fax.fill_between(wls * (1 + lqso.props['z_lens'].values[0]), avg_model - models_std, avg_model + models_std)
-        fax.legend()
 
         print('Avg model red chi sq:', FitFunction(sed, wls=wls, fluxs=avg_model).chi_squared([1]) / (sed.flux_G.shape[0] - 1))
 
@@ -249,7 +243,11 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         print(f'N = 0 for {lqso.name}.')
         return None
 
-    return wls * (1. + lqso.props.z_lens.values[0]), avg_model, models_std
+    wls = wls * (1. + lqso.props.z_lens.values[0])
+
+    plot_fit(lqso, model_set, avg_model=(wls, avg_model, models_std), save_plots=save_plots, save_location=save_location, count=N)
+
+    return wls, avg_model, models_std
 
 
 class FitFunction:
@@ -299,13 +297,16 @@ class FitFunction:
                                self.sed[f'flux{self.component}_err'].values, 2))
 
 
-def plot_fit(lqso, models, save_plots=True, save_location='plots', count=5):
-    # TODO: change to average model for total plot
+def plot_fit(lqso, models, avg_model, save_plots=True, save_location='plots', count=5):
+    avg_wls, avg_model, avg_err = avg_model
 
     # Plot the model on just the foreground galaxy data
     fig, ax = lqso.plot_spectrum(loglog=True, component='_G')
     for i in range(count):
-        ax.plot(MODELS[models['name'].iloc[i]].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[models['name'].iloc[i]].flux * models['mult'].iloc[i], color='black' if i == 0 else None, alpha=.6 / count * (count - i), label=models['name'].iloc[i])
+        ax.plot(MODELS[models['name'].iloc[i]].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[models['name'].iloc[i]].flux * models['mult'].iloc[i], alpha=.6 / count * (count - i) + .4, label=models['name'].iloc[i])
+
+    ax.plot(avg_wls, avg_model, label='Average', color='black')
+    ax.fill_between(avg_wls, avg_model - avg_err, avg_model + avg_err, color='grey', alpha=.3, label='Avg. model $\pm 1\sigma$')
 
     # Plot residuals
     # sed = lqso.filter_sed(component='_G', allow_zero_error=False)
@@ -322,7 +323,8 @@ def plot_fit(lqso, models, save_plots=True, save_location='plots', count=5):
 
     # Plot the model on total flux data
     fig, ax = lqso.plot_spectrum(loglog=True)
-    ax.plot(MODELS[models['name'].iloc[0]].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[models['name'].iloc[0]].flux * models['mult'].iloc[0], color='black', alpha=.6, label=models['name'].iloc[0])
+    ax.plot(avg_wls, avg_model, label='Average', color='black')
+    ax.fill_between(avg_wls, avg_model - avg_err, avg_model + avg_err, color='grey', alpha=.5, label='Avg. model $\pm 1\sigma$')
 
     # TODO: just as a test for now, remove later
     #if lqso.name == 'B1600+434':
@@ -337,7 +339,7 @@ def plot_fit(lqso, models, save_plots=True, save_location='plots', count=5):
         fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit_full_sed.pdf'))
         fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit_full_sed.jpg'))
 
-    return rfig, rax
+    return rfig, rax, fig, ax
 
 
 def closest_wavelength(wl, model):
