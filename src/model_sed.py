@@ -82,7 +82,7 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
 # Leja+2017 (https://iopscience.iop.org/article/10.3847/1538-4357/aa5ffe/meta) uses scipy minimize combined with MCMC
 
 
-def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='plots'):
+def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='plots', verbose_plots=False):
     """
     Fits a Brown SED to the foreground galaxy data points of given LensedQSO using scipy.optimize.curve_fit.
     :param lqso:
@@ -218,31 +218,32 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
         print('Avg model red chi sq:', FitFunction(sed, wls=wls, fluxs=avg_model).chi_squared([1]) / (sed.flux_G.shape[0] - 1))
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
+    if verbose_plots:
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
 
-    fig = plt.figure()
-    moax = fig.add_subplot(111, projection='3d')
+        fig = plt.figure()
+        moax = fig.add_subplot(111, projection='3d')
 
-    models_flux = [MODELS[row['name']]['flux'].values * row['mult'] for _, row in model_set.iterrows()]
-    models_wl = [list(MODELS[row['name']]['wavelength'].values) for _, row in model_set.iterrows()]
+        models_flux = [MODELS[row['name']]['flux'].values * row['mult'] for _, row in model_set.iterrows()]
+        models_wl = [list(MODELS[row['name']]['wavelength'].values) for _, row in model_set.iterrows()]
 
-    all_wls = np.array([w for wls in models_wl for w in wls])
+        all_wls = np.array([w for wls in models_wl for w in wls])
 
-    # Get all the unique wavelenghts that the models have, so we can interp at those wavelenghts
-    mwls = np.unique(all_wls[(all_wls >= all_wls) & (all_wls <= all_wls)])
-    mwls = np.sort(mwls)
-    interp_models_flux = np.stack([np.interp(mwls, models_wl[j], models_flux[j]) for j in range(model_set.shape[0])])
+        # Get all the unique wavelenghts that the models have, so we can interp at those wavelenghts
+        mwls = np.unique(all_wls[(all_wls >= all_wls) & (all_wls <= all_wls)])
+        mwls = np.sort(mwls)
+        interp_models_flux = np.stack([np.interp(mwls, models_wl[j], models_flux[j]) for j in range(model_set.shape[0])])
 
-    for i in range(model_set.shape[0]):
-        t_model = np.average(interp_models_flux[0:i + 1], axis=0, weights=1. / model_set['red_chi_sq'].head(i + 1).values)
+        for i in range(model_set.shape[0]):
+            t_model = np.average(interp_models_flux[0:i + 1], axis=0, weights=1. / model_set['red_chi_sq'].head(i + 1).values)
 
-        moax.plot3D([i] * len(mwls), np.log10(mwls), np.log10(interp_models_flux[i]))
-        ax.plot3D([i] * len(mwls), np.log10(mwls), np.log10(t_model))
+            moax.plot3D([i] * len(mwls), np.log10(mwls), np.log10(interp_models_flux[i]))
+            ax.plot3D([i] * len(mwls), np.log10(mwls), np.log10(t_model))
 
-    ax.set_xlabel('Model count')
-    ax.set_ylabel('$\mathit{Wavelength}\ (\mathrm{\AA})$')
-    ax.set_zlabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
+        ax.set_xlabel('Model count')
+        ax.set_ylabel('$\mathit{Wavelength}\ (\mathrm{\AA})$')
+        ax.set_zlabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
 
     if N == 0:
         print(f'N = 0 for {lqso.name}.')
