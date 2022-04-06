@@ -12,6 +12,8 @@ from src.filters import get_wavelength, FILTER_PROPERTIES
 import warnings
 
 
+# TODO: how to filter Chandra and radio only for regular AGNfitter, not for rX version?
+# Perhaps filter add argument to filter_sed to only find within certain wavelength range?
 FILTERED_SOURCES = {
     'B1152+200': ['panstarrs', 'chandra', 'luichies'],
     'B1600+434': ['panstarrs', 'chandra', 'luichies'],
@@ -241,6 +243,7 @@ class LensedQSO:
         if rX:
             filters, filternames, filterfilenames = self.agn_fitter_input_filters(rX)
 
+            # TODO
             hasxray = False
             hasradio = False
             return settings_template_rX.format(**{
