@@ -24,17 +24,13 @@ if __name__ == '__main__':
 
     #model subtraction
     #model_subtraction(lqso)
-    #plot_lqso_in_speagle(lqso)
-
-    #making the settings for agn fitter
-    #print(lqso.sed_to_agn_fitter())
-    #AGN_input_1()
-    #AGN_input_2()
-    #AGN_input_3(galaxy)
     
-    #AGn input
-    print(lqso.sed_to_agn_fitter())
-    print(lqso.agn_settings())
+    #AGN input
+    #print(lqso.sed_to_agn_fitter())
+    #print(lqso.agn_settings())
+    
+    #speagle
+    #plot_lqso_in_speagle(lqso)
     
     
     
