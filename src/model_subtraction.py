@@ -23,10 +23,9 @@ def model_subtraction(lqso):
     morph = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
 
     #Fitting gives the model> see model_sed for details
-    wavelength_array, flux, flux_error = fit(lqso, morph = morph)
+    wavelength, flux, flux_error = fit(lqso, morph = morph)
 
-    #The wavelengths of the model, in the restframe
-    x_model = wavelength_array * (1 + lqso.props['z_lens'].values[0])
+    #The wavelengths of the model are returned already in restframe by model_sed
 
     #an empty list to store the fluxes, and new column in the sed
     lqso.sed['flux_sub'] = 0.
@@ -41,13 +40,13 @@ def model_subtraction(lqso):
             print(f'upper limit for row {i}')
 
         #exclude too large lambdas
-        if row['wavelength'] >= np.max(x_model):
+        if row['wavelength'] >= np.max(wavelength):
             list_sub.append( row['flux_total'])
             list_sub_err.append(row['flux_err'])
             continue
 
         #exclude too small lambdas
-        elif row['wavelength'] <= np.min(x_model):
+        elif row['wavelength'] <= np.min(wavelength):
             list_sub.append( row['flux_total'])
             list_sub_err.append(row['flux_err'])
             continue
@@ -66,8 +65,8 @@ def model_subtraction(lqso):
             #check if there is a telescope mentioned, otherwise just take closest wavelength value
             if pd.isnull(row['telescope']):
                 print(f'no telescope in sed file for row {i}')
-                list_sub.append( float(row['flux_total']) - np.interp(row['wavelength'], xp=x_model, fp=flux))
-                list_sub_err.append(np.sqrt(row['flux_err'] ** 2 + np.interp(row['wavelength'], xp=x_model, fp=flux_error) ** 2))
+                list_sub.append( float(row['flux_total']) - np.interp(row['wavelength'], xp=wavelength, fp=flux))
+                list_sub_err.append(np.sqrt(row['flux_err'] ** 2 + np.interp(row['wavelength'], xp=wavelength, fp=flux_error) ** 2))
                 continue
 
             #check if the telescope has a name in filters.csv
@@ -75,8 +74,8 @@ def model_subtraction(lqso):
             filename = get_filename(row['telescope'], row['filter'])
             if pd.isnull(filename):
                 print( 'filename not in filters.csv for', row['telescope'])
-                list_sub.append( float(row['flux_total'])- np.interp(row['wavelength'], xp=x_model, fp=flux))
-                list_sub_err.append(np.sqrt(row['flux_err']**2 + np.interp(row['wavelength'], xp=x_model, fp=flux_error) **2 ))
+                list_sub.append( float(row['flux_total'])- np.interp(row['wavelength'], xp=wavelength, fp=flux))
+                list_sub_err.append(np.sqrt(row['flux_err']**2 + np.interp(row['wavelength'], xp=wavelength, fp=flux_error) **2 ))
                 continue
 
             #read in the filterprofile
@@ -84,9 +83,9 @@ def model_subtraction(lqso):
                 delim_whitespace=True, header=None,usecols=[ 0,1], names=['wavelength', 'transmission'])
 
             #middel over het filterprofiel: selecteer eerst het stukje model op je filterprofiel
-            x_model_range=x_model[(x_model >= min(filterprofile['wavelength'])) & (x_model <= max(filterprofile['wavelength']))]
-            y_model_range=flux[(x_model >= min(filterprofile['wavelength'])) & (x_model <= max(filterprofile['wavelength']))]
-            error_range = flux_error[(x_model >= min(filterprofile['wavelength'])) & (x_model <= max(filterprofile['wavelength']))]
+            x_model_range=wavelength[(wavelength >= min(filterprofile['wavelength'])) & (wavelength <= max(filterprofile['wavelength']))]
+            y_model_range=flux[(wavelength >= min(filterprofile['wavelength'])) & (wavelength <= max(filterprofile['wavelength']))]
+            error_range = flux_error[(wavelength >= min(filterprofile['wavelength'])) & (wavelength <= max(filterprofile['wavelength']))]
             
             #Neem de weights = de waarden van je filterprofiel op de range van je model
             weights_filter = np.interp(x_model_range, xp=filterprofile['wavelength'], fp=filterprofile['transmission'])
@@ -115,7 +114,7 @@ def model_subtraction(lqso):
     fig, ax = lqso.plot_spectrum(component='_sub')
     fig.savefig(os.path.join('plots', lqso.name, f'{lqso.name}_sub.jpg'))
     fig.savefig(os.path.join('plots', lqso.name, f'{lqso.name}_sub.pdf'))
-    plt.vlines(np.max(x_model), 0.9*np.min(list_sub), np.max(lqso.sed['flux_total']), alpha=0.5)
-    plt.vlines(np.min(x_model), 0.9*np.min(list_sub), np.max(lqso.sed['flux_total']), alpha=0.5, label='model boundary')
+    plt.vlines(np.max(wavelength), 0.9*np.min(list_sub), np.max(lqso.sed['flux_total']), alpha=0.5)
+    plt.vlines(np.min(wavelength), 0.9*np.min(list_sub), np.max(lqso.sed['flux_total']), alpha=0.5, label='model boundary')
     plt.legend()
     lqso.save_sed()

@@ -11,7 +11,7 @@ from src.filters import populate_filter_profile_path_column
 
 if __name__ == '__main__':
     #photometry
-    galaxy = 'B1152+200'
+    galaxy = 'B1608+656'
     lqso = LensedQSO(galaxy)
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
     #lqso.plot_spectrum(loglog=True)
