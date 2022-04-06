@@ -63,7 +63,7 @@ class LensedQSO:
         self.props = self.props.loc[self.props.galaxy == self.name]
 
         # filtered_sed only selects entries that have a wavelength and a flux_total
-        self.filtered_sed = self.sed[(self.sed.wavelength > 0) * (self.sed.flux_total > 0)].copy()
+        self.filtered_sed = self.sed[(self.sed.wavelength > 0) & (self.sed.flux_total > 0)].copy()
 
     def filter_sed(self, disallowed_sources=None, component='_total', allow_zero_error=True):
         """
@@ -156,7 +156,7 @@ class LensedQSO:
         for l in u_sources:
             # Filter based on source
             # Only take those that have both a wavelength and a total flux
-            sel = data[(data.source == l) * (data.wavelength > 0) * (data[data_type] > 0)]
+            sel = data[(data.source == l) & (data.wavelength > 0) & (data[data_type] > 0)]
 
             # If there are no entries after filtering, continue to next source
             if len(sel) == 0:
@@ -256,7 +256,7 @@ class LensedQSO:
             fil = FILTER_PROPERTIES.filtername.values[i]
 
             # if [tel,fil] in lqso.sed[['telescope', 'filter']].values:
-            if self.filter_sed(component='_sub').loc[(self.filter_sed(component='_sub')['telescope'] == tel) * (
+            if self.filter_sed(component='_sub').loc[(self.filter_sed(component='_sub')['telescope'] == tel) & (
                     self.filter_sed(component='_sub')['filter'] == fil)].shape[0] > 0:
                 f = fil.replace("'", 'prime').replace('-', 'dash').replace('/', 'slash').replace('.', 'dot')
                 outstr += f"    filters['_{tel.replace(' ', 'space')}_{f}']=True\n"
