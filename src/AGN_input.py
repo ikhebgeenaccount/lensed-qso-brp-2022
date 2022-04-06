@@ -4,11 +4,23 @@ To write the AGN input as a print
 """
 import pandas as pd
 import os
-from src.lensed_qso import LensedQSO
-from src.filters import get_filename
 
 FILTER_PROPS_PATH = os.path.join('data', 'filter.csv')
 FILTER_PROPERTIES = pd.read_csv(FILTER_PROPS_PATH)
+
+
+def format_filter_name(filter_name):
+    return filter_name.replace("'", 'prime').replace('-', 'dash').replace('/', 'slash').replace('.', 'dot')
+
+
+def format_telescope_name(tel_name):
+    return tel_name.replace(' ', 'space')
+
+
+def get_agnf_filter_path(tel, fil):
+    TEL = tel.upper()
+    file = FILTER_PROPERTIES.loc[(FILTER_PROPERTIES['telescope'] == tel) & (FILTER_PROPERTIES['filtername'] == fil)].file.values[0]
+    return f'models/FILTERS/{TEL}/{file}'
 
 
 def AGN_input_1():
