@@ -207,7 +207,6 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         interp_models_flux = np.stack([np.interp(wls, models_wl[i], models_flux[i]) for i in range(N)])
         avg_model = np.average(interp_models_flux, axis=0, weights=1. / model_set['red_chi_sq'].head(N) if not single_g else None)
 
-        # Error seems wrong, way too small? Check std of mult
         stds = model_set['std'].head(N).values.reshape((N, 1))
 
         # mult_err_prop = np.linalg.norm(interp_models_flux * stds, axis=0)
@@ -249,7 +248,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         print(f'N = 0 for {lqso.name}.')
         return None
 
-    return wls, avg_model, models_std
+    return wls * (1. + lqso.props.z_lens.values[0]), avg_model, models_std
 
 
 class FitFunction:
