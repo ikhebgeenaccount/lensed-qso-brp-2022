@@ -22,17 +22,13 @@ def model_subtraction_average(lqso):
     """
     morph = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
 
-    #Fitting gives the proper model and the scalar
+    #Fitting gives the model> see model_sed for details
     wavelength_array, flux, flux_error = fit(lqso, morph = morph)
 
-    #The wavelengths of the model
+    #The wavelengths of the model, in the restframe
     x_model = wavelength_array * (1 + lqso.props['z_lens'].values[0])
 
-    #how to plot it
-    #fig, ax = lqso.plot_spectrum(loglog=True)
-    #ax.plot(x_model, y_model, label = model_name)
-
-    #an empty list to store the fluxes
+    #an empty list to store the fluxes, and new column in the sed
     lqso.sed['flux_sub'] = 0.
     lqso.sed['flux_sub_err'] = 0.
     list_sub=[]
@@ -56,9 +52,7 @@ def model_subtraction_average(lqso):
             list_sub_err.append(row['flux_err'])
             continue
 
-
-
-        #if the entire row is empty
+        #if the entire row is empty, subtracted is 0
         elif row['flux_G'] == 0. and row['flux_A'] == 0. and row['flux_B'] == 0.\
                                 and row['flux_C'] == 0. and row['flux_D'] == 0. and row['flux_total']==0:
             list_sub.append(0)
@@ -89,17 +83,19 @@ def model_subtraction_average(lqso):
             filterprofile = pd.read_csv (os.path.join('data','Filterprofiles','TXT',filename), \
                 delim_whitespace=True, header=None,usecols=[ 0,1], names=['wavelength', 'transmission'])
 
-            #middel over het filterprofiel: neem het stukje model op je filterprofiel
+            #middel over het filterprofiel: selecteer eerst het stukje model op je filterprofiel
             x_model_range=x_model[(x_model >= min(filterprofile['wavelength'])) & (x_model <= max(filterprofile['wavelength']))]
             y_model_range=flux[(x_model >= min(filterprofile['wavelength'])) & (x_model <= max(filterprofile['wavelength']))]
             error_range = flux_error[(x_model >= min(filterprofile['wavelength'])) & (x_model <= max(filterprofile['wavelength']))]
+            
             #Neem de weights = de waarden van je filterprofiel op de range van je model
             weights_filter = np.interp(x_model_range, xp=filterprofile['wavelength'], fp=filterprofile['transmission'])
+            
             #Neem het weighted average = de waarden van je model op de filterrange
             average_model = np.average (y_model_range, weights=weights_filter)
             average_error = np.average (error_range, weights=weights_filter)
 
-            list_sub.append( float(row['flux_total'])-  average_model)
+            list_sub.append( float(row['flux_total']) -  average_model)
             list_sub_err.append(np.sqrt(row['flux_err']**2 + (average_error)**2))
 
         #if the componentwise data is available, use that instead of subtracting the data

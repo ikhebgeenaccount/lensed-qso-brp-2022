@@ -23,7 +23,7 @@ if __name__ == '__main__':
     #percent_to_fraction('WIYN.U_HARRIS.txt','WIYN.U_HARRIS_fraction.txt')
 
     #model subtraction
-    model_subtraction_average(lqso)
+    #model_subtraction_average(lqso)
     
 
     #making the settings for agn fitter
@@ -44,8 +44,8 @@ if __name__ == '__main__':
         for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
             lqso = LensedQSO(g)
             #lqso.plot_spectrum(loglog=True)
-            model_subtraction(lqso)
+            model_subtraction_average(lqso)
     
-    #all_galaxies()    
+    all_galaxies()    
 
     plt.show()
