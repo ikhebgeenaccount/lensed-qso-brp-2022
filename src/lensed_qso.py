@@ -15,17 +15,20 @@ import warnings
 # TODO: how to filter Chandra and radio only for regular AGNfitter, not for rX version?
 # Perhaps filter add argument to filter_sed to only find within certain wavelength range?
 FILTERED_SOURCES = {
-    'B1152+200': ['panstarrs', 'chandra', 'luichies', 'toft'],
-    'B1600+434': ['panstarrs', 'chandra', 'luichies', 'munoz'],
-    'B1608+656': ['chandra', 'luichies'],#['Koopmans+2003' ],
-    'J0806+2006': ['panstarrs', 'chandra', 'luichies'],
-    'J0924+0219': ['panstarrs', 'faure', 'castles', 'chandra', 'luichies'],
-    'J1330+1810': ['panstarrs', 'chandra', 'luichies'],
-    'J1455+1447': ['panstarrs', 'chandra', 'luichies'],
-    'J1524+4409': ['panstarrs', 'chandra', 'luichies', 'Oguri'],
-    'J1633+3134': ['panstarrs', 'chandra', 'luichies', 'Morgan'],
-    'J1650+4251': ['panstarrs', 'chandra', 'luichies', 'Morgan']
+    'B1152+200': ['panstarrs', 'toft'],
+    'B1600+434': ['panstarrs', 'munoz'],
+    'B1608+656': [ 'luichies'],#['Koopmans+2003' ],
+    'J0806+2006': ['panstarrs'],
+    'J0924+0219': ['panstarrs', 'faure', 'castles'],
+    'J1330+1810': ['panstarrs'],
+    'J1455+1447': ['panstarrs'],
+    'J1524+4409': ['panstarrs', 'Oguri'],
+    'J1633+3134': ['panstarrs', 'Morgan'],
+    'J1650+4251': ['panstarrs', 'Morgan']
 }
+
+RADIO_CUTOFF = 1e8  # wavelenghts >1e8 Angstrom are classified as radio
+XRAY_CUTOFF = 300  # wavelenghts < 300 Angstrom are classified as Xray
 
 
 class LensedQSO:
@@ -68,7 +71,7 @@ class LensedQSO:
         # filtered_sed only selects entries that have a wavelength and a flux_total
         self.filtered_sed = self.sed[(self.sed.wavelength > 0) & (self.sed.flux_total > 0)].copy()
 
-    def filter_sed(self, disallowed_sources=None, component='_total', allow_zero_error=True):
+    def filter_sed(self, disallowed_sources=None, component='_total', allow_zero_error=True, rX=True):
         """
         Returns a DataFrame that contains only those rows that are allowed through LensedQSO.allowed_sources
         :param disallowed_sources: passed to LensedQSO.allowed_sources
@@ -80,11 +83,15 @@ class LensedQSO:
         if component is not None:
             compfilter = self.sed[f'flux{component}'] > 0
 
+        rX_filter = np.ones(self.sed.shape[0], dtype=bool)
+        if not rX:
+            rX_filter = (self.sed['wavelength'] >= XRAY_CUTOFF) & (self.sed['wavelength'] <= RADIO_CUTOFF)
+
         errorfilter = np.ones(self.sed.shape[0], dtype=bool)
         if not allow_zero_error:
             errorfilter= self.sed[f'flux{"" if component == "_total" else component}_err'] > 0
 
-        return self.sed.loc[self.sed.source.isin(allowed_sources) * compfilter * errorfilter]
+        return self.sed.loc[self.sed.source.isin(allowed_sources) * compfilter * errorfilter * rX_filter]
 
     def allowed_sources(self, disallowed_sources=None):
         """
@@ -207,7 +214,7 @@ class LensedQSO:
     def save_sed(self):
         self.sed.to_csv(os.path.join('data', self.name, self.sed_file), index=False)
 
-    def sed_to_agn_fitter(self):
+    def sed_to_agn_fitter(self, rX=False):
         """
         Translates the SED to a catalog that is compatible with AGNfitter.
         :return: str
@@ -220,7 +227,7 @@ class LensedQSO:
         l = 2
 
         catalog = header + f'{id} {self.props.z_qso.values[0]} '
-        for i, row in self.filter_sed(component='_sub').iterrows():
+        for i, row in self.filter_sed(component='_sub', rX=rX).iterrows():
             if row['flux_sub'] <= 0:
                 print('Skipping SED row', i)
                 continue
@@ -244,8 +251,9 @@ class LensedQSO:
             filters, filternames, filterfilenames = self.agn_fitter_input_filters(rX)
 
             # TODO
-            hasxray = False
-            hasradio = False
+            hasxray = sum(self.filter_sed(component='_sub', rX=True)['wavelength'] <= XRAY_CUTOFF) > 0
+            hasradio = sum(self.filter_sed(component='_sub', rX=True)['wavelength'] >= RADIO_CUTOFF) > 0
+            print(hasxray, hasradio)
             return settings_template_rX.format(**{
                 'length': self.sed_to_agn_fitter()[1],
                 'length + 1': self.sed_to_agn_fitter()[1] + 1,
