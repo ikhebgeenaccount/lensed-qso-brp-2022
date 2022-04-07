@@ -12,10 +12,10 @@ from src.filters import populate_filter_profile_path_column
 
 if __name__ == '__main__':
     #photometry
-    galaxy = 'B1608+656' 
+    galaxy = 'J0806+2006' 
     lqso = LensedQSO(galaxy)
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
-    lqso.plot_spectrum(loglog=True, component='_sub')
+    #lqso.plot_spectrum(loglog=True, component='_sub')
     
     #filterprofiles
     #xml_to_txt('VLT_CONICA_H.xml', 'VLT_CONICA_H.txt')
@@ -44,13 +44,14 @@ if __name__ == '__main__':
         ax = None
         for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
             lqso = LensedQSO(g)
+            lqso.plot_error_percentage()
             #lqso.plot_spectrum(loglog=True)
             #model_subtraction(lqso)
-            if lqso.agn_fitter_output(copy=True) is not None:
-                if ax is None:
-                    fig, ax = plot_lqso_in_speagle(lqso)
-                else:
-                    plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
+            # if lqso.agn_fitter_output(copy=True) is not None:
+            #     if ax is None:
+            #         fig, ax = plot_lqso_in_speagle(lqso)
+            #     else:
+            #         plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
     
     all_galaxies()
 
