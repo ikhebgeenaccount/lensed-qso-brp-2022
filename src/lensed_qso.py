@@ -208,9 +208,20 @@ class LensedQSO:
         if self.save_all_plots:
             fig.savefig(os.path.join(self.save_location, f'SED{component if component is not None else "_total"}.pdf'))
             fig.savefig(os.path.join(self.save_location, f'SED{component if component is not None else "_total"}.png'))
-
+            
         return fig, ax
-
+    
+    
+    def plot_error_percentage(self, loglog=True):
+        fig, ax = plt.subplots(figsize=(10, 8))
+        ratio=self.sed['flux_sub_err']/self.sed['flux_sub'] *100
+        ax.scatter(self.sed['wavelength'][ratio<=100],ratio[ratio<=100])
+        ax.set_xscale('log')
+        ax.set_ylabel('errors of sub in percentage', fontsize=15)
+        ax.set_title(f'{self.name} percentage error')
+        
+        return fig,ax
+        
     def save_sed(self):
         self.sed.to_csv(os.path.join('data', self.name, self.sed_file), index=False)
 
