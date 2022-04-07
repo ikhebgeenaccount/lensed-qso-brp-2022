@@ -23,7 +23,7 @@ FILTERED_SOURCES = {
     'J1330+1810': ['panstarrs', 'chandra', 'luichies'],
     'J1455+1447': ['panstarrs', 'chandra', 'luichies'],
     'J1524+4409': ['panstarrs', 'chandra', 'luichies'],
-    'J1633+3134': ['panstarrs', 'chandra', 'luichies'],
+    'J1633+3134': ['panstarrs', 'chandra', 'luichies', 'Morgan'],
     'J1650+4251': ['panstarrs', 'chandra', 'luichies']
 }
 
