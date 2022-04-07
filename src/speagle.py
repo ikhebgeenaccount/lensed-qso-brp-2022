@@ -64,8 +64,12 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None):
     sfr_opt_me = sfr_opt - lqso.agn_fitter_output()['SFR_opt'].iloc[1]
 
     sfr_tot = sfr_opt + sfr_ir
-    sfr_tot_pe = np.sqrt(sfr_ir_pe **2 + sfr_opt_pe**2)
-    sfr_tot_me = np.sqrt(sfr_ir_me **2 + sfr_opt_me**2)
+    sfr_tot_pe = np.sqrt(sfr_ir_pe ** 2. + sfr_opt_pe ** 2.)
+    sfr_tot_me = np.sqrt(sfr_ir_me ** 2. + sfr_opt_me ** 2.)
+
+    print(sfr_tot)
+    print(sfr_tot_pe)
+    print(sfr_tot_me)
 
     # logM_star
     log_m_star = lqso.agn_fitter_output()['logMstar'].iloc[2]
@@ -87,22 +91,13 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None):
         ax.set_ylabel('log SFR')
         ax.set_xlabel('log$M_*$')
 
-
     # Format errors properly
     xerr = np.array([log_m_star_me, log_m_star_pe]).reshape((2, 1))
-
-    yerr_ir = np.array([sfr_ir_me, sfr_ir_pe]).reshape((2, 1))
-    yerr_ir = yerr_ir / (sfr_ir * np.log(10.))  # Calculate error in log SFR from SFR
-
-    yerr_opt = np.array([sfr_opt_me, sfr_opt_pe]).reshape((2, 1))
-    yerr_opt = yerr_opt / (sfr_opt * np.log(10.))  # Calculate error in log SFR from SFR
 
     yerr_tot = np.array([sfr_tot_me, sfr_tot_pe]).reshape((2, 1))
     yerr_tot = yerr_tot / (sfr_tot * np.log(10.))  # Calculate error in total SFR from S
 
     # Plot galaxy
-    #ax.errorbar(log_m_star - np.log10(mu), np.log10(sfr_ir/mu), xerr=xerr, yerr=yerr_ir, label=f'{lqso.name} SFR_IR, z={lqso.props.z_qso.values[0]:.3f}', fmt='o', capsize=4)
-    #ax.errorbar(log_m_star - np.log10(mu), np.log10(sfr_opt/mu), xerr=xerr, yerr=yerr_opt, label=f'{lqso.name} SFR_opt, z={lqso.props.z_qso.values[0]:.3f}', fmt='o', capsize=4)
     ax.errorbar(log_m_star, np.log10(sfr_tot), xerr=xerr, yerr=yerr_tot, label=f'{lqso.name} SFR_tot, z={lqso.props.z_qso.values[0]:.3f}', fmt='o', capsize=4)
 
     ax.legend()
