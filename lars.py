@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from src.agn_fitter_automated import run_agn_fitter
 from src.lensed_qso import LensedQSO
 from src.latex_output import dataframe_to_latex_table
 from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
@@ -14,6 +15,8 @@ from src.speagle import plot_lqso_in_speagle
 
 import src.model_sed
 
+import os.system
+
 GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']
 
 PLOTS_SAVE = 'plots'
@@ -23,18 +26,21 @@ def all_galaxies():
     ax = None
     for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
         lqso = LensedQSO(g)
-        lqso.plot_spectrum(loglog=True)
+        # lqso.plot_spectrum(loglog=True)
 
         # mags_to_fluxes(lqso, components=None if g != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
 
-        count = lqso.filter_sed().loc[lqso.sed['flux_G'] > 0].shape[0]
-        print(f'{g}, {count}')
+        # count = lqso.filter_sed().loc[lqso.sed['flux_G'] > 0].shape[0]
+        # print(f'{g}, {count}')
 
         # telescope = 'Magellan'
         # if lqso.mags.loc[lqso.mags.telescope == telescope].shape[0] > 0:
             # print(g, 'has', telescope)
 
-        model_subtraction(lqso)
+        # model_subtraction(lqso)
+        # m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
+        # a = src.model_sed.fit(lqso, m)
+        # print(a)
 
         if lqso.agn_fitter_output(copy=False) is not None:
             if ax is None:
@@ -62,7 +68,7 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'J1455+1447'
+    galaxy = 'J0806+2006'
     lqso = LensedQSO(galaxy)
 
     # ned_table_to_sed(lqso, ned_file='ned_wise.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
@@ -73,21 +79,24 @@ def single_galaxy():
     m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
     # mag_ratio_split_total_flux(lqso, 'Koopmans+2003', overwrite=True,  components=None if galaxy != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
 
-    src.model_sed.fit(lqso, m)
+    # a = src.model_sed.fit(lqso, m)
 
     # lqso.plot_spectrum()
+    lqso.plot_spectrum(component='_sub')
+    lqso.plot_spectrum(component='_sub_demag')
 
     # model_subtraction(lqso)
 
-    #catalog, length = lqso.sed_to_agn_fitter()
+    catalog, length = lqso.sed_to_agn_fitter(rX=True)
 
-    #print(catalog)
+    print(catalog)
+    # print(length)
 
-    #print(lqso.agn_settings())
+    # lqso.agn_settings(rX=True)
 
     #print(lqso.agn_fitter_output())
     #print(lqso.agn_fitter_output()[['tau', 'age', 'LIR(8-1000)', 'SFR_IR', 'SFR_opt', 'logMstar']])
-    plot_lqso_in_speagle(lqso)
+    # plot_lqso_in_speagle(lqso)
 
 
 def latex():
@@ -114,13 +123,27 @@ def plot_ell_models():
     ax.legend()
 
 
+def agnfitter():
+    for g in GALAXIES:
+        lqso = LensedQSO(g)
+        model_subtraction(lqso)
+        #run_agn_fitter([g])
+        lqso.agn_fitter_output(copy=True)
+
+        os.system('git add data/*')
+        os.system(f'git commit -m AGNfitter output automated {lqso.name}')
+        os.system('git push')
+        break
+
+
 if __name__ == '__main__':
     # all_galaxies()
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
     # plot_single_model()
-    single_galaxy()
+    # single_galaxy()
+    agnfitter()
 
     # latex()
 
