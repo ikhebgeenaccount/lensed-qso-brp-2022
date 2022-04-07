@@ -1,13 +1,13 @@
 #For locations, redshifts, luminosity distances, luminosities in fir and other info, see evernote notebook. This file is to keep a record of what data is available, and what has been added to the file already.
-galaxy,lensed by spiral?,single galaxy?,z_qso,z_lens,lens_type,magnification
-J1524+4409,no, yes(feb 2008),1.21,0.320,elliptical,7.4
-B1608+656,possibly 2 merging galaxies>need to check, yes(december 1999),1.39,0.630,elliptical,10.8
-J1330+1810,maybe disk galaxy, yes but galaxies 120 arcsec SW (december 2008),1.393,0.373,elliptical,10
-J1455+1447,no, yes(april 2010),1.424,0.42,elliptical,12.7
-J1633+3134,followup from Morgan 2001, yes(february 2001),1.518,0.684,elliptical,10
-J0924+0219,no, no 4th component might be reddened =weird (august 2003),1.523,0.393,elliptical,10
-J1650+4251,no, yes (november 2003),1.543,0.577,elliptical,10
-B1152+200,no, yes (june 1999),1.019,0.438,elliptical,10
-B1600+434,YES, yes but weird reddening component B (january 1997),1.589,0.414,spiral,10
-J0806+2006,no, yes but some nearby galaxies that may pertube the system > modeling (april 2006),1.540,0.573,elliptical,10
+galaxy,lensed by spiral?,single galaxy?,z_qso,z_lens,lens_type,magnification,magn_err
+J1524+4409,no, yes(feb 2008),1.21,0.320,elliptical,7.4,5
+B1608+656,possibly 2 merging galaxies>need to check, yes(december 1999),1.39,0.630,elliptical,10.8,5
+J1330+1810,maybe disk galaxy, yes but galaxies 120 arcsec SW (december 2008),1.393,0.373,elliptical,10,5
+J1455+1447,no, yes(april 2010),1.424,0.42,elliptical,12.7,5
+J1633+3134,followup from Morgan 2001, yes(february 2001),1.518,0.684,elliptical,10,5
+J0924+0219,no, no 4th component might be reddened =weird (august 2003),1.523,0.393,elliptical,10,5
+J1650+4251,no, yes (november 2003),1.543,0.577,elliptical,10,5
+B1152+200,no, yes (june 1999),1.019,0.438,elliptical,10,5
+B1600+434,YES, yes but weird reddening component B (january 1997),1.589,0.414,spiral,10,5
+J0806+2006,no, yes but some nearby galaxies that may pertube the system > modeling (april 2006),1.540,0.573,elliptical,10,5
 
