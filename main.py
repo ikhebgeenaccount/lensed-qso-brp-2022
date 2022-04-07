@@ -27,7 +27,7 @@ if __name__ == '__main__':
     
     #AGN input
     #print(lqso.sed_to_agn_fitter(rX=False))
-    print(lqso.agn_settings(rX=False))
+    #print(lqso.agn_settings(rX=False))
     
     #speagle
     #plot_lqso_in_speagle(lqso)
@@ -52,6 +52,6 @@ if __name__ == '__main__':
                 else:
                     plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
     
-    #all_galaxies()
+    all_galaxies()
 
     plt.show()
