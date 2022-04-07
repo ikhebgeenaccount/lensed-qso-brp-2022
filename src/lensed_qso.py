@@ -15,7 +15,7 @@ import warnings
 # TODO: how to filter Chandra and radio only for regular AGNfitter, not for rX version?
 # Perhaps filter add argument to filter_sed to only find within certain wavelength range?
 FILTERED_SOURCES = {
-    'B1152+200': ['panstarrs', 'chandra', 'luichies'],
+    'B1152+200': ['panstarrs', 'chandra', 'luichies', 'toft'],
     'B1600+434': ['panstarrs', 'chandra', 'luichies'],
     'B1608+656': ['chandra', 'luichies'],#['Koopmans+2003' ],
     'J0806+2006': ['panstarrs', 'chandra', 'luichies'],
