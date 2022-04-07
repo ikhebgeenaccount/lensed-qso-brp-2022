@@ -26,8 +26,8 @@ if __name__ == '__main__':
     #model_subtraction(lqso)
     
     #AGN input
-    print(lqso.sed_to_agn_fitter())
-    print(lqso.agn_settings())
+    #print(lqso.sed_to_agn_fitter())
+    #print(lqso.agn_settings())
     
     #speagle
     #plot_lqso_in_speagle(lqso)
@@ -46,12 +46,12 @@ if __name__ == '__main__':
             lqso = LensedQSO(g)
             #lqso.plot_spectrum(loglog=True)
             #model_subtraction(lqso)
-            if lqso.agn_fitter_output(copy=False) is not None:
+            if lqso.agn_fitter_output(copy=True) is not None:
                 if ax is None:
                     fig, ax = plot_lqso_in_speagle(lqso)
                 else:
                     plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
     
-    #all_galaxies()
+    all_galaxies()
 
     plt.show()
