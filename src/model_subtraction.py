@@ -24,7 +24,7 @@ def model_subtraction(lqso):
 
     #Fitting gives the model> see model_sed for details
     wavelength, flux, flux_error = fit(lqso, morph = morph)
-    
+
     #The wavelengths of the model are returned already in restframe by model_sed
 
     #an empty list to store the fluxes, and new column in the sed
@@ -86,14 +86,14 @@ def model_subtraction(lqso):
             x_model_range=wavelength[(wavelength >= min(filterprofile['wavelength'])) & (wavelength <= max(filterprofile['wavelength']))]
             y_model_range=flux[(wavelength >= min(filterprofile['wavelength'])) & (wavelength <= max(filterprofile['wavelength']))]
             error_range = flux_error[(wavelength >= min(filterprofile['wavelength'])) & (wavelength <= max(filterprofile['wavelength']))]
-            
+
             #Neem de weights = de waarden van je filterprofiel op de range van je model
             weights_filter = np.interp(x_model_range, xp=filterprofile['wavelength'], fp=filterprofile['transmission'])
-            
+
             #Neem het weighted average = de waarden van je model op de filterrange
             average_model = np.average (y_model_range, weights=weights_filter)
             #average_error = np.average (error_range, weights=weights_filter)
-            
+
             average_error = (1 / len(weights_filter)*np.sum(weights_filter)) * \
                 np.sqrt (np.sum (np.square(weights_filter * error_range)))
 
@@ -110,6 +110,14 @@ def model_subtraction(lqso):
     lqso.sed.loc[lqso.filter_sed(component=None).index, 'flux_sub']=list_sub
     lqso.sed.loc[lqso.filter_sed(component=None).index, 'flux_sub_err']=list_sub_err
 
+    # Remove magnification
+    # Divide by magnification
+    lqso.sed['flux_sub_demag'] = lqso.sed['flux_sub'] / lqso.props['magnification'].values[0]
+    # Calculate new error
+    lqso.sed['flux_sub_demag_err'] = np.sqrt(
+        np.power(1. / lqso.props['magnification'].values[0] * lqso.sed['flux_sub_err'], 2.) +
+        np.power(lqso.sed['flux_sub'] / np.power(lqso.props['magnification'].values[0], 2.) * lqso.props['magn_err'].values[0], 2.)
+    )
 
     fig, ax = lqso.plot_spectrum(component='_sub')
     fig.savefig(os.path.join('plots', lqso.name, f'{lqso.name}_sub.jpg'))
