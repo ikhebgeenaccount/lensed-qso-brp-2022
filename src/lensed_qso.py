@@ -225,20 +225,23 @@ class LensedQSO:
         header = '# ID redshift [wavelength_angstrom flux_mJy flux_error_mJy]\n'
 
         l = 2
+        catalog = header
+        for j in range(10):
+            catalog_line = f'{str(id) + ("" if j == 0 else str(j))} {self.props.z_qso.values[0]} '
+            for i, row in self.filter_sed(component='_sub', rX=rX).iterrows():
+                if row['flux_sub_demag'] <= 0:
+                    print('Skipping SED row', i)
+                    continue
 
-        catalog = header + f'{id} {self.props.z_qso.values[0]} '
-        for i, row in self.filter_sed(component='_sub', rX=rX).iterrows():
-            if row['flux_sub'] <= 0:
-                print('Skipping SED row', i)
-                continue
+                if not row.upper_limit:
+                    catalog_line += f'{row.wavelength} {row.flux_sub_demag} {row.flux_sub_demag_err} '
+                else:
+                    # Upper limit has error -99 as flag for AGNfitter
+                    catalog_line += f'{row.wavelength} {row.flux_sub_demag} -99 '
 
-            if not row.upper_limit:
-                catalog += f'{row.wavelength} {row.flux_sub} {row.flux_sub_err} '
-            else:
-                # Upper limit has error -99 as flag for AGNfitter
-                catalog += f'{row.wavelength} {row.flux_sub} -99 '
-
-            l += 3
+                if j== 0:
+                    l += 3
+            catalog += catalog_line + '\n'
 
         return catalog, l
 
