@@ -12,10 +12,10 @@ from src.filters import populate_filter_profile_path_column
 
 if __name__ == '__main__':
     #photometry
-    galaxy = 'J0806+2006'
+    galaxy = 'J1633+3134'
     lqso = LensedQSO(galaxy)
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
-    #lqso.plot_spectrum(loglog=True)
+    lqso.plot_spectrum(loglog=True, component='_sub')
     
     #filterprofiles
     #xml_to_txt('VLT_CONICA_H.xml', 'VLT_CONICA_H.txt')
@@ -24,13 +24,13 @@ if __name__ == '__main__':
 
     #model subtraction
     #model_subtraction(lqso)
-    #plot_lqso_in_speagle(lqso)
-
-    #making the settings for agn fitter
+    
+    #AGN input
     #print(lqso.sed_to_agn_fitter())
-    #AGN_input_1()
-    #AGN_input_2()
-    #AGN_input_3(galaxy)
+    #print(lqso.agn_settings())
+    
+    #speagle
+    #plot_lqso_in_speagle(lqso)
     
     
     
@@ -46,7 +46,7 @@ if __name__ == '__main__':
             lqso = LensedQSO(g)
             #lqso.plot_spectrum(loglog=True)
             #model_subtraction(lqso)
-            if lqso.agn_fitter_output(copy=False) is not None:
+            if lqso.agn_fitter_output(copy=True) is not None:
                 if ax is None:
                     fig, ax = plot_lqso_in_speagle(lqso)
                 else:

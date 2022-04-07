@@ -16,14 +16,14 @@ import warnings
 # Perhaps filter add argument to filter_sed to only find within certain wavelength range?
 FILTERED_SOURCES = {
     'B1152+200': ['panstarrs', 'chandra', 'luichies', 'toft'],
-    'B1600+434': ['panstarrs', 'chandra', 'luichies'],
+    'B1600+434': ['panstarrs', 'chandra', 'luichies', 'munoz'],
     'B1608+656': ['chandra', 'luichies'],#['Koopmans+2003' ],
     'J0806+2006': ['panstarrs', 'chandra', 'luichies'],
     'J0924+0219': ['panstarrs', 'faure', 'castles', 'chandra', 'luichies'],
     'J1330+1810': ['panstarrs', 'chandra', 'luichies'],
     'J1455+1447': ['panstarrs', 'chandra', 'luichies'],
     'J1524+4409': ['panstarrs', 'chandra', 'luichies'],
-    'J1633+3134': ['panstarrs', 'chandra', 'luichies'],
+    'J1633+3134': ['panstarrs', 'chandra', 'luichies', 'Morgan'],
     'J1650+4251': ['panstarrs', 'chandra', 'luichies']
 }
 
