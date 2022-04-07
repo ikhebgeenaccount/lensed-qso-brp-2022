@@ -22,9 +22,9 @@ FILTERED_SOURCES = {
     'J0924+0219': ['panstarrs', 'faure', 'castles', 'chandra', 'luichies'],
     'J1330+1810': ['panstarrs', 'chandra', 'luichies'],
     'J1455+1447': ['panstarrs', 'chandra', 'luichies'],
-    'J1524+4409': ['panstarrs', 'chandra', 'luichies'],
+    'J1524+4409': ['panstarrs', 'chandra', 'luichies', 'Oguri'],
     'J1633+3134': ['panstarrs', 'chandra', 'luichies', 'Morgan'],
-    'J1650+4251': ['panstarrs', 'chandra', 'luichies']
+    'J1650+4251': ['panstarrs', 'chandra', 'luichies', 'Morgan']
 }
 
 
