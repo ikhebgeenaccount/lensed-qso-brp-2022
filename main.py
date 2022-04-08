@@ -44,7 +44,7 @@ if __name__ == '__main__':
         ax = None
         for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
             lqso = LensedQSO(g)
-            lqso.plot_error_percentage()
+            #lqso.plot_error_percentage() #how much of the sub fluxes errors they are in percentages
             #lqso.plot_spectrum(loglog=True)
             #model_subtraction(lqso)
             # if lqso.agn_fitter_output(copy=True) is not None:
