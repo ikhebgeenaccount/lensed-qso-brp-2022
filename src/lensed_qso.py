@@ -329,21 +329,23 @@ class LensedQSO:
             print('rX path not yet')
         else:
             path = os.path.join(os.pardir, 'AGNfitter', 'OUTPUT', str(agnf_id))
+        repo_path = os.path.join('data', f'{self.name}', 'agnfitter')
 
-        if not os.path.isdir(path):
-            if not os.path.isdir(os.path.join(os.pardir, 'lensed-qso-brp-2022', 'data', f'{self.name}', 'agnfitter')):
-                print('Are you working on vdesk? If not, then this output has not been copied to our github repo')
-                return
-            else:
-                path=os.path.join(os.pardir, 'lensed-qso-brp-2022', 'data', f'{self.name}', 'agnfitter')
+        # Three cases:
+        # path exists: points to AGNfitter output
+        # repo_path exists: points to data in repo
+        # neither exist: sucks
+        if os.path.isdir(path):
+            if copy:
+                distutils.dir_util.copy_tree(path, os.path.join('data', self.name, 'agnfitter'))
+        elif os.path.isdir(repo_path):
+            path = repo_path
+        else:
+            print('Are you working on vdesk or strw? If not, then this output has not been copied to our github repo')
+            return
 
-        if copy:
-            distutils.dir_util.copy_tree(path, os.path.join('data', self.name, 'agnfitter'))
-
-        result = pd.read_csv(os.path.join(path, f'parameter_outvalues_{agnf_id}.txt'),
+        return pd.read_csv(os.path.join(path, f'parameter_outvalues_{agnf_id}.txt'),
                              delim_whitespace=True, skiprows=4, header=None, names=['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like'])
-
-        return result
 
 
 settings_template_rX = "'''\n" +\
