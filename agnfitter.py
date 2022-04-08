@@ -9,12 +9,12 @@ import os
 GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']
 
 
-def agnfitter(galaxies, run_ten=False, git_push=False, rX=False):
-    for g in GALAXIES:
+def agnfitter(galaxies, run_ten=False, git_push=False, rX=False, copy=False):
+    for g in galaxies:
         lqso = LensedQSO(g)
         model_subtraction(lqso)
         run_agn_fitter([g], run_ten=run_ten, rX=rX)
-        lqso.agn_fitter_output(copy=True)
+        lqso.agn_fitter_output(copy=copy)
 
         if git_push:
             os.system('git add data/*')
@@ -30,9 +30,9 @@ if __name__ == '__main__':
     parser.add_argument('--push', help='Push to GitHub repo', action='store_true')
     parser.add_argument('--rX', help='Run rX version of AGNfitter', action='store_true')
     parser.add_argument('--tenmode', help='Run all galaxies 10 times', action='store_true')
+    parser.add_argument('--copy', help='Copy files from AGNfitter OUTPUT to git repo', action='store_true')
     #   --single
-    parser.add_argument('--single', type=str, help='Run a single galaxy, give name')
-    parser.add_argument('--all', help='Run all galaxies', action='store_true')
+    parser.add_argument('--single', type=str, help='Run a single galaxy, give name, if not given, runs all galaxies')
 
     args = parser.parse_args()
 
@@ -40,4 +40,4 @@ if __name__ == '__main__':
     if args.single:
         gals = [args.single]
 
-    agnfitter(gals, run_ten=args.tenmode, git_push=args.push, rX=args.rX)
+    agnfitter(gals, run_ten=args.tenmode, git_push=args.push, rX=args.rX, copy=args.copy)
