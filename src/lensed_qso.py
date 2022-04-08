@@ -308,8 +308,8 @@ class LensedQSO:
             tel = FILTER_PROPERTIES.telescope.values[i]
             fil = FILTER_PROPERTIES.filtername.values[i]
 
-            exists_in_sed =self.filter_sed(component='_sub').loc[(self.filter_sed(component='_sub')['telescope'] == tel) & (
-                    self.filter_sed(component='_sub')['filter'] == fil)].shape[0] > 0
+            exists_in_sed =self.filter_sed(component='_sub', rX=rX).loc[(self.filter_sed(component='_sub', rX=rX)['telescope'] == tel) & (
+                    self.filter_sed(component='_sub', rX=rX)['filter'] == fil)].shape[0] > 0
 
             if rX:
                 filterfilenames += [get_agnf_filter_path(tel, fil)]
