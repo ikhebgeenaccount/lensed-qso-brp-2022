@@ -359,7 +359,7 @@ settings_template_rX = "'''\n" +\
 "Change only the functions which state \n" +\
 "***USER INPUT NEEDED***.\n" +\
 "'''\n" +\
-"\n" +\
+"import os\n" +\
 "\n" +\
 "def CATALOG_settings():\n" +\
 "\n" +\
@@ -374,7 +374,7 @@ settings_template_rX = "'''\n" +\
 "\n" +\
 "\n" +\
 "    ##GENERAL\n" +\
-"    cat['path'] = '/data2/bach1/abbo/brp/AGNfitter-rX_v0.1/AGNfitter/' #'/Users/gcalistr/Documents/AGNfitter/'  #path to the AGNfitter code\n" +\
+"    cat['path'] = os.getcwd().replace('lensed-qso-brp-2022', 'AGNfitter_rXv0.1/AGNfitter/') #'/Users/gcalistr/Documents/AGNfitter/'  #path to the AGNfitter code\n" +\
 "    cat['filename'] = cat['path']+'data/{name}.txt'\n" +\
 "    cat['filetype'] = 'ASCII' ## catalog file type: 'ASCII' or 'FITS'. \n" +\
 "    cat['name'] = 0                 ## If ASCII: Column index (int) of source IDs\n" +\
@@ -606,7 +606,7 @@ settings_template = "'''\n" +\
 "Change only the functions which state\n" +\
 "***USER INPUT NEEDED***.\n" +\
 "'''\n" +\
-"\n" +\
+"import os\n" +\
 "def CATALOG_settings():\n" +\
 "\n" +\
 "    '''==================================\n" +\
@@ -621,7 +621,7 @@ settings_template = "'''\n" +\
 "\n" +\
 "\n" +\
 "    ##GENERAL\n" +\
-"    cat['path'] ='/data2/bach1/abbo/brp/AGNfitter/'  #path to the AGNfitter code\n" +\
+"    cat['path'] = os.getcwd().replace('lensed-qso-brp-2022', 'AGNfitter/')  #path to the AGNfitter code\n" +\
 "\n" +\
 "\n" +\
 "    cat['filename'] = cat['path']+'data/{name}.txt'\n" +\
