@@ -119,6 +119,10 @@ def model_subtraction(lqso):
         np.power(lqso.sed['flux_sub'] / np.power(lqso.props['magnification'].values[0], 2.) * lqso.props['magn_err'].values[0], 2.)
     )
 
+    # Change upper limits with errors to upper limit = upper limit + error
+    lqso.sed['flux_sub_demag'].loc[lqso.sed['upper_limit'] == 1] += lqso.sed['flux_sub_demag_err'].loc[lqso.sed['upper_limit'] == 1]
+    lqso.sed['flux_sub_demag_err'].loc[lqso.sed['upper_limit'] == 1] = 0
+
     fig, ax = lqso.plot_spectrum(component='_sub')
     fig.savefig(os.path.join('plots', lqso.name, f'{lqso.name}_sub.jpg'))
     fig.savefig(os.path.join('plots', lqso.name, f'{lqso.name}_sub.pdf'))
