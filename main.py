@@ -20,7 +20,6 @@ if __name__ == '__main__':
     #filterprofiles
     #xml_to_txt('VLT_CONICA_H.xml', 'VLT_CONICA_H.txt')
     #tophat(230.609583,0.560, 'IRAM_1.3mm.txt',freq_Ghz=True, energy_Kev=False)
-    #percent_to_fraction('WIYN.U_HARRIS.txt','WIYN.U_HARRIS_fraction.txt')
 
     #model subtraction
     #model_subtraction(lqso)
@@ -46,12 +45,11 @@ if __name__ == '__main__':
             lqso = LensedQSO(g)
             #lqso.plot_error_percentage() #how much of the sub fluxes errors they are in percentages
             #lqso.plot_spectrum(loglog=True)
-            #model_subtraction(lqso)
-            # if lqso.agn_fitter_output(copy=True) is not None:
-            #     if ax is None:
-            #         fig, ax = plot_lqso_in_speagle(lqso)
-            #     else:
-            #         plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
+            if lqso.agn_fitter_output(copy=True) is not None:
+                if ax is None:
+                     fig, ax = plot_lqso_in_speagle(lqso)
+                else:
+                     plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
     
     all_galaxies()
 
