@@ -67,10 +67,6 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None):
     sfr_tot_pe = np.sqrt(sfr_ir_pe ** 2. + sfr_opt_pe ** 2.)
     sfr_tot_me = np.sqrt(sfr_ir_me ** 2. + sfr_opt_me ** 2.)
 
-    # print(sfr_tot)
-    # print(sfr_tot_pe)
-    # print(sfr_tot_me)
-
     # logM_star
     log_m_star = lqso.agn_fitter_output()['logMstar'].iloc[2]
     log_m_star_pe = lqso.agn_fitter_output()['logMstar'].iloc[3] - log_m_star
