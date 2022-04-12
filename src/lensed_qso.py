@@ -251,7 +251,7 @@ class LensedQSO:
     def save_sed(self):
         self.sed.to_csv(os.path.join('data', self.name, self.sed_file), index=False)
 
-    def sed_to_agn_fitter(self, rX=False):
+    def sed_to_agn_fitter(self, rX=False, component='_sub'):
         """
         Translates the SED to a catalog that is compatible with AGNfitter.
         :return: str
@@ -265,16 +265,16 @@ class LensedQSO:
         catalog = header
         for j in range(10):
             catalog_line = f'{str(id) + ("" if j == 0 else str(j))} {self.props.z_qso.values[0]} '
-            for i, row in self.filter_sed(component='_sub', rX=rX).iterrows():
-                if row['flux_sub_demag'] <= 0:
+            for i, row in self.filter_sed(component=component, rX=rX).iterrows():
+                if row[f'flux{component}'] <= 0:
                     print('Skipping SED row', i)
                     continue
 
                 if not row.upper_limit:
-                    catalog_line += f'{row.wavelength} {row.flux_sub_demag} {row.flux_sub_demag_err} '
+                    catalog_line += f'{row.wavelength} {row[f"flux{component}"]} {row[f"flux{component}_err"]} '
                 else:
                     # Upper limit has error -99 as flag for AGNfitter
-                    catalog_line += f'{row.wavelength} {row.flux_sub_demag} -99 '
+                    catalog_line += f'{row.wavelength} {row[f"flux{component}"]} -99 '
 
                 if j== 0:
                     l += 3

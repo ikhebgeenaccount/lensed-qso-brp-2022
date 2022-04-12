@@ -9,7 +9,7 @@ AGN_FITTER_PATH = os.path.join(os.pardir, 'AGNfitter')
 AGN_FITTER_RX_PATH = os.path.join(os.pardir, 'AGNfitter-rX_v0.1', 'AGNfitter')
 
 
-def run_agn_fitter(galaxies, rX=False, run_ten=False, settings=None):
+def run_agn_fitter(galaxies, rX=False, run_ten=False, settings=None, demag=False):
     if rX:
         path = AGN_FITTER_RX_PATH
     else:
@@ -20,7 +20,7 @@ def run_agn_fitter(galaxies, rX=False, run_ten=False, settings=None):
 
         # Update catalog
         print(f'Updating catalog for {lqso.name}')
-        cat, l = lqso.sed_to_agn_fitter(rX=rX)
+        cat, l = lqso.sed_to_agn_fitter(rX=rX, component='_sub_demag' if demag else '_sub')
 
         with open(os.path.join(path, 'data', f'{lqso.name}.txt'), 'w') as cf:
             cf.write(cat)
