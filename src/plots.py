@@ -144,9 +144,14 @@ def plot_agnf_output(gals, field_1, field_2, color_scale_field=None):
     if color_scale_field is not None:
         ax_scatter = ax.scatter(f1vs, f2vs, c=fcs, cmap=cm, zorder=100)#, vmin=0, vmax=10000)
         ax.errorbar(f1vs, f2vs, xerr=f1es, yerr=f2es, zorder=0, fmt='o')#, vmin=0, vmax=10000)
-        fig.colorbar(ax_scatter, cmap=cm)
+        cbar = fig.colorbar(ax_scatter, cmap=cm)
+
+        cbar.set_label(color_scale_field)
     else:
         ax.errorbar(f1vs, f2vs, xerr=f1es, yerr=f2es, zorder=0, fmt='o')
 
     ax.set_xlabel(field_1)
     ax.set_ylabel(field_2)
+
+    fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.pdf'))
+    fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.svg'))
