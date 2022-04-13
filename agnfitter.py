@@ -11,7 +11,7 @@ import json
 GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']
 
 
-def agnfitter(galaxies, run_ten=False, git_push=False, rX=False, copy=False, model_sub=False, settings=None, demag=False, speagle=False):
+def agnfitter(galaxies, run_ten=False, git_push=False, rX=False, copy=False, model_sub=False, settings=None, component='_sub_demag', speagle=False):
 
     ax = None
 
@@ -20,11 +20,11 @@ def agnfitter(galaxies, run_ten=False, git_push=False, rX=False, copy=False, mod
 
         if model_sub:
             model_subtraction(lqso)
-        run_agn_fitter([g], run_ten=run_ten, rX=rX, settings=settings, demag=demag)
+        run_agn_fitter([g], run_ten=run_ten, rX=rX, settings=settings, component=component)
         lqso.agn_fitter_output(copy=copy)
 
         if speagle:
-            _, ax = plot_lqso_in_speagle(lqso, ax=ax, is_demag=demag)
+            _, ax = plot_lqso_in_speagle(lqso, ax=ax)
 
         if git_push:
             os.system('git add data/*')
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     parser.add_argument('--tenmode', help='Run all galaxies 10 times', action='store_true')
     parser.add_argument('--copy', help='Copy files from AGNfitter OUTPUT to git repo', action='store_true')
     parser.add_argument('--modelsub', help='Run model subtraction for galaxies', action='store_true')
-    parser.add_argument('--demag', help='Use demagnified flux', action='store_true')
+    parser.add_argument('--component', help='Flux component to use, default "_sub_demag"', type=str, default='_sub_demag')
     parser.add_argument('--speagle', help='Plot run galaxies in a Speagle MS', action='store_true')
     #   --single
     parser.add_argument('--single', type=str, help='Run a single galaxy, give name, if not given, runs all galaxies')
@@ -61,5 +61,5 @@ if __name__ == '__main__':
 
     agnfitter(gals, run_ten=args.tenmode, git_push=args.push,
               rX=args.rX, copy=args.copy, model_sub=args.modelsub,
-              settings=settings, demag=args.demag, speagle=args.speagle
+              settings=settings, component=args.component, speagle=args.speagle
     )

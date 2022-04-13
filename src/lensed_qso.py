@@ -33,7 +33,7 @@ XRAY_CUTOFF = 300  # wavelenghts < 300 Angstrom are classified as Xray
 DEFAULT_AGNFITTER_SETTINGS = {
     'nwalkers': 100,
     'nburnsets': 2,
-    'nburn': 10000,
+    'nburn': 5000,
     'nmcmc': 15000,
     'iprint': 1000,
     'plot_tracesburn-in': True,

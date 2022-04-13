@@ -39,7 +39,7 @@ def speagle_gms(log_m_star, t, log_m_star_err=None, t_err=None):
     return log_sfr, log_sfr_err
 
 
-def plot_lqso_in_speagle(lqso, fig=None, ax=None, is_demag=True):
+def plot_lqso_in_speagle(lqso, fig=None, ax=None):
     if lqso.agn_fitter_output() is None:
         print('No AGNfitter output found for', lqso.name)
         return
@@ -100,11 +100,6 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None, is_demag=True):
 
     yerr_opt = np.array([sfr_opt_me, sfr_opt_pe]).reshape((2, 1))
     yerr_opt = yerr_opt / (sfr_opt * np.log(10.))  # Calculate error in SFR_opt from S
-
-    # If data is not yet demagnified, needs to be done with error
-    if not is_demag:
-        raise NotImplementedError('Speagle plot is not yet accounting for not yet demagnified data.')
-        pass
 
     # Plot galaxy
     ax.errorbar(log_m_star, np.log10(sfr_tot), xerr=xerr, yerr=yerr_tot, label=f'{lqso.name} SFR_tot, z={lqso.props.z_qso.values[0]:.3f}', fmt='o', capsize=4)
