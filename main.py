@@ -6,7 +6,7 @@ from src.ned_to_sed import ned_table_to_sed
 from src.xml_to_txt import xml_to_txt
 from src.tophat import tophat
 from src.model_subtraction import model_subtraction
-from src.speagle import plot_lqso_in_speagle
+from src.plots import plot_lqso_in_speagle
 from src.percent_to_fraction import percent_to_fraction
 from src.filters import populate_filter_profile_path_column
 

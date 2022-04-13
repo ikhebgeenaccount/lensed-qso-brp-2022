@@ -1,7 +1,7 @@
 from src.lensed_qso import LensedQSO
 from src.model_subtraction import model_subtraction
 from src.agn_fitter_automated import run_agn_fitter
-from src.speagle import plot_lqso_in_speagle
+from src.plots import plot_lqso_in_speagle
 
 import argparse
 import os
