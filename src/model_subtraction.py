@@ -131,7 +131,7 @@ def model_subtraction(lqso):
         np.power(1. / lqso.props['magnification'].values[0] * lqso.sed['flux_sub_err'], 2.))
 
     # Change upper limits with errors to upper limit = upper limit + error
-    lqso.sed['flux_sub_demag-test'].loc[lqso.sed['upper_limit'] == 1] += lqso.sed['flux_sub_demag_test_err'].loc[lqso.sed['upper_limit'] == 1]
+    lqso.sed['flux_sub_demag_test'].loc[lqso.sed['upper_limit'] == 1] += lqso.sed['flux_sub_demag_test_err'].loc[lqso.sed['upper_limit'] == 1]
     lqso.sed['flux_sub_demag_test_err'].loc[lqso.sed['upper_limit'] == 1] = 0
     """
     to here
