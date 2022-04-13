@@ -361,7 +361,7 @@ class LensedQSO:
         else:
             return outstr
 
-    def agn_fitter_output(self, rX=False, agnf_id=None, copy=False):
+    def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=True):
         if agnf_id is None:
             agnf_id = self.agn_fitter_id()
         if rX:
@@ -377,7 +377,7 @@ class LensedQSO:
         if os.path.isdir(path):
             if copy:
                 distutils.dir_util.copy_tree(path, os.path.join('data', self.name, 'agnfitter'))
-        elif os.path.isdir(repo_path):
+        elif os.path.isdir(repo_path) and check_git:
             path = repo_path
         else:
             print('Are you working on vdesk or strw? If not, then this output has not been copied to our github repo')
