@@ -15,7 +15,7 @@ from src.speagle import plot_lqso_in_speagle
 
 import src.model_sed
 
-import os.system
+import os
 
 GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']
 
@@ -81,22 +81,22 @@ def single_galaxy():
 
     # a = src.model_sed.fit(lqso, m)
 
+    model_subtraction(lqso)
+
     # lqso.plot_spectrum()
     lqso.plot_spectrum(component='_sub')
     lqso.plot_spectrum(component='_sub_demag')
 
-    # model_subtraction(lqso)
+    # catalog, length = lqso.sed_to_agn_fitter(rX=True)
 
-    catalog, length = lqso.sed_to_agn_fitter(rX=True)
-
-    print(catalog)
+    # print(catalog)
     # print(length)
 
     # lqso.agn_settings(rX=True)
 
     #print(lqso.agn_fitter_output())
     #print(lqso.agn_fitter_output()[['tau', 'age', 'LIR(8-1000)', 'SFR_IR', 'SFR_opt', 'logMstar']])
-    # plot_lqso_in_speagle(lqso)
+    plot_lqso_in_speagle(lqso)
 
 
 def latex():
@@ -123,30 +123,13 @@ def plot_ell_models():
     ax.legend()
 
 
-def agnfitter():
-    for g in GALAXIES:
-        lqso = LensedQSO(g)
-        model_subtraction(lqso)
-        #run_agn_fitter([g])
-        lqso.agn_fitter_output(copy=True)
-
-        os.system('git add data/*')
-        os.system(f'git commit -m AGNfitter output automated {lqso.name}')
-        os.system('git push')
-        break
-
-
 if __name__ == '__main__':
     # all_galaxies()
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
-    # plot_single_model()
-    # single_galaxy()
-    agnfitter()
+    single_galaxy()
 
     # latex()
 
-    # populate_filter_profile_path_column()
-
-    plt.show()
+    #plt.show()

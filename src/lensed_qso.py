@@ -30,6 +30,32 @@ FILTERED_SOURCES = {
 RADIO_CUTOFF = 1e8  # wavelenghts >1e8 Angstrom are classified as radio
 XRAY_CUTOFF = 300  # wavelenghts < 300 Angstrom are classified as Xray
 
+DEFAULT_AGNFITTER_SETTINGS = {
+    'nwalkers': 100,
+    'nburnsets': 2,
+    'nburn': 5000,
+    'nmcmc': 15000,
+    'iprint': 1000,
+    'plot_tracesburn-in': True,
+    'plot_tracesmcmc': True,
+    'plot_posteriortriangle': False,
+    'realizations2plot': 10,
+    'plotSEDrealizations': True
+}
+
+DEFAULT_AGNFITTER_SETTINSG_RX = {
+    'plot_residuals': True,
+    'modelset': 'modelsv1',
+    'GALAXY': 'BC03_metal',
+    'STARBURST': 'S17_radio',
+    'BBB': 'SN12',
+    'TORUS': 'SKIRTORM',
+    'PRIOR_energy_balance': 'Flexible',
+    'PRIOR_AGNfraction': True,
+    'PRIOR_midIR_UV': False,
+    'PRIOR_galaxy_only': False
+}
+
 
 class LensedQSO:
 
@@ -208,10 +234,10 @@ class LensedQSO:
         if self.save_all_plots:
             fig.savefig(os.path.join(self.save_location, f'SED{component if component is not None else "_total"}.pdf'))
             fig.savefig(os.path.join(self.save_location, f'SED{component if component is not None else "_total"}.png'))
-            
+
         return fig, ax
-    
-    
+
+
     def plot_error_percentage(self, loglog=True):
         fig, ax = plt.subplots(figsize=(10, 8))
         ratio=self.sed['flux_sub_err']/self.sed['flux_sub'] *100
@@ -219,13 +245,13 @@ class LensedQSO:
         ax.set_xscale('log')
         ax.set_ylabel('errors of sub in percentage', fontsize=15)
         ax.set_title(f'{self.name} percentage error')
-        
+
         return fig,ax
-        
+
     def save_sed(self):
         self.sed.to_csv(os.path.join('data', self.name, self.sed_file), index=False)
 
-    def sed_to_agn_fitter(self, rX=False):
+    def sed_to_agn_fitter(self, rX=False, component='_sub'):
         """
         Translates the SED to a catalog that is compatible with AGNfitter.
         :return: str
@@ -239,16 +265,16 @@ class LensedQSO:
         catalog = header
         for j in range(10):
             catalog_line = f'{str(id) + ("" if j == 0 else str(j))} {self.props.z_qso.values[0]} '
-            for i, row in self.filter_sed(component='_sub', rX=rX).iterrows():
-                if row['flux_sub_demag'] <= 0:
+            for i, row in self.filter_sed(component=component, rX=rX).iterrows():
+                if row[f'flux{component}'] <= 0:
                     print('Skipping SED row', i)
                     continue
 
                 if not row.upper_limit:
-                    catalog_line += f'{row.wavelength} {row.flux_sub_demag} {row.flux_sub_demag_err} '
+                    catalog_line += f'{row.wavelength} {row[f"flux{component}"]} {row[f"flux{component}_err"]} '
                 else:
                     # Upper limit has error -99 as flag for AGNfitter
-                    catalog_line += f'{row.wavelength} {row.flux_sub_demag} -99 '
+                    catalog_line += f'{row.wavelength} {row[f"flux{component}"]} -99 '
 
                 if j== 0:
                     l += 3
@@ -260,15 +286,21 @@ class LensedQSO:
         t = self.name.replace('B', '').replace('J', '').replace('+', '')
         return t if t[0] != '0' else t[1:]
 
-    def agn_settings(self, rX=False):
+    def agn_settings(self, rX=False, settings=None):
+        # First load default settings to make sure every setting is set
+        settings_use = DEFAULT_AGNFITTER_SETTINGS.copy()
+        template = None
+
         if rX:
+            settings_use.update(DEFAULT_AGNFITTER_SETTINSG_RX)
+
+            template = settings_template_rX
             filters, filternames, filterfilenames = self.agn_fitter_input_filters(rX)
 
-            # TODO
             hasxray = sum(self.filter_sed(component='_sub', rX=True)['wavelength'] <= XRAY_CUTOFF) > 0
             hasradio = sum(self.filter_sed(component='_sub', rX=True)['wavelength'] >= RADIO_CUTOFF) > 0
             print(hasxray, hasradio)
-            return settings_template_rX.format(**{
+            settings_use.update({
                 'length': self.sed_to_agn_fitter()[1],
                 'length + 1': self.sed_to_agn_fitter()[1] + 1,
                 'length + 2': self.sed_to_agn_fitter()[1] + 2,
@@ -281,7 +313,8 @@ class LensedQSO:
                 'hasradio': hasradio
             })
         else:
-            return settings_template.format(**{
+            template = settings_template
+            settings_use.update({
                 'length': self.sed_to_agn_fitter()[1],
                 'length + 1': self.sed_to_agn_fitter()[1] + 1,
                 'length + 2': self.sed_to_agn_fitter()[1] + 2,
@@ -289,6 +322,12 @@ class LensedQSO:
                 'redshift': self.props.z_qso.values[0],
                 'filters': self.agn_fitter_input_filters()
             })
+
+        # Update default settings with settings that have been passed by user
+        if settings is not None:
+            settings_use.update(settings)
+
+        return template.format(**settings_use)
 
     def agn_fitter_input_filters(self, rX=False):
         """
@@ -479,25 +518,25 @@ settings_template_rX = "'''\n" +\
 "\n" +\
 "    models = dict()\n" +\
 "    models['path'] = 'models/' \n" +\
-"    models['modelset'] = 'modelsv1'\n" +\
+"    models['modelset'] = {modelset}\n" +\
 "\n" +\
 "\n" +\
-"    models['GALAXY'] = 'BC03_metal'   ### Current options:\n" +\
+"    models['GALAXY'] = {GALAXY}   ### Current options:\n" +\
 "                                ### 'BC03' (Bruzual & Charlot 2003)\n" +\
 "                                ### 'BC03_metal' (Bruzual & Charlot 2003), with metallicities\n" +\
-"    models['STARBURST'] = 'S17_radio' ### Current options:\n" +\
+"    models['STARBURST'] = {STARBURST} ### Current options:\n" +\
 "                                ### 'DH02_CE01' (Dale & Helou 2002 + Chary & Elbaz 2001)\n" +\
 "                                ### 'S17' (Schreiber et al. 2017 (submitted))  \n" +\
 "                                ### 'S17_newmodel'\n" +\
 "                                ### 'S17_radio' \n" +\
 "\n" +\
-"    models['BBB'] = 'SN12' ### Current options:\n" +\
+"    models['BBB'] = {BBB} ### Current options:\n" +\
 "                         ### 'R06' (Richards et al. 2006) ## Needs 2 manual changes in PARAMETERSPACE_AGNfitter.py\n" +\
 "                         ### 'SN12' (Slone&Netzer 2012)\n" +\
 "                         ### 'D12_S' (Done et al. 2012) for Schwarzschild BH, with x-ray predictions\n" +\
 "                         ### 'D12_K' (Done et al. 2012) for Kerr BH, with x-ray predictions\n" +\
 "\n" +\
-"    models['TORUS'] ='SKIRTORM' ### Current options:\n" +\
+"    models['TORUS'] ={TORUS} ### Current options:\n" +\
 "                           ### 'S04' (Silva et al. 2004)\n" +\
 "                           ### 'NK0' (Nenkova et al. 2008)\n" +\
 "                           ### 'NK0_2P' (Nenkova et al. 2008) with averaged SEDs for each inclination and openning angle\n" +\
@@ -512,12 +551,12 @@ settings_template_rX = "'''\n" +\
 "\n" +\
 "    models['RADIO'] = {hasradio} ### If radio data is available and informative for the fit\n" +\
 "\n" +\
-"    models['PRIOR_energy_balance'] = 'Flexible' ### Default:'Flexible'\n" +\
+"    models['PRIOR_energy_balance'] = {PRIOR_energy_balance} ### Default:'Flexible'\n" +\
 "                                          ### 'Flexible': Sets a lower limit to the dust emission luminosity ('starburst' model)\n" +\
 "                                          ### as given by the observed attenuation in the stellar component SED.\n" +\
 "                                          ### 'Restrictive': Favours a combination of parameters such that the luminosity of the cold dust \n" +\
 "                                          ### and that attenuated in the stellar component are equal.\n" +\
-"    models['PRIOR_AGNfraction'] = True  ### Default: True\n" +\
+"    models['PRIOR_AGNfraction'] = {PRIOR_AGNfraction}  ### Default: True\n" +\
 "                                        ### True: - *IF* blue/UV bands (around 1500 Angstrom) are 10 times higher than expected by the galaxy luminosity function by Parsa, Dunlop et al. 2014. \n" +\
 "                                        ###         this option rejects AGN-to-GAL ratios lower than 1 (log =0). It then applies a Gaussian prior probability with log ratio=2, with a sigma of 2.\n" +\
 "                                        ###       - In this cases it also applies a Gaussian prior on the galaxy normalization, i.e. stellar mass (usually unconstrained in these cases) to \n" +\
@@ -526,8 +565,8 @@ settings_template_rX = "'''\n" +\
 "                                        ###         this option gives preference to galaxy contribution in the optical UV, with Gaussian prior probability centered on AGN to GALAXY log ratios of -1. \n" +\
 "                                        ###          and sigma 1, i.e. accretion disk is disfavoured at least the data strongly prefers it.\n" +\
 "                                        ### False:- Non-informative prior\n" +\
-"    models['PRIOR_midIR_UV'] = False\n" +\
-"    models['PRIOR_galaxy_only'] = False ### Default:False \n" +\
+"    models['PRIOR_midIR_UV'] = {PRIOR_midIR_UV}\n" +\
+"    models['PRIOR_galaxy_only'] = {PRIOR_galaxy_only} ### Default:False \n" +\
 "                                        ### True: sets all AGN contribution to 0.ß\n" +\
 "    return models\n" +\
 "\n" +\
@@ -539,11 +578,11 @@ settings_template_rX = "'''\n" +\
 "\n" +\
 "    mc = dict()\n" +\
 "\n" +\
-"    mc['Nwalkers'] = 100  ## 100 number of walkers #100\n" +\
-"    mc['Nburnsets']= 2   ## number of burn-in sets\n" +\
-"    mc['Nburn'] = 6000 ## length of each burn-in sets\n" +\
-"    mc['Nmcmc'] = 15000  ## length of each burn-in sets\n" +\
-"    mc['iprint'] = 1000 ## show progress in terminal in steps of this many samples\n" +\
+"    mc['Nwalkers'] = {nwalkers}  ## 100 number of walkers #100\n" +\
+"    mc['Nburnsets']= {nburnsets}   ## number of burn-in sets\n" +\
+"    mc['Nburn'] = {nburn} ## length of each burn-in sets\n" +\
+"    mc['Nmcmc'] = {nmcmc}  ## length of each burn-in sets\n" +\
+"    mc['iprint'] = {iprint} ## show progress in terminal in steps of this many samples\n" +\
 "\n" +\
 "    return mc\n" +\
 "\n" +\
@@ -558,14 +597,14 @@ settings_template_rX = "'''\n" +\
 "    out['plot_format'] = 'pdf'\n" +\
 "\n" +\
 "    #CHAIN TRACES\n" +\
-"    out['plot_tracesburn-in'] = False    \n" +\
-"    out['plot_tracesmcmc'] = True\n" +\
+"    out['plot_tracesburn-in'] = {plot_tracesburn-in}    \n" +\
+"    out['plot_tracesmcmc'] = {plot_tracesmcmc}\n" +\
 "\n" +\
 "    #BASIC OUTPUT\n" +\
 "    out['Nsample'] = 1000 ## out['Nsample'] * out['Nthinning'] <= out['Nmcmc']\n" +\
 "    out['Nthinning'] = 10 ## This describes thinning of the chain to sample\n" +\
 "    out['writepar_meanwitherrors'] = True ##Write output values for all parameters in a file.\n" +\
-"    out['plot_posteriortriangle'] = True ##Plot triangle with all parameters' PDFs?\n" +\
+"    out['plot_posteriortriangle'] = {plot_posteriortriangle} ##Plot triangle with all parameters' PDFs?\n" +\
 "\n" +\
 "    #INTEGRATED LUMINOSITIES\n" +\
 "    out['calc_intlum'] = True  \n" +\
@@ -584,10 +623,10 @@ settings_template_rX = "'''\n" +\
 "    out['intlum_names'] = ['LIR(8-1000)','Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)','Lagn_rad(0.1-15000)', 'LAGN(0.1-30)', 'AGNfrac(8-1000)', 'Lgal_bbb(0.4-0.5)', 'AGNfrac(0.4-0.5)', 'Lxr(2-10keV)',  'Ltor(6)', 'Lsb(1-30)']\n" +\
 "\n" +\
 "    #SED PLOTTING\n" +\
-"    out['realizations2plot'] = 10\n" +\
-"    out['plot_residuals']= True\n" +\
+"    out['realizations2plot'] = {realizations2plot}\n" +\
+"    out['plot_residuals']= {plot_residuals}\n" +\
 "    out['saveSEDresiduals'] = True\n" +\
-"    out['plotSEDrealizations'] = True\n" +\
+"    out['plotSEDrealizations'] = {plotSEDrealizations}\n" +\
 "    out['saveSEDrealizations'] = True\n" +\
 "\n" +\
 "    return out"
@@ -703,11 +742,11 @@ settings_template = "'''\n" +\
 "\n" +\
 "    mc = dict()\n" +\
 "\n" +\
-"    mc['Nwalkers'] = 100  ## number of walkers\n" +\
-"    mc['Nburnsets']= 2   ## number of burn-in sets\n" +\
-"    mc['Nburn'] = 4000 ## length of each burn-in sets\n" +\
-"    mc['Nmcmc'] = 10000  ## length of each burn-in sets\n" +\
-"    mc['iprint'] = 1000 ## show progress in terminal in steps of this many samples\n" +\
+"    mc['Nwalkers'] = {nwalkers}  ## number of walkers\n" +\
+"    mc['Nburnsets']= {nburnsets}   ## number of burn-in sets\n" +\
+"    mc['Nburn'] = {nburn} ## length of each burn-in sets\n" +\
+"    mc['Nmcmc'] = {nmcmc}  ## length of each burn-in sets\n" +\
+"    mc['iprint'] = {iprint} ## show progress in terminal in steps of this many samples\n" +\
 "\n" +\
 "    return mc\n" +\
 "\n" +\
@@ -722,8 +761,8 @@ settings_template = "'''\n" +\
 "    out['plot_format'] = 'pdf'\n" +\
 "\n" +\
 "    #CHAIN TRACES\n" +\
-"    out['plot_tracesburn-in'] = False\n" +\
-"    out['plot_tracesmcmc'] = True\n" +\
+"    out['plot_tracesburn-in'] = {plot_tracesburn-in}\n" +\
+"    out['plot_tracesmcmc'] = {plot_tracesmcmc}\n" +\
 "\n" +\
 "    #BASIC OUTPUT\n" +\
 "    out['Nsample'] = 1000 ## out['Nsample'] * out['Nthinning'] <= out['Nmcmc']\n" +\
@@ -747,9 +786,9 @@ settings_template = "'''\n" +\
 "    out['intlum_names'] = ['LIR(8-1000)','Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)','Lsb(1-30)']\n" +\
 "\n" +\
 "    #SED PLOTTING\n" +\
-"    out['realizations2plot'] = 10\n" +\
+"    out['realizations2plot'] = {realizations2plot}\n" +\
 "\n" +\
-"    out['plotSEDrealizations'] = True\n" +\
+"    out['plotSEDrealizations'] = {plotSEDrealizations}\n" +\
 "\n" +\
 "    return out\n" +\
 ""

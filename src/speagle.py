@@ -7,7 +7,7 @@ import os.path
 
 LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)  # Cosmological constants as Speagle uses them
 
-log_m_stars = np.linspace(8, 14, num=10000)
+log_m_stars = np.linspace(6, 12, num=10000)
 
 # Speagle GMS constants
 a = 0.84
@@ -67,10 +67,6 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None):
     sfr_tot_pe = np.sqrt(sfr_ir_pe ** 2. + sfr_opt_pe ** 2.)
     sfr_tot_me = np.sqrt(sfr_ir_me ** 2. + sfr_opt_me ** 2.)
 
-    #print(sfr_tot)
-    #print(sfr_tot_pe)
-    #print(sfr_tot_me)
-
     # logM_star
     log_m_star = lqso.agn_fitter_output()['logMstar'].iloc[2]
     log_m_star_pe = lqso.agn_fitter_output()['logMstar'].iloc[3] - log_m_star
@@ -80,13 +76,15 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None):
         # These things are only done if no ax is given
         fig, ax = plt.subplots(figsize=(10,8))
 
-        sp_ms, sp_ms_err = speagle_gms(log_m_stars, LCDM.age(z_max).value)
+        sp_ms_max, sp_ms_err_max = speagle_gms(log_m_stars, LCDM.age(z_max).value)
 
-        ax.fill_between(log_m_stars, sp_ms - sp_ms_err, sp_ms + sp_ms_err, alpha=.6, label=f'Speagle+2014, z={z_max}')
+        # ax.fill_between(log_m_stars, sp_ms_max - sp_ms_err_max, sp_ms_max + sp_ms_err_max, alpha=.6, label=f'Speagle+2014, z={z_max}')
 
         sp_ms, sp_ms_err = speagle_gms(log_m_stars, LCDM.age(z_min).value)
 
-        ax.fill_between(log_m_stars, sp_ms - sp_ms_err, sp_ms + sp_ms_err, alpha=.6, label=f'Speagle+2014, z={z_min}', color='fuchsia')
+        # ax.fill_between(log_m_stars, sp_ms - sp_ms_err, sp_ms + sp_ms_err, alpha=.6, label=f'Speagle+2014, z={z_min}', color='fuchsia')
+
+        ax.fill_between(log_m_stars, sp_ms - sp_ms_err, sp_ms_max + sp_ms_err_max, alpha=.4, color='grey', label=f'Speagle+2014, z=[{z_min},{z_max}]')
 
         ax.set_ylabel('log SFR')
         ax.set_xlabel('log$M_*$')
@@ -97,8 +95,16 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None):
     yerr_tot = np.array([sfr_tot_me, sfr_tot_pe]).reshape((2, 1))
     yerr_tot = yerr_tot / (sfr_tot * np.log(10.))  # Calculate error in total SFR from S
 
+    yerr_ir = np.array([sfr_ir_me, sfr_ir_pe]).reshape((2, 1))
+    yerr_ir = yerr_ir / (sfr_ir * np.log(10.))  # Calculate error in SFR_IR from S
+
+    yerr_opt = np.array([sfr_opt_me, sfr_opt_pe]).reshape((2, 1))
+    yerr_opt = yerr_opt / (sfr_opt * np.log(10.))  # Calculate error in SFR_opt from S
+
     # Plot galaxy
     ax.errorbar(log_m_star, np.log10(sfr_tot), xerr=xerr, yerr=yerr_tot, label=f'{lqso.name} SFR_tot, z={lqso.props.z_qso.values[0]:.3f}', fmt='o', capsize=4)
+    # ax.errorbar(log_m_star, np.log10(sfr_ir), xerr=xerr, yerr=yerr_ir, label=f'{lqso.name} SFR_ir, z={lqso.props.z_qso.values[0]:.3f}', fmt='o', capsize=4)
+    # ax.errorbar(log_m_star, np.log10(sfr_opt), xerr=xerr, yerr=yerr_opt, label=f'{lqso.name} SFR_opt, z={lqso.props.z_qso.values[0]:.3f}', fmt='o', capsize=4)
 
     ax.legend()
 
