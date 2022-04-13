@@ -12,7 +12,7 @@ from src.filters import populate_filter_profile_path_column
 
 if __name__ == '__main__':
     #photometry
-    galaxy = 'J0806+2006' 
+    galaxy = 'B1600+434' 
     lqso = LensedQSO(galaxy)
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
     #lqso.plot_spectrum(loglog=True, component='_sub')
@@ -22,7 +22,8 @@ if __name__ == '__main__':
     #tophat(230.609583,0.560, 'IRAM_1.3mm.txt',freq_Ghz=True, energy_Kev=False)
 
     #model subtraction
-    #model_subtraction(lqso)
+    
+    model_subtraction(lqso)
     
     #AGN input
     #print(lqso.sed_to_agn_fitter(rX=False))
@@ -51,6 +52,6 @@ if __name__ == '__main__':
                 else:
                      plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
     
-    all_galaxies()
+    #all_galaxies()
 
     plt.show()
