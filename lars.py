@@ -11,7 +11,7 @@ from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
 from src.ned_to_sed import ned_table_to_sed
 from src.filters import populate_filter_profile_path_column
 from src.model_subtraction import model_subtraction
-from src.speagle import plot_lqso_in_speagle
+from src.plots import plot_lqso_in_speagle, plot_agnf_output
 
 import src.model_sed
 
@@ -23,6 +23,7 @@ PLOTS_SAVE = 'plots'
 
 
 def all_galaxies():
+    fig = None
     ax = None
     for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
         lqso = LensedQSO(g)
@@ -43,10 +44,11 @@ def all_galaxies():
         # print(a)
 
         if lqso.agn_fitter_output(copy=False) is not None:
-            if ax is None:
-                fig, ax = plot_lqso_in_speagle(lqso)
-            else:
-                plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
+            fig, ax = plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
+
+    plot_agnf_output(GALAXIES, 'EBVbbb', 'Nh', color_scale_field='SFR_opt')
+    plot_agnf_output(GALAXIES, 'SFR_IR', 'SFR_opt', color_scale_field='age')
+
 
 
 def big_plot():
@@ -124,11 +126,11 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    # all_galaxies()
+    all_galaxies()
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
-    single_galaxy()
+    # single_galaxy()
 
     # latex()
 
