@@ -155,3 +155,5 @@ def plot_agnf_output(gals, field_1, field_2, color_scale_field=None):
 
     fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.pdf'))
     fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.svg'))
+
+    return fig, ax

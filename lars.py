@@ -46,9 +46,13 @@ def all_galaxies():
         if lqso.agn_fitter_output(copy=False) is not None:
             fig, ax = plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
 
-    plot_agnf_output(GALAXIES, 'EBVbbb', 'Nh', color_scale_field='SFR_opt')
-    plot_agnf_output(GALAXIES, 'SFR_IR', 'SFR_opt', color_scale_field='age')
+    fig, ax = plot_agnf_output(GALAXIES, 'EBVbbb', 'Nh', color_scale_field='SFR_opt')
 
+    # Add Type1/2 AGN separation line as found in AGNfitter paper
+    ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
+    ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
+
+    plot_agnf_output(GALAXIES, 'SFR_IR', 'SFR_opt', color_scale_field='age')
 
 
 def big_plot():

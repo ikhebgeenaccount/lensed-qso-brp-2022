@@ -280,7 +280,7 @@ class LensedQSO:
         catalog = header
         for j in range(10):
             catalog_line = f'{str(id) + ("" if j == 0 else str(j))} {self.props.z_qso.values[0]} '
-            for i, row in self.filter_sed(component=component, rX=rX, disallowed_sources=FILTERED_SOURCES_AGNFITTER).iterrows():
+            for i, row in self.filter_sed(component=component, rX=rX, disallowed_sources=FILTERED_SOURCES_AGNFITTER[self.name]).iterrows():
                 if row[f'flux{component}'] <= 0:
                     print('Skipping SED row', i)
                     continue
