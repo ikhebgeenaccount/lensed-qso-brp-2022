@@ -23,7 +23,7 @@ if __name__ == '__main__':
 
     #model subtraction
     
-    model_subtraction(lqso)
+    #model_subtraction(lqso)
     
     #AGN input
     #print(lqso.sed_to_agn_fitter(rX=False))
@@ -45,13 +45,14 @@ if __name__ == '__main__':
         for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
             lqso = LensedQSO(g)
             #lqso.plot_error_percentage() #how much of the sub fluxes errors they are in percentages
-            #lqso.plot_spectrum(loglog=True)
-            if lqso.agn_fitter_output(copy=True) is not None:
-                if ax is None:
-                     fig, ax = plot_lqso_in_speagle(lqso)
-                else:
-                     plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
+            model_subtraction(lqso)
+            lqso.plot_spectrum(loglog=True, component ='_sub')
+            # if lqso.agn_fitter_output(copy=True) is not None:
+            #     if ax is None:
+            #          fig, ax = plot_lqso_in_speagle(lqso)
+            #     else:
+            #          plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
     
-    #all_galaxies()
+    all_galaxies()
 
     plt.show()

@@ -15,17 +15,32 @@ import warnings
 # TODO: how to filter Chandra and radio only for regular AGNfitter, not for rX version?
 # Perhaps filter add argument to filter_sed to only find within certain wavelength range?
 FILTERED_SOURCES = {
-    'B1152+200': ['panstarrs', 'toft'],
-    'B1600+434': ['panstarrs', 'munoz'],
+    'B1152+200': ['panstarrs'],
+    'B1600+434': ['panstarrs'],
     'B1608+656': [ 'luichies'],#['Koopmans+2003' ],
     'J0806+2006': ['panstarrs'],
-    'J0924+0219': ['panstarrs', 'faure', 'castles'],
+    'J0924+0219': ['panstarrs', 'faure'],
     'J1330+1810': ['panstarrs'],
     'J1455+1447': ['panstarrs'],
-    'J1524+4409': ['panstarrs', 'Oguri'],
-    'J1633+3134': ['panstarrs', 'Morgan'],
-    'J1650+4251': ['panstarrs', 'Morgan']
+    'J1524+4409': ['panstarrs'],
+    'J1633+3134': ['panstarrs'],
+    'J1650+4251': ['panstarrs']
 }
+
+
+FILTERED_SOURCES_AGNFITTER = {
+    'B1152+200': ['toft'],
+    'B1600+434': ['munoz'],
+    'B1608+656': [ 'luichies'],#['Koopmans+2003' ],
+    'J0806+2006': [],
+    'J0924+0219': [],
+    'J1330+1810': [],
+    'J1455+1447': [],
+    'J1524+4409': ['Oguri'],
+    'J1633+3134': ['Morgan'],
+    'J1650+4251': ['Morgan']
+}
+
 
 RADIO_CUTOFF = 1e8  # wavelenghts >1e8 Angstrom are classified as radio
 XRAY_CUTOFF = 300  # wavelenghts < 300 Angstrom are classified as Xray
@@ -265,7 +280,7 @@ class LensedQSO:
         catalog = header
         for j in range(10):
             catalog_line = f'{str(id) + ("" if j == 0 else str(j))} {self.props.z_qso.values[0]} '
-            for i, row in self.filter_sed(component=component, rX=rX).iterrows():
+            for i, row in self.filter_sed(component=component, rX=rX, disallowed_sources=FILTERED_SOURCES_AGNFITTER).iterrows():
                 if row[f'flux{component}'] <= 0:
                     print('Skipping SED row', i)
                     continue
