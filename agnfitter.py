@@ -21,7 +21,9 @@ def agnfitter(galaxies, run_ten=False, git_push=False, rX=False, copy=False, mod
         if model_sub:
             model_subtraction(lqso)
         run_agn_fitter([g], run_ten=run_ten, rX=rX, settings=settings, component=component)
-        lqso.agn_fitter_output(copy=copy)
+
+        if copy:
+            lqso.agn_fitter_output(copy=copy)
 
         if speagle:
             _, ax = plot_lqso_in_speagle(lqso, ax=ax)
