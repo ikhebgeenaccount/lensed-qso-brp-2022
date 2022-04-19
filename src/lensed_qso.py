@@ -70,6 +70,13 @@ DEFAULT_AGNFITTER_SETTINSG_RX = {
 }
 
 
+COMPONENT_ID = {
+    '_sub': 0,
+    '_sub_demag': 1,
+    '_sub_demag_test': 2
+}
+
+
 class LensedQSO:
 
     def __init__(self, name, sed_source='sed.csv',  mags_source='mags.csv', properties='properties.txt', save_all_plots=True, save_location='plots'):
@@ -269,7 +276,7 @@ class LensedQSO:
         Translates the SED to a catalog that is compatible with AGNfitter.
         :return: str
         """
-        id = self.agn_fitter_id()
+        id = self.agn_fitter_id(component=component)
 
         header = '# ID redshift [wavelength_angstrom flux_mJy flux_error_mJy]\n'
 
@@ -294,8 +301,8 @@ class LensedQSO:
 
         return catalog, l
 
-    def agn_fitter_id(self):
-        t = self.name.replace('B', '').replace('J', '').replace('+', '')
+    def agn_fitter_id(self, component='_sub'):
+        t = self.name.replace('B', '').replace('J', '').replace('+', '') + str(COMPONENT_ID[component])
         return t if t[0] != '0' else t[1:]
 
     def agn_settings(self, rX=False, settings=None):
@@ -373,9 +380,9 @@ class LensedQSO:
         else:
             return outstr
 
-    def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=True):
+    def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=True, component='_sub'):
         if agnf_id is None:
-            agnf_id = self.agn_fitter_id()
+            agnf_id = self.agn_fitter_id(component=component)
         if rX:
             print('rX path not yet')
         else:
