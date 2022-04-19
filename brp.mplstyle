@@ -3,7 +3,7 @@ axes.titlesize : 16
 axes.labelsize : 16
 
 # Graphs
-lines.linewidth : 2
+lines.linewidth : 1
 lines.markersize : 5
 xtick.labelsize : 16
 ytick.labelsize : 16

@@ -321,17 +321,14 @@ def plot_fit(lqso, models, avg_model, save_plots=True, save_location='plots', co
     # Plot the model on just the foreground galaxy data
     fig, ax, labels, legend_list = lqso.plot_spectrum(loglog=True, component='_G')
     for i in range(count):
-        le = ax.plot(MODELS[models['name'].iloc[i]].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[models['name'].iloc[i]].flux * models['mult'].iloc[i], alpha=.6 / count * (count - i) + .4, label=models['name'].iloc[i])
-
         labels.append(models['name'].iloc[i])
-        legend_list.append(le)
+        legend_list.append(ax.plot(MODELS[models['name'].iloc[i]].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[models['name'].iloc[i]].flux * models['mult'].iloc[i], alpha=.6 / count * (count - i) + .4, label=models['name'].iloc[i])[0])
 
-    le = ax.plot(avg_wls, avg_model, label='Average', color='black')
     labels.append('Average')
-    legend_list.append(le)
-    le = ax.fill_between(avg_wls, avg_model - avg_err, avg_model + avg_err, color='grey', alpha=.3, label='Avg. model $\pm 1\sigma$')
+    legend_list.append(ax.plot(avg_wls, avg_model, label='Average', color='black')[0])
     labels.append('Avg. model $\pm 1\sigma$')
-    legend_list.append(le)
+    legend_list.append(ax.fill_between(avg_wls, avg_model - avg_err, avg_model + avg_err, color='grey', alpha=.3, label='Avg. model $\pm 1\sigma$'))
+
 
     # Plot residuals
     # sed = lqso.filter_sed(component='_G', allow_zero_error=False)
@@ -347,13 +344,11 @@ def plot_fit(lqso, models, avg_model, save_plots=True, save_location='plots', co
     rfig, rax = fig, ax
 
     # Plot the model on total flux data
-    fig, ax, labels, legend = lqso.plot_spectrum(loglog=True)
-    le = ax.plot(avg_wls, avg_model, label='Average', color='black')
+    fig, ax, labels, legend_list = lqso.plot_spectrum(loglog=True)
     labels.append('Average')
-    legend_list.append(le)
-    le = ax.fill_between(avg_wls, avg_model - avg_err, avg_model + avg_err, color='grey', alpha=.5, label='Avg. model $\pm 1\sigma$')
+    legend_list.append(ax.plot(avg_wls, avg_model, label='Average', color='black')[0])
     labels.append('Avg. model $\pm 1\sigma$')
-    legend_list.append(le)
+    legend_list.append(ax.fill_between(avg_wls, avg_model - avg_err, avg_model + avg_err, color='grey', alpha=.5, label='Avg. model $\pm 1\sigma$'))
 
     # TODO: just as a test for now, remove later
     #if lqso.name == 'B1600+434':
@@ -367,8 +362,6 @@ def plot_fit(lqso, models, avg_model, save_plots=True, save_location='plots', co
     if save_plots:
         fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit_full_sed.pdf'))
         fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit_full_sed.jpg'))
-
-    return rfig, rax, fig, ax
 
 
 def closest_wavelength(wl, model):

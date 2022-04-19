@@ -17,6 +17,8 @@ import src.model_sed
 
 import os
 
+plt.style.use('brp.mplstyle')
+
 GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']
 
 PLOTS_SAVE = 'plots'
@@ -46,7 +48,7 @@ def all_galaxies():
         if lqso.agn_fitter_output(copy=False) is not None:
             fig, ax = plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
 
-    fig, ax = plot_agnf_output(GALAXIES, 'EBVbbb', 'Nh', color_scale_field='SFR_opt')
+    fig, ax = plot_agnf_output(GALAXIES, 'EBVbbb', 'Nh', color_scale_field='SFR_IR')
 
     # Add Type1/2 AGN separation line as found in AGNfitter paper
     ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
@@ -74,8 +76,11 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'J0806+2006'
+    galaxy = 'B1600+434'
     lqso = LensedQSO(galaxy)
+
+    # print(lqso.filter_sed(disallowed_sources=src.lensed_qso.FILTERED_SOURCES_AGNFITTER[lqso.name]).sort_values(by='wavelength')[['source', 'wavelength']])
+    print(lqso.sed_to_agn_fitter(component='_sub_demag'))
 
     # ned_table_to_sed(lqso, ned_file='ned_wise.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
     # ned_table_to_sed(lqso, ned_file='ned_2mass.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
@@ -90,8 +95,8 @@ def single_galaxy():
     model_subtraction(lqso)
 
     # lqso.plot_spectrum()
-    lqso.plot_spectrum(component='_sub')
-    lqso.plot_spectrum(component='_sub_demag')
+    # lqso.plot_spectrum(component='_sub')
+    # lqso.plot_spectrum(component='_sub_demag')
 
     # catalog, length = lqso.sed_to_agn_fitter(rX=True)
 
@@ -103,6 +108,31 @@ def single_galaxy():
     #print(lqso.agn_fitter_output())
     #print(lqso.agn_fitter_output()[['tau', 'age', 'LIR(8-1000)', 'SFR_IR', 'SFR_opt', 'logMstar']])
     plot_lqso_in_speagle(lqso)
+
+    plot_agnf_output([galaxy], 'SFR_IR', 'SFR_opt', color_scale_field='age')
+
+    fig, ax = plot_agnf_output([galaxy], 'EBVbbb', 'Nh', color_scale_field='SFR_IR')
+
+    # Add Type1/2 AGN separation line as found in AGNfitter paper
+    ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
+    ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
+
+
+def known_mag_gals():
+    known_mag_gals = ['J1524+4409', 'B1608+656' , 'J1455+1447']
+
+    fig, ax = None, None
+    for g in known_mag_gals:
+        lqso = LensedQSO(g)
+        fig, ax = plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
+
+    plot_agnf_output(known_mag_gals, 'SFR_IR', 'SFR_opt', color_scale_field='age')
+
+    fig, ax = plot_agnf_output(known_mag_gals, 'EBVbbb', 'Nh', color_scale_field='SFR_IR')
+
+    # Add Type1/2 AGN separation line as found in AGNfitter paper
+    ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
+    ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
 
 
 def latex():
@@ -130,12 +160,13 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    all_galaxies()
+    # all_galaxies()
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
-    # single_galaxy()
+    single_galaxy()
+    # known_mag_gals()
 
     # latex()
 
-    #plt.show()
+    plt.show()
