@@ -137,7 +137,7 @@ def model_subtraction(lqso):
     to here
     """
 
-    fig, ax = lqso.plot_spectrum(component='_sub')
+    fig, ax, _, _ = lqso.plot_spectrum(component='_sub')
     fig.savefig(os.path.join('plots', lqso.name, f'{lqso.name}_sub.jpg'))
     fig.savefig(os.path.join('plots', lqso.name, f'{lqso.name}_sub.pdf'))
     plt.vlines(np.max(wavelength), 0.9*np.min(list_sub), np.max(lqso.sed['flux_total']), alpha=0.5)

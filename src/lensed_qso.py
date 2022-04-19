@@ -248,7 +248,7 @@ class LensedQSO:
             fig.savefig(os.path.join(self.save_location, f'SED{component if component is not None else "_total"}.pdf'))
             fig.savefig(os.path.join(self.save_location, f'SED{component if component is not None else "_total"}.png'))
 
-        return fig, ax
+        return fig, ax, plotted_sources, legend_list
 
 
     def plot_error_percentage(self, loglog=True):

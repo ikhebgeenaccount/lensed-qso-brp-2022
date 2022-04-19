@@ -5,6 +5,7 @@ import pandas
 
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.legend_handler import HandlerTuple
 from mpl_toolkits.mplot3d import Axes3D
 
 from scipy.optimize import curve_fit, minimize
@@ -318,19 +319,26 @@ def plot_fit(lqso, models, avg_model, save_plots=True, save_location='plots', co
     avg_wls, avg_model, avg_err = avg_model
 
     # Plot the model on just the foreground galaxy data
-    fig, ax = lqso.plot_spectrum(loglog=True, component='_G')
+    fig, ax, labels, legend_list = lqso.plot_spectrum(loglog=True, component='_G')
     for i in range(count):
-        ax.plot(MODELS[models['name'].iloc[i]].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[models['name'].iloc[i]].flux * models['mult'].iloc[i], alpha=.6 / count * (count - i) + .4, label=models['name'].iloc[i])
+        le = ax.plot(MODELS[models['name'].iloc[i]].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[models['name'].iloc[i]].flux * models['mult'].iloc[i], alpha=.6 / count * (count - i) + .4, label=models['name'].iloc[i])
 
-    ax.plot(avg_wls, avg_model, label='Average', color='black')
-    ax.fill_between(avg_wls, avg_model - avg_err, avg_model + avg_err, color='grey', alpha=.3, label='Avg. model $\pm 1\sigma$')
+        labels.append(models['name'].iloc[i])
+        legend_list.append(le)
+
+    le = ax.plot(avg_wls, avg_model, label='Average', color='black')
+    labels.append('Average')
+    legend_list.append(le)
+    le = ax.fill_between(avg_wls, avg_model - avg_err, avg_model + avg_err, color='grey', alpha=.3, label='Avg. model $\pm 1\sigma$')
+    labels.append('Avg. model $\pm 1\sigma$')
+    legend_list.append(le)
 
     # Plot residuals
     # sed = lqso.filter_sed(component='_G', allow_zero_error=False)
     # ax_res = fig.add_axes(rect=[0, 0, 1, 0.33], sharex=ax)
     # ax_res.errorbar(sed['wavelength'].values, sed['flux_G'].values - np.interp(sed['wavelength'].values, xp=MODELS[models['name'].iloc[i]].wavelength * (1 + lqso.props['z_lens'].values[0]), fp=MODELS[models['name'].iloc[i]].flux * models['mult'].iloc[0]), yerr=sed['flux_G_err'].values, fmt='o')
 
-    ax.legend()
+    ax.legend(legend_list, labels, handler_map={tuple: HandlerTuple(ndivide=None)})
 
     if save_plots:
         fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit.pdf'))
@@ -339,9 +347,13 @@ def plot_fit(lqso, models, avg_model, save_plots=True, save_location='plots', co
     rfig, rax = fig, ax
 
     # Plot the model on total flux data
-    fig, ax = lqso.plot_spectrum(loglog=True)
-    ax.plot(avg_wls, avg_model, label='Average', color='black')
-    ax.fill_between(avg_wls, avg_model - avg_err, avg_model + avg_err, color='grey', alpha=.5, label='Avg. model $\pm 1\sigma$')
+    fig, ax, labels, legend = lqso.plot_spectrum(loglog=True)
+    le = ax.plot(avg_wls, avg_model, label='Average', color='black')
+    labels.append('Average')
+    legend_list.append(le)
+    le = ax.fill_between(avg_wls, avg_model - avg_err, avg_model + avg_err, color='grey', alpha=.5, label='Avg. model $\pm 1\sigma$')
+    labels.append('Avg. model $\pm 1\sigma$')
+    legend_list.append(le)
 
     # TODO: just as a test for now, remove later
     #if lqso.name == 'B1600+434':
@@ -350,7 +362,7 @@ def plot_fit(lqso, models, avg_model, save_plots=True, save_location='plots', co
         #rax.legend()
         #ax.scatter([60e4, 2.14137e9], [8.17, 38.3], label='radio model', color='fuchsia')
 
-    ax.legend()
+    ax.legend(legend_list, labels, handler_map={tuple: HandlerTuple(ndivide=None)})
 
     if save_plots:
         fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit_full_sed.pdf'))
