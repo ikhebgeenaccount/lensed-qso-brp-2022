@@ -12,8 +12,6 @@ from src.filters import get_wavelength, FILTER_PROPERTIES
 import warnings
 
 
-# TODO: how to filter Chandra and radio only for regular AGNfitter, not for rX version?
-# Perhaps filter add argument to filter_sed to only find within certain wavelength range?
 FILTERED_SOURCES = {
     'B1152+200': ['panstarrs'],
     'B1600+434': ['panstarrs'],
@@ -42,8 +40,8 @@ FILTERED_SOURCES_AGNFITTER = {
 }
 
 
-RADIO_CUTOFF = 1e8  # wavelenghts >1e8 Angstrom are classified as radio
-XRAY_CUTOFF = 300  # wavelenghts < 300 Angstrom are classified as Xray
+RADIO_CUTOFF = 1e8  # wavelengths >1e8 Angstrom are classified as radio
+XRAY_CUTOFF = 300  # wavelengths < 300 Angstrom are classified as Xray
 
 DEFAULT_AGNFITTER_SETTINGS = {
     'nwalkers': 100,
@@ -271,7 +269,6 @@ class LensedQSO:
         Translates the SED to a catalog that is compatible with AGNfitter.
         :return: str
         """
-        # TODO: use split data, model subtraction from total fluxes
         id = self.agn_fitter_id()
 
         header = '# ID redshift [wavelength_angstrom flux_mJy flux_error_mJy]\n'
@@ -362,8 +359,8 @@ class LensedQSO:
             tel = FILTER_PROPERTIES.telescope.values[i]
             fil = FILTER_PROPERTIES.filtername.values[i]
 
-            exists_in_sed =self.filter_sed(component='_sub', rX=rX).loc[(self.filter_sed(component='_sub', rX=rX)['telescope'] == tel) & (
-                    self.filter_sed(component='_sub', rX=rX)['filter'] == fil)].shape[0] > 0
+            exists_in_sed =self.filter_sed(component='_sub', rX=rX, disallowed_sources=FILTERED_SOURCES_AGNFITTER[self.name]).loc[(self.filter_sed(component='_sub', rX=rX, disallowed_sources=FILTERED_SOURCES_AGNFITTER[self.name])['telescope'] == tel) & (
+                    self.filter_sed(component='_sub', rX=rX, disallowed_sources=FILTERED_SOURCES_AGNFITTER[self.name])['filter'] == fil)].shape[0] > 0
 
             if rX:
                 filterfilenames += [get_agnf_filter_path(tel, fil)]
