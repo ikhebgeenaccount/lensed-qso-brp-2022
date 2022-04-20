@@ -45,8 +45,6 @@ def all_galaxies():
         # a = src.model_sed.fit(lqso, m)
         # print(a)
 
-        lqso.load_agnf_output()
-
         if lqso.agn_fitter_output(copy=False) is not None:
             fig, ax = plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
 
@@ -100,7 +98,7 @@ def single_galaxy():
 
     # a = src.model_sed.fit(lqso, m)
 
-    model_subtraction(lqso)
+    # model_subtraction(lqso)
 
     # lqso.plot_spectrum()
     # lqso.plot_spectrum(component='_sub')
@@ -170,11 +168,11 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    all_galaxies()
+    # all_galaxies()
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
-    # single_galaxy()
+    single_galaxy()
     # known_mag_gals()
 
     # latex()

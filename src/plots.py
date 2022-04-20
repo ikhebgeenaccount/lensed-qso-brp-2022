@@ -121,7 +121,6 @@ def plot_agnf_output(gals, field_1, field_2, color_scale_field=None, component='
 
     for g in gals:
         lqso = LensedQSO(g)
-        lqso.load_agnf_output()
 
         f1v, f1pe, f1me = lqso.get_agnf_output_field(field_1, component=component)
 
