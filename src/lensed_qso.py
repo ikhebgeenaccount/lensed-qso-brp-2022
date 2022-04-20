@@ -393,7 +393,7 @@ class LensedQSO:
         print('Run\t-ll')
 
         for i in range(run_times):
-            output = self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(i))
+            output = self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(i if i != 0 else ''))
 
             lls.append(output['-ln_like'].values[2])
 
