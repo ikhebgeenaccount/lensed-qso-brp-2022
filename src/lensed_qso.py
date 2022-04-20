@@ -52,6 +52,7 @@ DEFAULT_AGNFITTER_SETTINGS = {
     'plot_tracesburn-in': True,
     'plot_tracesmcmc': True,
     'plot_posteriortriangle': False,
+    'realizations2int': 100,
     'realizations2plot': 10,
     'plotSEDrealizations': True
 }
@@ -380,6 +381,12 @@ class LensedQSO:
         else:
             return outstr
 
+    def load_agnf_output(self, rX=False, copy=False):
+        self.agnf_output = [0] * len(COMPONENT_ID)
+        for c in COMPONENT_ID.keys():
+            print(c)
+            self.agn_fitter_output(rX=rX, copy=copy, component=c, check_git=False)
+
     def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=True, component='_sub'):
         if agnf_id is None:
             agnf_id = self.agn_fitter_id(component=component)
@@ -399,11 +406,31 @@ class LensedQSO:
         elif os.path.isdir(repo_path) and check_git:
             path = repo_path
         else:
-            print('Are you working on vdesk or strw? If not, then this output has not been copied to our github repo')
+            print('Are you working on vdesk or strw? If not, then this output has not been copied to our github repo, or doesn\'t exist')
             return
 
-        return pd.read_csv(os.path.join(path, f'parameter_outvalues_{agnf_id}.txt'),
-                             delim_whitespace=True, skiprows=4, header=None, names=['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like'])
+        cols = ['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
+
+        output = pd.read_csv(os.path.join(path, f'parameter_outvalues_{agnf_id}.txt'),
+                             delim_whitespace=True, skiprows=4, header=None, names=cols)
+
+        cid = COMPONENT_ID[component]
+        self.agnf_output[cid] = {}
+        for c in cols:
+            self.agnf_output[cid][c] = []
+
+            self.agnf_output[cid][c].append(output[c].iloc[2])
+            self.agnf_output[cid][c].append(output[c].iloc[3] - self.agnf_output[cid][c][0])
+            self.agnf_output[cid][c].append(self.agnf_output[cid][c][0] - output[c].iloc[1])
+
+        return output
+
+    def get_agnf_output_field(self, field, component='_sub'):
+        if hasattr(self, 'agnf_output'):
+            return self.agnf_output[COMPONENT_ID[component]][field]
+        raise AttributeError('Call agn_fitter_output() first to load AGNfitter output.')
+
+
 
 
 settings_template_rX = "'''\n" +\
@@ -629,7 +656,7 @@ settings_template_rX = "'''\n" +\
 "    out['calc_intlum'] = True  \n" +\
 "    out['save_posterior_luminosities']= False\n" +\
 "    out['save_posteriors']= True\n" +\
-"    out['realizations2int'] = 100 #This process is very time consuming.\n" +\
+"    out['realizations2int'] = {realizations2int} #This process is very time consuming.\n" +\
 "                                #Around 100-1000 is recomendend for computational reasons.\n" +\
 "                                #If you want to plot posterior triangles of \n" +\
 "                                #the integrated luminosities, should be > 1000.\n" +\
@@ -787,11 +814,11 @@ settings_template = "'''\n" +\
 "    out['Nsample'] = 1000 ## out['Nsample'] * out['Nthinning'] <= out['Nmcmc']\n" +\
 "    out['Nthinning'] = 10 ## This describes thinning of the chain to sample\n" +\
 "    out['writepar_meanwitherrors'] = True ##Write output values for all parameters in a file.\n" +\
-"    out['plot_posteriortriangle'] = False ##Plot triangle with all parameters' PDFs?\n" +\
+"    out['plot_posteriortriangle'] = {plot_posteriortriangle} ##Plot triangle with all parameters' PDFs?\n" +\
 "\n" +\
 "    #INTEGRATED LUMINOSITIES\n" +\
 "    out['calc_intlum'] = True\n" +\
-"    out['realizations2int'] = 100 #This process is very time consuming.\n" +\
+"    out['realizations2int'] = {realizations2int} #This process is very time consuming.\n" +\
 "                                #Around 100-1000 is recomendend for computational reasons.\n" +\
 "                                #If you want to plot posterior triangles of\n" +\
 "                                #the integrated luminosities, should be > 1000.\n" +\

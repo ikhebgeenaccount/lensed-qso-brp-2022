@@ -4,7 +4,7 @@ axes.labelsize : 16
 
 # Graphs
 lines.linewidth : 1
-lines.markersize : 5
+lines.markersize : 8
 xtick.labelsize : 16
 ytick.labelsize : 16
 
