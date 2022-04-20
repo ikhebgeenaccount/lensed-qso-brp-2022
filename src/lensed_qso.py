@@ -388,6 +388,14 @@ class LensedQSO:
             self.agn_fitter_output(rX=rX, copy=copy, component=c, check_git=False)
 
     def find_best_run(self, run_times=1, rX=False, component='_sub'):
+        """
+        Finds the best AGNfitter run, based on the log likelihood. Highest log likelihood corresponds to best fit.
+        Loads that best AGNfitter run as output.
+        :param run_times:
+        :param rX:
+        :param component:
+        :return:
+        """
         lls = []
 
         print('Run\t-ll')
@@ -400,6 +408,8 @@ class LensedQSO:
             print(f'{i}\t{lls[-1]}')
 
         print(f'Best run: {np.argmax(lls)}')
+
+        return self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(np.argmax(lls) if np.argmax(lls) != 0 else ''))
 
     def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=True, component='_sub'):
         if agnf_id is None:
