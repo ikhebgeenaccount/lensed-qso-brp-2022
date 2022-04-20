@@ -384,7 +384,6 @@ class LensedQSO:
     def load_agnf_output(self, rX=False, copy=False):
         self.agnf_output = [0] * len(COMPONENT_ID)
         for c in COMPONENT_ID.keys():
-            print(c)
             self.agn_fitter_output(rX=rX, copy=copy, component=c, check_git=False)
 
     def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=True, component='_sub'):
