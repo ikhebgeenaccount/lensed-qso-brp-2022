@@ -44,7 +44,7 @@ if __name__ == '__main__':
     parser.add_argument('--tenmode', help='Run all galaxies 10 times', action='store_true')
     parser.add_argument('--copy', help='Copy files from AGNfitter OUTPUT to git repo', action='store_true')
     parser.add_argument('--modelsub', help='Run model subtraction for galaxies', action='store_true')
-    parser.add_argument('--component', help='Flux component to use, default "_sub_demag"', type=str, default='_sub_demag')
+    parser.add_argument('--component', help='Flux component to use, default _sub', type=str, default='_sub')
     parser.add_argument('--speagle', help='Plot run galaxies in a Speagle MS', action='store_true')
     #   --single
     parser.add_argument('--single', type=str, help='Run a single galaxy, give name, if not given, runs all galaxies')
