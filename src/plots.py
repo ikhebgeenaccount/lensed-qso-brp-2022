@@ -57,22 +57,16 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None):
     z_max = 1.589
 
     # Star formation rate
-    sfr_ir = lqso.agn_fitter_output()['SFR_IR'].iloc[2]
-    sfr_ir_pe = lqso.agn_fitter_output()['SFR_IR'].iloc[3] - sfr_ir
-    sfr_ir_me = sfr_ir - lqso.agn_fitter_output()['SFR_IR'].iloc[1]
+    sfr_ir, sfr_ir_pe, sfr_ir_me = lqso.get_agnf_output_field('SFR_IR', demag=True)
 
-    sfr_opt = lqso.agn_fitter_output()['SFR_opt'].iloc[2]
-    sfr_opt_pe = lqso.agn_fitter_output()['SFR_opt'].iloc[3] - sfr_opt
-    sfr_opt_me = sfr_opt - lqso.agn_fitter_output()['SFR_opt'].iloc[1]
+    sfr_opt, sfr_opt_pe, sfr_opt_me = lqso.get_agnf_output_field('SFR_opt', demag=True)
 
     sfr_tot = sfr_opt + sfr_ir
     sfr_tot_pe = np.sqrt(sfr_ir_pe ** 2. + sfr_opt_pe ** 2.)
     sfr_tot_me = np.sqrt(sfr_ir_me ** 2. + sfr_opt_me ** 2.)
 
     # logM_star
-    log_m_star = lqso.agn_fitter_output()['logMstar'].iloc[2]
-    log_m_star_pe = lqso.agn_fitter_output()['logMstar'].iloc[3] - log_m_star
-    log_m_star_me = log_m_star - lqso.agn_fitter_output()['logMstar'].iloc[1]
+    log_m_star, log_m_star_pe,log_m_star_me = lqso.get_agnf_output_field('logMstar', demag=True)
 
     if ax is None:
         # These things are only done if no ax is given
@@ -116,7 +110,7 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None):
     return fig, ax
 
 
-def plot_agnf_output(gals, field_1, field_2, color_scale_field=None):
+def plot_agnf_output(gals, field_1, field_2, color_scale_field=None, component='_sub'):
     f1vs = []
     f1es = [[],[]]
 
@@ -127,17 +121,22 @@ def plot_agnf_output(gals, field_1, field_2, color_scale_field=None):
 
     for g in gals:
         lqso = LensedQSO(g)
+        lqso.load_agnf_output()
 
-        f1vs.append(lqso.agn_fitter_output()[field_1].iloc[2])
-        f1es[0].append(lqso.agn_fitter_output()[field_1].iloc[3] - f1vs[-1])
-        f1es[1].append(f1vs[-1] - lqso.agn_fitter_output()[field_1].iloc[1])
+        f1v, f1pe, f1me = lqso.get_agnf_output_field(field_1, component=component)
 
-        f2vs.append(lqso.agn_fitter_output()[field_2].iloc[2])
-        f2es[0].append(lqso.agn_fitter_output()[field_2].iloc[3] - f2vs[-1])
-        f2es[1].append(f2vs[-1] - lqso.agn_fitter_output()[field_2].iloc[1])
+        f1vs.append(f1v)
+        f1es[0].append(f1pe)
+        f1es[1].append(f1me)
+
+        f2v, f2pe, f2me = lqso.get_agnf_output_field(field_2, component=component)
+
+        f2vs.append(f2v)
+        f2es[0].append(f2pe)
+        f2es[1].append(f2me)
 
         if color_scale_field is not None:
-            fcs.append(lqso.agn_fitter_output()[color_scale_field].values[2])
+            fcs.append(lqso.get_agnf_output_field(color_scale_field, component=component)[0])
 
     cm = plt.cm.get_cmap('RdYlBu')
     fig, ax = plt.subplots()
