@@ -76,8 +76,9 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'B1600+434'
+    galaxy = 'J0806+2006'
     lqso = LensedQSO(galaxy)
+    lqso.find_best_run(run_times=5)
 
     # print(lqso.filter_sed(disallowed_sources=src.lensed_qso.FILTERED_SOURCES_AGNFITTER[lqso.name]).sort_values(by='wavelength')[['source', 'wavelength']])
     # print(lqso.sed_to_agn_fitter(component='_sub_demag'))
@@ -105,9 +106,9 @@ def single_galaxy():
 
     # lqso.agn_settings(rX=True)
 
-    lqso.load_agnf_output()
-    print(lqso.get_agnf_output_field('SFR_IR', component='_sub'))
-    print(lqso.get_agnf_output_field('SFR_IR', component='_sub_demag_test'))
+    # lqso.load_agnf_output()
+    # print(lqso.get_agnf_output_field('SFR_IR', component='_sub'))
+    # print(lqso.get_agnf_output_field('SFR_IR', component='_sub_demag_test'))
     #print(lqso.agn_fitter_output()[['tau', 'age', 'LIR(8-1000)', 'SFR_IR', 'SFR_opt', 'logMstar']])
     # plot_lqso_in_speagle(lqso)
 
