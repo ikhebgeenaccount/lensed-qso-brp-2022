@@ -83,8 +83,9 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'B1600+434'
+    galaxy = 'J0806+2006'
     lqso = LensedQSO(galaxy)
+    lqso.find_best_run(run_times=5)
 
     # print(lqso.filter_sed(disallowed_sources=src.lensed_qso.FILTERED_SOURCES_AGNFITTER[lqso.name]).sort_values(by='wavelength')[['source', 'wavelength']])
     # print(lqso.sed_to_agn_fitter(component='_sub_demag'))

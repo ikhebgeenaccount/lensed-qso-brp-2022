@@ -118,6 +118,8 @@ class LensedQSO:
         # filtered_sed only selects entries that have a wavelength and a flux_total
         self.filtered_sed = self.sed[(self.sed.wavelength > 0) & (self.sed.flux_total > 0)].copy()
 
+        self.load_agnf_output()
+
     def filter_sed(self, disallowed_sources=None, component='_total', allow_zero_error=True, rX=True):
         """
         Returns a DataFrame that contains only those rows that are allowed through LensedQSO.allowed_sources
@@ -258,7 +260,6 @@ class LensedQSO:
 
         return fig, ax, plotted_sources, legend_list
 
-
     def plot_error_percentage(self, loglog=True):
         fig, ax = plt.subplots(figsize=(10, 8))
         ratio=self.sed['flux_sub_err']/self.sed['flux_sub'] *100
@@ -386,11 +387,25 @@ class LensedQSO:
         for c in COMPONENT_ID.keys():
             self.agn_fitter_output(rX=rX, copy=copy, component=c, check_git=False)
 
+    def find_best_run(self, run_times=1, rX=False, component='_sub'):
+        lls = []
+
+        print('Run\t-ll')
+
+        for i in range(run_times):
+            output = self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(i))
+
+            lls.append(output['-ln_like'].values[2])
+
+            print(f'{i}\t{lls[-1]}')
+
+        print(f'Best run: {np.argmax(lls)}')
+
     def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=True, component='_sub'):
         if agnf_id is None:
             agnf_id = self.agn_fitter_id(component=component)
         if rX:
-            print('rX path not yet')
+            raise NotImplementedError('rX path not yet')
         else:
             path = os.path.join(os.pardir, 'AGNfitter', 'OUTPUT', str(agnf_id))
         repo_path = os.path.join('data', f'{self.name}', 'agnfitter')
@@ -433,7 +448,7 @@ class LensedQSO:
                 mu = self.props['magnification'].values[0]
                 mu_err = self.props['magn_err'].values[0]
 
-                if (field == 'SFR_IR' or field == 'SFR_opt'):
+                if field == 'SFR_IR' or field == 'SFR_opt':
                     new_value = value / mu
 
                     new_pe = np.sqrt(np.power(value_pe / mu, 2.) + np.power(value / np.power(mu, 2.) * mu_err, 2.))
