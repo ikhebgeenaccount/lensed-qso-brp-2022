@@ -45,10 +45,17 @@ def all_galaxies():
         # a = src.model_sed.fit(lqso, m)
         # print(a)
 
+        lqso.load_agnf_output()
+
         if lqso.agn_fitter_output(copy=False) is not None:
             fig, ax = plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
 
-    fig, ax = plot_agnf_output(GALAXIES, 'EBVbbb', 'Nh', color_scale_field='SFR_IR')
+    fig, ax = plot_agnf_output(GALAXIES, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
+    # Add Type1/2 AGN separation line as found in AGNfitter paper
+    ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
+    ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
+
+    fig, ax = plot_agnf_output(GALAXIES, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub_demag_test')
 
     # Add Type1/2 AGN separation line as found in AGNfitter paper
     ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
@@ -92,7 +99,7 @@ def single_galaxy():
 
     # a = src.model_sed.fit(lqso, m)
 
-    # model_subtraction(lqso)
+    model_subtraction(lqso)
 
     # lqso.plot_spectrum()
     # lqso.plot_spectrum(component='_sub')
@@ -105,9 +112,9 @@ def single_galaxy():
 
     # lqso.agn_settings(rX=True)
 
-    lqso.load_agnf_output()
-    print(lqso.get_agnf_output_field('SFR_IR', component='_sub'))
-    print(lqso.get_agnf_output_field('SFR_IR', component='_sub_demag_test'))
+    # lqso.load_agnf_output()
+    # print(lqso.get_agnf_output_field('SFR_IR', component='_sub'))
+    # print(lqso.get_agnf_output_field('SFR_IR', component='_sub_demag_test'))
     #print(lqso.agn_fitter_output()[['tau', 'age', 'LIR(8-1000)', 'SFR_IR', 'SFR_opt', 'logMstar']])
     # plot_lqso_in_speagle(lqso)
 
@@ -162,11 +169,11 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    # all_galaxies()
+    all_galaxies()
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
-    single_galaxy()
+    # single_galaxy()
     # known_mag_gals()
 
     # latex()
