@@ -272,7 +272,7 @@ class LensedQSO:
     def save_sed(self):
         self.sed.to_csv(os.path.join('data', self.name, self.sed_file), index=False)
 
-    def sed_to_agn_fitter(self, rX=False, component='_sub'):
+    def sed_to_agn_fitter(self, rX=False, component='_sub', run_times=1):
         """
         Translates the SED to a catalog that is compatible with AGNfitter.
         :return: str
@@ -283,7 +283,7 @@ class LensedQSO:
 
         l = 2
         catalog = header
-        for j in range(10):
+        for j in range(run_times):
             catalog_line = f'{str(id) + ("" if j == 0 else str(j))} {self.props.z_qso.values[0]} '
             for i, row in self.filter_sed(component=component, rX=rX, disallowed_sources=FILTERED_SOURCES_AGNFITTER[self.name]).iterrows():
                 if row[f'flux{component}'] <= 0:
@@ -384,7 +384,6 @@ class LensedQSO:
     def load_agnf_output(self, rX=False, copy=False):
         self.agnf_output = [0] * len(COMPONENT_ID)
         for c in COMPONENT_ID.keys():
-            print(c)
             self.agn_fitter_output(rX=rX, copy=copy, component=c, check_git=False)
 
     def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=True, component='_sub'):
@@ -425,10 +424,34 @@ class LensedQSO:
 
         return output
 
-    def get_agnf_output_field(self, field, component='_sub'):
+    def get_agnf_output_field(self, field, component='_sub', demag=False):
         if hasattr(self, 'agnf_output'):
+
+            if demag and component == '_sub':
+                # Save values in easy vars
+                value, value_pe, value_me = self.agnf_output[COMPONENT_ID[component]][field]
+                mu = self.props['magnification'].values[0]
+                mu_err = self.props['magn_err'].values[0]
+
+                if (field == 'SFR_IR' or field == 'SFR_opt'):
+                    new_value = value / mu
+
+                    new_pe = np.sqrt(np.power(value_pe / mu, 2.) + np.power(value / np.power(mu, 2.) * mu_err, 2.))
+                    new_me = np.sqrt(np.power(value_me / mu, 2.) + np.power(value / np.power(mu, 2.) * mu_err, 2.))
+                elif field == 'logMstar':
+                    new_value = value - np.log10(mu)
+
+                    new_pe = np.sqrt(np.power(value_pe, 2.) + np.power(mu_err / (np.log(10) * mu), 2.))
+                    new_me = np.sqrt(np.power(value_me, 2.) + np.power(mu_err / (np.log(10) * mu), 2.))
+                else:
+                    raise ValueError(f'No demagnification specified for {field}')
+
+                return new_value, new_pe, new_me
+
+            elif demag:
+                raise ValueError('Don\'t demag a different component than _sub')
             return self.agnf_output[COMPONENT_ID[component]][field]
-        raise AttributeError('Call agn_fitter_output() first to load AGNfitter output.')
+        raise AttributeError('Call load_agnf_output() first to load AGNfitter output.')
 
 
 

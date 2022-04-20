@@ -11,7 +11,7 @@ import json
 GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']
 
 
-def agnfitter(galaxies, run_ten=False, git_push=False, rX=False, copy=False, model_sub=False, settings=None, component='_sub_demag', speagle=False):
+def agnfitter(galaxies, run_times=1, git_push=False, rX=False, copy=False, model_sub=False, settings=None, component='_sub_demag', speagle=False):
 
     ax = None
 
@@ -20,7 +20,7 @@ def agnfitter(galaxies, run_ten=False, git_push=False, rX=False, copy=False, mod
 
         if model_sub:
             model_subtraction(lqso)
-        run_agn_fitter([g], run_ten=run_ten, rX=rX, settings=settings, component=component)
+        run_agn_fitter([g], run_times=run_times, rX=rX, settings=settings, component=component)
 
         if copy:
             lqso.agn_fitter_output(copy=copy)
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     #   --push: flag whether to git push or not
     parser.add_argument('--push', help='Push to GitHub repo', action='store_true')
     parser.add_argument('--rX', help='Run rX version of AGNfitter', action='store_true')
-    parser.add_argument('--tenmode', help='Run all galaxies 10 times', action='store_true')
+    parser.add_argument('--times', help='Run all galaxies n times', type=int, default=1)
     parser.add_argument('--copy', help='Copy files from AGNfitter OUTPUT to git repo', action='store_true')
     parser.add_argument('--modelsub', help='Run model subtraction for galaxies', action='store_true')
     parser.add_argument('--component', help='Flux component to use, default _sub', type=str, default='_sub')
@@ -61,7 +61,7 @@ if __name__ == '__main__':
         with open(args.settings, 'r') as f:
             settings = json.load(f)
 
-    agnfitter(gals, run_ten=args.tenmode, git_push=args.push,
+    agnfitter(gals, run_times=args.times, git_push=args.push,
               rX=args.rX, copy=args.copy, model_sub=args.modelsub,
               settings=settings, component=args.component, speagle=args.speagle
     )

@@ -9,7 +9,7 @@ AGN_FITTER_PATH = os.path.join(os.pardir, 'AGNfitter')
 AGN_FITTER_RX_PATH = os.path.join(os.pardir, 'AGNfitter-rX_v0.1', 'AGNfitter')
 
 
-def run_agn_fitter(galaxies, rX=False, run_ten=False, settings=None, component='_sub_demag'):
+def run_agn_fitter(galaxies, rX=False, run_times=1, settings=None, component='_sub_demag'):
     if rX:
         path = AGN_FITTER_RX_PATH
     else:
@@ -20,7 +20,7 @@ def run_agn_fitter(galaxies, rX=False, run_ten=False, settings=None, component='
 
         # Update catalog
         print(f'Updating catalog for {lqso.name}')
-        cat, l = lqso.sed_to_agn_fitter(rX=rX, component=component)
+        cat, l = lqso.sed_to_agn_fitter(rX=rX, component=component, run_times=run_times)
 
         with open(os.path.join(path, 'data', f'{lqso.name}.txt'), 'w') as cf:
             cf.write(cat)
@@ -32,8 +32,8 @@ def run_agn_fitter(galaxies, rX=False, run_ten=False, settings=None, component='
             sf.write(settings)
 
         command = RUN_SINGLE_MODE.format(**{'name': lqso.name})
-        if run_ten:
-            print('Selected run_ten mode')
+        if run_times > 1:
+            print('Selected multiple run mode')
             command = RUN_TEN_MODE.format(**{'name': lqso.name})
 
         print(f'Running AGNfitter for {lqso.name}')
