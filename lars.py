@@ -6,7 +6,7 @@ import pandas as pd
 
 from src.agn_fitter_automated import run_agn_fitter
 from src.lensed_qso import LensedQSO
-from src.latex_output import dataframe_to_latex_table
+from src.latex_output import dataframe_to_latex_table, sed_to_latex_table, all_seds_plot, plots_in_subfigures
 from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
 from src.ned_to_sed import ned_table_to_sed
 from src.filters import populate_filter_profile_path_column
@@ -29,7 +29,9 @@ def all_galaxies():
     ax = None
     for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
         lqso = LensedQSO(g)
-        # lqso.plot_spectrum(loglog=True)
+        print(g)
+        # lqso.find_best_run(run_times=5)
+        lqso.plot_spectrum(loglog=True)
 
         # mags_to_fluxes(lqso, components=None if g != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
 
@@ -40,7 +42,7 @@ def all_galaxies():
         # if lqso.mags.loc[lqso.mags.telescope == telescope].shape[0] > 0:
             # print(g, 'has', telescope)
 
-        # model_subtraction(lqso)
+        model_subtraction(lqso)
         # m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
         # a = src.model_sed.fit(lqso, m)
         # print(a)
@@ -49,12 +51,6 @@ def all_galaxies():
             fig, ax = plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
 
     fig, ax = plot_agnf_output(GALAXIES, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
-    # Add Type1/2 AGN separation line as found in AGNfitter paper
-    ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
-    ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
-
-    fig, ax = plot_agnf_output(GALAXIES, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub_demag_test')
-
     # Add Type1/2 AGN separation line as found in AGNfitter paper
     ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
     ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
@@ -144,10 +140,23 @@ def known_mag_gals():
 
 
 def latex():
-    dataframe_to_latex_table(src.filters.FILTER_PROPERTIES.loc[src.filters.FILTER_PROPERTIES['conversion'].notnull()],
-                                   usecols=['telescope', 'filtername', 'central_wavelength', 'conversion', 'zeropoint'],
-                                   header=['Telescope', 'Filter', 'Central wavelength ($\\unit{\\angstrom}$)', 'Conversion', 'Zeropoint ($\\unit{\milli\jansky}$)'],
-                                   label='table:filter_conv', caption='All filters for which magnitudes were found, with their respective conversion methods and zeropoints.')
+    # Filter table to latex
+    # dataframe_to_latex_table(src.filters.FILTER_PROPERTIES.loc[src.filters.FILTER_PROPERTIES['conversion'].notnull()],
+    #                                usecols=['telescope', 'filtername', 'central_wavelength', 'conversion', 'zeropoint'],
+    #                                header=['Telescope', 'Filter', 'Central wavelength ($\\unit{\\angstrom}$)', 'Conversion', 'Zeropoint ($\\unit{\milli\jansky}$)'],
+    #                                label='table:filter_conv', caption='All filters for which magnitudes were found, with their respective conversion methods and zeropoints.')
+
+    # Galaxy SEDs to latex
+    # for g in GALAXIES:
+    #     lqso = LensedQSO(g)
+
+    #     sed_to_latex_table(lqso)
+
+    # SED plots to latex
+    # all_seds_plot(GALAXIES)
+
+    # Foreground fit plots
+    plots_in_subfigures(GALAXIES, 'G_model_fit', 'Fits to foreground galaxy datapoints for every galaxy.')
 
 
 def plot_ell_models():
@@ -172,9 +181,9 @@ if __name__ == '__main__':
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
-    single_galaxy()
+    # single_galaxy()
     # known_mag_gals()
 
-    # latex()
+    latex()
 
     plt.show()
