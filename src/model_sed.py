@@ -192,8 +192,8 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     ax.set_title(f'Reduced $\chi^2$ values of models for {lqso.name}_G')
 
     if save_plots:
-        fig.savefig(os.path.join(save_location, lqso.name, 'models_chisq.pdf'))
-        fig.savefig(os.path.join(save_location, lqso.name, 'models_chisq.jpg'))
+        fig.savefig(os.path.join(save_location, f'{lqso.name}_models_chisq.pdf'))
+        # fig.savefig(os.path.join(save_location, f'{lqso.name}_models_chisq.jpg'))
 
     print(model_set[['name', 'red_chi_sq', 'mult', 'std']].head(15))
 
@@ -333,8 +333,8 @@ def plot_fit(lqso, models, avg_model, save_plots=True, save_location='plots', co
     ax.legend(legend_list, labels, handler_map={avg: HandlerTuple(), tuple: HandlerTuple(ndivide=None)})
 
     if save_plots:
-        fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit.pdf'))
-        fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit.jpg'))
+        fig.savefig(os.path.join(save_location, f'{lqso.name}_G_model_fit.pdf'))
+        # fig.savefig(os.path.join(save_location, f'{lqso.name}_G_model_fit.jpg'))
 
     rfig, rax = fig, ax
 
@@ -355,8 +355,8 @@ def plot_fit(lqso, models, avg_model, save_plots=True, save_location='plots', co
     ax.legend(legend_list, labels, handler_map={avg: HandlerTuple(), tuple: HandlerTuple(ndivide=None)})
 
     if save_plots:
-        fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit_full_sed.pdf'))
-        fig.savefig(os.path.join(save_location, lqso.name, 'G_model_fit_full_sed.jpg'))
+        fig.savefig(os.path.join(save_location, f'{lqso.name}_G_model_fit_full_sed.pdf'))
+        # fig.savefig(os.path.join(save_location, f'{lqso.name}_G_model_fit_full_sed.jpg'))
 
 
 def closest_wavelength(wl, model):

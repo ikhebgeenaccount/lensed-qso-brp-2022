@@ -9,7 +9,7 @@ from src.lensed_qso import LensedQSO
 
 LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)  # Cosmological constants as Speagle uses them
 
-log_m_stars = np.linspace(6, 12, num=10000)
+log_m_stars = np.linspace(7, 13, num=10000)
 
 # Speagle GMS constants
 a = 0.84
@@ -102,10 +102,10 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None):
     # ax.errorbar(log_m_star, np.log10(sfr_ir), xerr=xerr, yerr=yerr_ir, label=f'{lqso.name} SFR_ir, z={lqso.props.z_qso.values[0]:.3f}', fmt='o', capsize=4)
     # ax.errorbar(log_m_star, np.log10(sfr_opt), xerr=xerr, yerr=yerr_opt, label=f'{lqso.name} SFR_opt, z={lqso.props.z_qso.values[0]:.3f}', fmt='o', capsize=4)
 
-    ax.legend()
+    ax.legend(ncol=2)
 
     fig.savefig(os.path.join('plots', 'speagle.pdf'))
-    fig.savefig(os.path.join('plots', 'speagle.svg'))
+    # fig.savefig(os.path.join('plots', 'speagle.svg'))
 
     return fig, ax
 
@@ -121,6 +121,7 @@ def plot_agnf_output(gals, field_1, field_2, color_scale_field=None, component='
 
     for g in gals:
         lqso = LensedQSO(g)
+        lqso.find_best_run(run_times=5, verbose=False)
 
         f1v, f1pe, f1me = lqso.get_agnf_output_field(field_1, component=component)
 
@@ -152,6 +153,6 @@ def plot_agnf_output(gals, field_1, field_2, color_scale_field=None, component='
     ax.set_ylabel(field_2)
 
     fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.pdf'))
-    fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.svg'))
+    # fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.svg'))
 
     return fig, ax

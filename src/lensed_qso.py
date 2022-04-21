@@ -90,7 +90,7 @@ class LensedQSO:
 
         # Save location for plots
         self.save_all_plots = save_all_plots
-        self.save_location = os.path.join(save_location, name)
+        self.save_location = os.path.join(save_location)
 
         # Check if location exists
         # Base plots folder
@@ -255,8 +255,8 @@ class LensedQSO:
             ax.set_ylabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
 
         if self.save_all_plots:
-            fig.savefig(os.path.join(self.save_location, f'SED{component if component is not None else "_total"}.pdf'))
-            fig.savefig(os.path.join(self.save_location, f'SED{component if component is not None else "_total"}.png'))
+            fig.savefig(os.path.join(self.save_location, f'{self.name}_SED{component if component is not None else "_total"}.pdf'))
+            # fig.savefig(os.path.join(self.save_location, f'{self.name}_SED{component if component is not None else "_total"}.png'))
 
         return fig, ax, plotted_sources, legend_list
 
@@ -387,7 +387,7 @@ class LensedQSO:
         for c in COMPONENT_ID.keys():
             self.agn_fitter_output(rX=rX, copy=copy, component=c, check_git=False)
 
-    def find_best_run(self, run_times=1, rX=False, component='_sub'):
+    def find_best_run(self, run_times=1, rX=False, component='_sub', verbose=True):
         """
         Finds the best AGNfitter run, based on the log likelihood. Highest log likelihood corresponds to best fit.
         Loads that best AGNfitter run as output.
@@ -398,16 +398,19 @@ class LensedQSO:
         """
         lls = []
 
-        print('Run\t-ll')
+        if verbose:
+            print('Run\t-ll')
 
         for i in range(run_times):
             output = self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(i if i != 0 else ''))
 
             lls.append(output['-ln_like'].values[2])
 
-            print(f'{i}\t{lls[-1]}')
+            if verbose:
+                print(f'{i}\t{lls[-1]}')
 
-        print(f'Best run: {np.argmax(lls)}')
+        if verbose:
+            print(f'Best run: {np.argmax(lls)}')
 
         return self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(np.argmax(lls) if np.argmax(lls) != 0 else ''))
 
@@ -430,7 +433,7 @@ class LensedQSO:
         elif os.path.isdir(repo_path) and check_git:
             path = repo_path
         else:
-            print('Are you working on vdesk or strw? If not, then this output has not been copied to our github repo, or doesn\'t exist')
+            # print('Are you working on vdesk or strw? If not, then this output has not been copied to our github repo, or doesn\'t exist')
             return
 
         cols = ['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
