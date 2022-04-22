@@ -30,8 +30,14 @@ def all_galaxies():
     for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
         lqso = LensedQSO(g)
         print(g)
-        # lqso.find_best_run(run_times=5)
-        lqso.plot_spectrum(loglog=True)
+        # lqso.find_best_run(run_times=5, verbose=False, sub_folder='5runs_100nwalkers')
+        lqso.agn_fitter_output()
+        # lqso.plot_spectrum(loglog=True)
+
+        # figs, axs = None, None
+        # for i in range(5):
+        #     lqso.agn_fitter_output(run_time=i)
+        #     figs, axs = plot_lqso_in_speagle(lqso, figs, axs, label=lqso.name + str(i))
 
         # mags_to_fluxes(lqso, components=None if g != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
 
@@ -42,13 +48,12 @@ def all_galaxies():
         # if lqso.mags.loc[lqso.mags.telescope == telescope].shape[0] > 0:
             # print(g, 'has', telescope)
 
-        model_subtraction(lqso)
+        # model_subtraction(lqso)
         # m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
         # a = src.model_sed.fit(lqso, m)
         # print(a)
 
-        if lqso.agn_fitter_output(copy=False) is not None:
-            fig, ax = plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
+        fig, ax = plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
 
     fig, ax = plot_agnf_output(GALAXIES, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
     # Add Type1/2 AGN separation line as found in AGNfitter paper
@@ -177,13 +182,13 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    # all_galaxies()
+    all_galaxies()
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
     # single_galaxy()
     # known_mag_gals()
 
-    latex()
+    # latex()
 
     plt.show()

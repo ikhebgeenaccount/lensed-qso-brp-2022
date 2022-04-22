@@ -1,5 +1,6 @@
 import os
 import distutils.dir_util
+import glob
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -387,7 +388,7 @@ class LensedQSO:
         for c in COMPONENT_ID.keys():
             self.agn_fitter_output(rX=rX, copy=copy, component=c, check_git=False)
 
-    def find_best_run(self, run_times=1, rX=False, component='_sub', verbose=True):
+    def find_best_run(self, run_times=1, rX=False, component='_sub', verbose=True, copy=False, sub_folder=None):
         """
         Finds the best AGNfitter run, based on the log likelihood. Highest log likelihood corresponds to best fit.
         Loads that best AGNfitter run as output.
@@ -403,7 +404,7 @@ class LensedQSO:
             print('Run\t-ll')
 
         for i in range(run_times):
-            output = self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(i if i != 0 else ''))
+            output = self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(i if i != 0 else ''), sub_folder=sub_folder)
 
             if output is None:
                 continue
@@ -417,15 +418,18 @@ class LensedQSO:
         if verbose:
             print(f'Best run: {np.argmax(lls)}')
 
-        return self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(index[np.argmax(lls)] if index[np.argmax(lls)] != 0 else ''), copy=True)
+        return self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(index[np.argmax(lls)] if index[np.argmax(lls)] != 0 else ''), copy=copy, sub_folder=sub_folder)
 
-    def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=True, component='_sub'):
+    def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=True, component='_sub', run_time=0, sub_folder=''):
         if agnf_id is None:
-            agnf_id = self.agn_fitter_id(component=component)
+            agnf_id = self.agn_fitter_id(component=component) + (str(run_time) if run_time != 0 else '')
         if rX:
             raise NotImplementedError('rX path not yet')
         else:
-            path = os.path.join(os.pardir, 'AGNfitter', 'OUTPUT', str(agnf_id))
+            if sub_folder is None:
+                path = os.path.join(os.pardir, 'AGNfitter', 'OUTPUT', str(agnf_id))
+            else:
+                path = os.path.join(os.pardir, 'AGNfitter', 'OUTPUT', sub_folder, str(agnf_id))
         repo_path = os.path.join('data', f'{self.name}', 'agnfitter')
 
         # Three cases:
@@ -433,9 +437,13 @@ class LensedQSO:
         # repo_path exists: points to data in repo
         # neither exist: sucks
         if os.path.isdir(path):
+            par_values_file = f'parameter_outvalues_{agnf_id}.txt'
             if copy:
                 distutils.dir_util.copy_tree(path, os.path.join('data', self.name, 'agnfitter'))
         elif os.path.isdir(repo_path) and check_git:
+            print(os.path.join(repo_path, f'parameter_outvalues_{self.agn_fitter_id(component=component)}{COMPONENT_ID[component]}[0-9]?.txt'))
+            par_values_file = glob.glob(os.path.join(repo_path, f'parameter_outvalues_{self.agn_fitter_id(component=component)}{COMPONENT_ID[component]}[0-9]?.txt'))
+            print(par_values_file)
             path = repo_path
         else:
             # print('Are you working on vdesk or strw? If not, then this output has not been copied to our github repo, or doesn\'t exist')
@@ -443,7 +451,7 @@ class LensedQSO:
 
         cols = ['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
 
-        output = pd.read_csv(os.path.join(path, f'parameter_outvalues_{agnf_id}.txt'),
+        output = pd.read_csv(os.path.join(path, par_values_file),
                              delim_whitespace=True, skiprows=4, header=None, names=cols)
 
         cid = COMPONENT_ID[component]
@@ -471,15 +479,17 @@ class LensedQSO:
 
                     new_pe = np.sqrt(np.power(value_pe / mu, 2.) + np.power(value / np.power(mu, 2.) * mu_err, 2.))
                     new_me = np.sqrt(np.power(value_me / mu, 2.) + np.power(value / np.power(mu, 2.) * mu_err, 2.))
+
+                    return new_value, new_pe, new_me
                 elif field == 'logMstar':
                     new_value = value - np.log10(mu)
 
                     new_pe = np.sqrt(np.power(value_pe, 2.) + np.power(mu_err / (np.log(10) * mu), 2.))
                     new_me = np.sqrt(np.power(value_me, 2.) + np.power(mu_err / (np.log(10) * mu), 2.))
-                else:
-                    raise ValueError(f'No demagnification specified for {field}')
 
-                return new_value, new_pe, new_me
+                    return new_value, new_pe, new_me
+                else:
+                    print(f'No demagnification specified for {field}')
 
             elif demag:
                 raise ValueError('Don\'t demag a different component than _sub')
