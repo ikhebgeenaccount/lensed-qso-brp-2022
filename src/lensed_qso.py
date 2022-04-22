@@ -397,6 +397,7 @@ class LensedQSO:
         :return:
         """
         lls = []
+        index = []
 
         if verbose:
             print('Run\t-ll')
@@ -404,7 +405,11 @@ class LensedQSO:
         for i in range(run_times):
             output = self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(i if i != 0 else ''))
 
+            if output is None:
+                continue
+
             lls.append(output['-ln_like'].values[2])
+            index.append(i)
 
             if verbose:
                 print(f'{i}\t{lls[-1]}')
@@ -412,7 +417,7 @@ class LensedQSO:
         if verbose:
             print(f'Best run: {np.argmax(lls)}')
 
-        return self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(np.argmax(lls) if np.argmax(lls) != 0 else ''))
+        return self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(index[np.argmax(lls)] if index[np.argmax(lls)] != 0 else ''), copy=True)
 
     def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=True, component='_sub'):
         if agnf_id is None:
