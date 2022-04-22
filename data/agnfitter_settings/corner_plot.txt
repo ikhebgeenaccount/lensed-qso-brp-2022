@@ -1,0 +1,4 @@
+{
+    "plot_posteriortriangle": true,
+    "realizations2int": 100
+}
