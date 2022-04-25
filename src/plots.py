@@ -107,7 +107,7 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None, label=None):
     return fig, ax
 
 
-def plot_agnf_output(gals, field_1, field_2, color_scale_field=None, component='_sub'):
+def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component='_sub'):
     f1vs = []
     f1es = [[],[]]
 
@@ -116,9 +116,7 @@ def plot_agnf_output(gals, field_1, field_2, color_scale_field=None, component='
 
     fcs = []
 
-    for g in gals:
-        lqso = LensedQSO(g)
-
+    for lqso in lqsos:
         f1v, f1pe, f1me = lqso.get_agnf_output_field(field_1, component=component, demag=True)
 
         f1vs.append(f1v)
