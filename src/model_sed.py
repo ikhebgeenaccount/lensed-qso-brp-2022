@@ -220,13 +220,27 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         wls = np.unique(all_wls[(all_wls >= start_wl) & (all_wls <= end_wl)])
         wls = np.sort(wls)
 
+        norm_weights = (1. / model_set['red_chi_sq'].head(N).values / np.sum(1. / model_set['red_chi_sq'].head(N).values)).reshape((N, 1))
+
+        if np.isnan(norm_weights).any():
+            norm_weights = 1
+
         interp_models_flux = np.stack([np.interp(wls, models_wl[i], models_flux[i]) for i in range(N)])
-        avg_model = np.average(interp_models_flux, axis=0, weights=1. / model_set['red_chi_sq'].head(N) if not single_g else None)
+        avg_model = np.average(interp_models_flux, axis=0, weights=norm_weights.reshape(N) if not single_g else None)
 
         stds = model_set['std'].head(N).values.reshape((N, 1))
 
         # mult_err_prop = np.linalg.norm(interp_models_flux * stds, axis=0)
-        models_std = np.std(interp_models_flux, axis=0)
+        models_std = np.sqrt(np.sum(norm_weights * np.power(interp_models_flux - avg_model, 2.), axis=0))
+
+        avg_model_err = np.sqrt(np.sum(np.power(norm_weights * stds * interp_models_flux, 2.), axis=0))
+
+        if np.isnan(avg_model_err).any() or np.isinf(avg_model_err).any():
+            avg_model_err = 0
+
+        avg_model_errs = np.sqrt(np.power(avg_model_err, 2.) + np.power(models_std, 2.))
+
+        print(np.sum(np.abs(models_std - avg_model_errs)))
 
         print('Avg model red chi sq:', FitFunction(sed, wls=wls, fluxs=avg_model).chi_squared([1]) / (sed.flux_G.shape[0] - 1))
 
@@ -263,9 +277,9 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
     wls = wls * (1. + lqso.props.z_lens.values[0])
 
-    plot_fit(lqso, model_set, avg_model=(wls, avg_model, models_std), save_plots=save_plots, save_location=save_location, count=N)
+    plot_fit(lqso, model_set, avg_model=(wls, avg_model, avg_model_errs), save_plots=save_plots, save_location=save_location, count=N)
 
-    return wls, avg_model, models_std
+    return wls, avg_model, avg_model_errs
 
 
 class FitFunction:
