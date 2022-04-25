@@ -453,7 +453,7 @@ class LensedQSO:
             return
 
         cols = ['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
-
+        print(path)
         output = pd.read_csv(os.path.join(path, par_values_file),
                              delim_whitespace=True, skiprows=4, header=None, names=cols)
 

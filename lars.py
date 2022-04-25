@@ -27,11 +27,12 @@ PLOTS_SAVE = 'plots'
 def all_galaxies():
     fig = None
     ax = None
+    lqsos = []
     for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
         lqso = LensedQSO(g)
+        lqsos.append(lqso)
         print(g)
-        # lqso.find_best_run(run_times=5, verbose=False, sub_folder='5runs_100nwalkers')
-        lqso.agn_fitter_output()
+        lqso.find_best_run(run_times=1, verbose=False)#, sub_folder='5runs_100nwalkers')
         # lqso.plot_spectrum(loglog=True)
 
         # figs, axs = None, None
@@ -55,12 +56,12 @@ def all_galaxies():
 
         fig, ax = plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
 
-    fig, ax = plot_agnf_output(GALAXIES, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
+    fig, ax = plot_agnf_output(lqsos, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
     # Add Type1/2 AGN separation line as found in AGNfitter paper
     ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
     ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
 
-    plot_agnf_output(GALAXIES, 'SFR_IR', 'SFR_opt', color_scale_field='age')
+    plot_agnf_output(lqsos, 'SFR_IR', 'SFR_opt', color_scale_field='age')
 
 
 def big_plot():
