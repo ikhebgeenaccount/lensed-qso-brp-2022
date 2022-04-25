@@ -1,3 +1,4 @@
+import re
 import os
 import distutils.dir_util
 import glob
@@ -119,7 +120,7 @@ class LensedQSO:
         # filtered_sed only selects entries that have a wavelength and a flux_total
         self.filtered_sed = self.sed[(self.sed.wavelength > 0) & (self.sed.flux_total > 0)].copy()
 
-        self.load_agnf_output()
+        # self.load_agnf_output()
 
     def filter_sed(self, disallowed_sources=None, component='_total', allow_zero_error=True, rX=True):
         """
@@ -285,7 +286,7 @@ class LensedQSO:
 
         l = 2
         catalog = header
-        for j in range(run_times):
+        for j in range(max(2, run_times)):
             catalog_line = f'{str(id) + ("" if j == 0 else str(j))} {self.props.z_qso.values[0]} '
             for i, row in self.filter_sed(component=component, rX=rX, disallowed_sources=FILTERED_SOURCES_AGNFITTER[self.name]).iterrows():
                 if row[f'flux{component}'] <= 0:
@@ -399,6 +400,7 @@ class LensedQSO:
         """
         lls = []
         index = []
+        self.agnf_output = [0] * len(COMPONENT_ID)
 
         if verbose:
             print('Run\t-ll')
@@ -420,7 +422,7 @@ class LensedQSO:
 
         return self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(index[np.argmax(lls)] if index[np.argmax(lls)] != 0 else ''), copy=copy, sub_folder=sub_folder)
 
-    def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=True, component='_sub', run_time=0, sub_folder=''):
+    def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=False, component='_sub', run_time=0, sub_folder=''):
         if agnf_id is None:
             agnf_id = self.agn_fitter_id(component=component) + (str(run_time) if run_time != 0 else '')
         if rX:
@@ -441,9 +443,10 @@ class LensedQSO:
             if copy:
                 distutils.dir_util.copy_tree(path, os.path.join('data', self.name, 'agnfitter'))
         elif os.path.isdir(repo_path) and check_git:
-            print(os.path.join(repo_path, f'parameter_outvalues_{self.agn_fitter_id(component=component)}{COMPONENT_ID[component]}[0-9]?.txt'))
-            par_values_file = glob.glob(os.path.join(repo_path, f'parameter_outvalues_{self.agn_fitter_id(component=component)}{COMPONENT_ID[component]}[0-9]?.txt'))
-            print(par_values_file)
+            # print(re.escape(os.path.join(repo_path, f'parameter_outvalues_{self.agn_fitter_id(component=component)}')).replace('/', '\\/') + '[0-9]?\.txt')
+            # par_values_file = glob.glob(re.escape(os.path.join(repo_path, f'parameter_outvalues_{self.agn_fitter_id(component=component)}')).replace('/', '\\/') + '[0-9]?\.txt')
+            # print(par_values_file)
+            par_values_file = f'parameter_outvalues_{agnf_id}.txt'
             path = repo_path
         else:
             # print('Are you working on vdesk or strw? If not, then this output has not been copied to our github repo, or doesn\'t exist')
