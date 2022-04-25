@@ -28,6 +28,7 @@ def all_galaxies():
     lqsos = []
     fig = None
     ax = None
+    lqsos = []
     for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
         lqso = LensedQSO(g)
         lqsos.append(lqso)
