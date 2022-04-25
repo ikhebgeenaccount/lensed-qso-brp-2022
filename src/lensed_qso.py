@@ -29,11 +29,11 @@ FILTERED_SOURCES = {
 
 FILTERED_SOURCES_AGNFITTER = {
     'B1152+200': ['toft'],
-    'B1600+434': ['munoz'],
+    'B1600+434': ['munoz', 'SDSS+DR14_filter'],
     'B1608+656': [ 'luichies'],#['Koopmans+2003' ],
-    'J0806+2006': [],
-    'J0924+0219': [],
-    'J1330+1810': [],
+    'J0806+2006': ['Fadely+2011'],
+    'J0924+0219': ['2MASS_filter'],
+    'J1330+1810': ['Galex_filter'],
     'J1455+1447': [],
     'J1524+4409': ['Oguri'],
     'J1633+3134': ['Morgan'],
@@ -41,7 +41,7 @@ FILTERED_SOURCES_AGNFITTER = {
 }
 
 
-RADIO_CUTOFF = 1e8  # wavelengths >1e8 Angstrom are classified as radio
+RADIO_CUTOFF = 	25000000  # wavelengths >1e8 Angstrom are classified as radio
 XRAY_CUTOFF = 300  # wavelengths < 300 Angstrom are classified as Xray
 
 DEFAULT_AGNFITTER_SETTINGS = {

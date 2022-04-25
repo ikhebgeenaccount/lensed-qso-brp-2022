@@ -30,12 +30,12 @@ def compare_test(lqso, true_values=True):
 
 if __name__ == '__main__':
     #general
-    galaxy = 'J1330+1810' 
+    galaxy = 'J0806+2006' 
     lqso = LensedQSO(galaxy)
     
     #photometry
     #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
-    #lqso.plot_spectrum(loglog=True)
+    lqso.plot_spectrum(loglog=True, component='_sub')
     
     #filterprofiles
     #xml_to_txt('VLT_CONICA_H.xml', 'VLT_CONICA_H.txt')
@@ -68,10 +68,10 @@ if __name__ == '__main__':
             #lqso.plot_spectrum(loglog=True)
             
             #AGnfitter checking
-            print(g)       
-            for variable in cols_simple:
-                    sub_output = lqso.get_agnf_output_field(variable)[0]
-                    print(f'Sub value of {variable}', sub_output)
+#            print(g)       
+#            for variable in cols_simple:
+#                    sub_output = lqso.get_agnf_output_field(variable)[0]
+#                    print(f'Sub value of {variable}', sub_output)
             
             #lqso.plot_error_percentage() #how much of the sub fluxes errors they are in percentages
             
@@ -83,6 +83,6 @@ if __name__ == '__main__':
             #          plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
             
     
-    all_galaxies()
+    #all_galaxies()
 
     plt.show()
