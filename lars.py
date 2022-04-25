@@ -25,19 +25,20 @@ PLOTS_SAVE = 'plots'
 
 
 def all_galaxies():
+    lqsos = []
     fig = None
     ax = None
     for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
         lqso = LensedQSO(g)
+        lqsos.append(lqso)
         print(g)
-        # lqso.find_best_run(run_times=5, verbose=False, sub_folder='5runs_100nwalkers')
-        lqso.agn_fitter_output()
+        lqso.find_best_run(run_times=5, verbose=True, sub_folder='5runs_100nwalkers')
         # lqso.plot_spectrum(loglog=True)
 
-        # figs, axs = None, None
-        # for i in range(5):
-        #     lqso.agn_fitter_output(run_time=i)
-        #     figs, axs = plot_lqso_in_speagle(lqso, figs, axs, label=lqso.name + str(i))
+        figs, axs = None, None
+        for i in range(5):
+            lqso.agn_fitter_output(run_time=i, sub_folder='5runs_100nwalkers')
+            figs, axs = plot_lqso_in_speagle(lqso, figs, axs, label=lqso.name + str(i))
 
         # mags_to_fluxes(lqso, components=None if g != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
 
@@ -53,14 +54,15 @@ def all_galaxies():
         # a = src.model_sed.fit(lqso, m)
         # print(a)
 
+        # lqso.agn_fitter_output()
         fig, ax = plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
 
-    fig, ax = plot_agnf_output(GALAXIES, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
+    fig, ax = plot_agnf_output(lqsos, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
     # Add Type1/2 AGN separation line as found in AGNfitter paper
     ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
     ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
 
-    plot_agnf_output(GALAXIES, 'SFR_IR', 'SFR_opt', color_scale_field='age')
+    plot_agnf_output(lqsos, 'SFR_IR', 'SFR_opt', color_scale_field='age')
 
 
 def big_plot():
@@ -82,9 +84,9 @@ def big_plot():
 
 
 def single_galaxy():
-    galaxy = 'J0806+2006'
+    galaxy = 'J1650+4251'
     lqso = LensedQSO(galaxy)
-    lqso.find_best_run(run_times=5)
+    # lqso.find_best_run(run_times=5)
 
     # print(lqso.filter_sed(disallowed_sources=src.lensed_qso.FILTERED_SOURCES_AGNFITTER[lqso.name]).sort_values(by='wavelength')[['source', 'wavelength']])
     # print(lqso.sed_to_agn_fitter(component='_sub_demag'))
@@ -99,9 +101,9 @@ def single_galaxy():
 
     # a = src.model_sed.fit(lqso, m)
 
-    # model_subtraction(lqso)
+    model_subtraction(lqso)
 
-    # lqso.plot_spectrum()
+    lqso.plot_spectrum()
     # lqso.plot_spectrum(component='_sub')
     # lqso.plot_spectrum(component='_sub_demag')
 
@@ -182,11 +184,11 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    all_galaxies()
+    # all_galaxies()
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
-    # single_galaxy()
+    single_galaxy()
     # known_mag_gals()
 
     # latex()
