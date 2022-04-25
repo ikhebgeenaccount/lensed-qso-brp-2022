@@ -6,6 +6,7 @@ from src.plots import plot_lqso_in_speagle
 import argparse
 import os
 import json
+import sys
 
 
 GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']
@@ -48,13 +49,14 @@ if __name__ == '__main__':
     parser.add_argument('--speagle', help='Plot run galaxies in a Speagle MS', action='store_true')
     #   --single
     parser.add_argument('--single', type=str, help='Run a single galaxy, give name, if not given, runs all galaxies')
+    parser.add_argument('--selection', type=str, help='Run a selection of galaxies, separated by commas')
     parser.add_argument('--settings', type=str, help='Settings file to use, if not given uses default settings')
 
     args = parser.parse_args()
 
     gals = GALAXIES
-    if args.single:
-        gals = [args.single]
+    if args.selection:
+        gals = args.selection.split(',')
 
     settings = None
     if args.settings:
