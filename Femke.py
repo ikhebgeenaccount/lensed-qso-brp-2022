@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 
 from src.lensed_qso import LensedQSO
+import numpy as np
 from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
 from src.ned_to_sed import ned_table_to_sed
 from src.xml_to_txt import xml_to_txt
@@ -51,13 +52,13 @@ if __name__ == '__main__':
             #general
             lqso = LensedQSO(g)
             #lqso.plot_spectrum(loglog=True)
-            lqso.find_best_run(run_times=5, verbose=True, sub_folder='5runs_100nwalkers')
+            lqso.find_best_run(run_times=10, verbose=False)#, sub_folder='5runs_100nwalkers')
             
             #AGnfitter checking
-#            print(g)       
-#            for variable in cols_simple:
-#                    sub_output = lqso.get_agnf_output_field(variable)[0]
-#                    print(f'Sub value of {variable}', sub_output)
+            print(g)       
+            for variable in cols_simple:
+                    sub_output = lqso.get_agnf_output_field(variable)[0]
+                    print(f'best value of {variable}', np.log10(sub_output))
             
             #lqso.plot_error_percentage() #how much of the sub fluxes errors they are in percentages
             
