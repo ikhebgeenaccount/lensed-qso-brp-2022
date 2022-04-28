@@ -33,7 +33,7 @@ if __name__ == '__main__':
         m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
         a = fit(lqso, m)
         print(a)
-        #model_subtraction(lqso)
+        model_subtraction(lqso)
         
         #AGN input
         #print(lqso.sed_to_agn_fitter(rX=False))

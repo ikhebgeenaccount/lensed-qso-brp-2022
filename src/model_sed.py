@@ -18,7 +18,7 @@ LQSO_NO_MODELS = {
     'J1455+1447': 5, #1 datapoint
     'J1524+4409': 5, #not clear, made guess
     'B1600+434': 4, #spiral>take best 5, changed to 4 since 4/5 best models have Herschel data
-    'B1608+656': 3, #semi clear
+    'B1608+656': 5, #semi clear
     'J1633+3134': 1, #very clear
     'J1650+4251': 5 #1 datapoint
 }
