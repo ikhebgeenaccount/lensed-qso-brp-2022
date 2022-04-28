@@ -11,7 +11,7 @@ from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
 from src.ned_to_sed import ned_table_to_sed
 from src.filters import populate_filter_profile_path_column
 from src.model_subtraction import model_subtraction
-from src.plots import plot_lqso_in_speagle, plot_agnf_output
+from src.plots import plot_lqso_in_speagle, plot_agnf_output, plot_n_runs_pars
 
 import src.model_sed
 
@@ -24,7 +24,7 @@ GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447',
 PLOTS_SAVE = 'plots'
 
 
-def all_galaxies():
+def all_galaxies(n=10, sub_folder='10runs_fixed_red'):
     lqsos = []
     fig = None
     ax = None
@@ -33,13 +33,16 @@ def all_galaxies():
         lqso = LensedQSO(g)
         lqsos.append(lqso)
         print(g)
-        lqso.find_best_run(run_times=5, verbose=True, sub_folder='5runs_100nwalkers')
+        lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder)
         # lqso.plot_spectrum(loglog=True)
+        # plot_n_runs_pars(lqso, sub_folder=sub_folder)
 
         figs, axs = None, None
-        for i in range(5):
-            lqso.agn_fitter_output(run_time=i, sub_folder='5runs_100nwalkers')
+        for i in range(n):
+            lqso.agn_fitter_output(run_time=i, sub_folder=sub_folder)
             figs, axs = plot_lqso_in_speagle(lqso, figs, axs, label=lqso.name + str(i))
+
+        lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder)
 
         # mags_to_fluxes(lqso, components=None if g != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
 
@@ -63,7 +66,7 @@ def all_galaxies():
     ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
     ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
 
-    plot_agnf_output(lqsos, 'SFR_IR', 'SFR_opt', color_scale_field='age')
+    plot_agnf_output(lqsos, 'SFR_IR', 'SFR_opt', color_scale_field='age', equals_line=True)
 
 
 def big_plot():
@@ -185,11 +188,11 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    # all_galaxies()
+    all_galaxies()
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
-    single_galaxy()
+    # single_galaxy()
     # known_mag_gals()
 
     # latex()
