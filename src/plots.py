@@ -107,7 +107,7 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None, label=None):
     return fig, ax
 
 
-def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component='_sub'):
+def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component='_sub', equals_line=False):
     f1vs = []
     f1es = [[],[]]
 
@@ -120,14 +120,14 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component=
         f1v, f1pe, f1me = lqso.get_agnf_output_field(field_1, component=component, demag=True)
 
         f1vs.append(f1v)
-        f1es[0].append(f1pe)
-        f1es[1].append(f1me)
+        f1es[1].append(f1pe)
+        f1es[0].append(f1me)
 
         f2v, f2pe, f2me = lqso.get_agnf_output_field(field_2, component=component, demag=True)
 
         f2vs.append(f2v)
-        f2es[0].append(f2pe)
-        f2es[1].append(f2me)
+        f2es[1].append(f2pe)
+        f2es[0].append(f2me)
 
         if color_scale_field is not None:
             fcs.append(lqso.get_agnf_output_field(color_scale_field, component=component, demag=True)[0])
@@ -142,6 +142,10 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component=
         cbar.set_label(color_scale_field)
     else:
         ax.errorbar(f1vs, f2vs, xerr=f1es, yerr=f2es, zorder=0, fmt='o')
+
+    if equals_line:
+        x = np.linspace(min(np.array(f1vs) - f1es[0]), max(np.array(f1vs) + f1es[1]), 10000)
+        ax.plot(x, x, linestyle='--', color='black')
 
     ax.set_xlabel(field_1)
     ax.set_ylabel(field_2)
