@@ -2,7 +2,7 @@ from astropy.cosmology import LambdaCDM
 
 import numpy as np
 import matplotlib.pyplot as plt
-
+import pandas as pd
 import os.path
 import pandas as pd
 
@@ -178,6 +178,35 @@ def plot_n_runs_pars(lqso, n=10, nrows=4, sub_folder=None):
     fig.savefig(os.path.join('plots', f'{lqso.name}_pars.pdf'))
 
 
+def residual_plot(lqso):
+    realizations = pd.read_csv( os.path.join('data',lqso.name,'agnfitter', 'sed_realizations.csv'))
+    data = pd.read_csv( os.path.join('data',lqso.name,'agnfitter', 'sed_data.csv'))
+    rest_nu_rea = realizations['nu_rest']
+    rest_nu_data = data['nu_rest']
+    
+    fig, ax = plt.subplots(nrows=1,ncols=1, figsize=(10,8))
+    ax.set_xscale ('log')
+    ax.set_yscale('log')
+    
+    terms=['SBnuLnu','BBnuLnu','GAnuLnu', 'TOnuLnu','TOTALnuLnu']
+    color= ['forestgreen','darkblue', 'gold', 'purple', 'red']
+    
+    for i in range(10):
+        for term in range(5) :
+            #print(realizations[f'{term}{i}'])
+            rea = realizations[f'{terms[term]}{i}']
+            ax.plot(rest_nu_rea, rea, color=color[term], alpha=0.5)
+            
+    ax.errorbar(rest_nu_data, data['nuLnu'],yerr=data['nuLnu_err'],color='black',zorder=2, fmt='o')
+            
+    plt.legend(terms)
+    ax.set_ylim(ymin=1e44)
+    ax.set_title('plot of the residuals', fontsize=15)
+    ax.set_ylabel('$\\nu \\rm{L}(\\nu)[erg \ s^{-1}]$', fontsize=14)
+    
+    #TODO upperlimits, residuals, x label, pas als allerlaatste lars zn layout doen, opslaan
+
+
 def plot_lqsos_vs_stacey(lqsos):
     x_labels = []
     agnf_sfr_ir = []
@@ -212,4 +241,3 @@ def plot_lqsos_vs_stacey(lqsos):
     ax.legend()
 
     fig.savefig(os.path.join('plots', 'SFR_IR_stacey_res.pdf'))
-
