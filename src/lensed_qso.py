@@ -55,7 +55,7 @@ DEFAULT_AGNFITTER_SETTINGS = {
     'plot_tracesmcmc': True,
     'plot_posteriortriangle': True,
     'plot_posteriortrianglewithluminosities': True,
-    'realizations2int': 2000,
+    'realizations2int': 1000,
     'realizations2plot': 10,
     'plotSEDrealizations': True
 }
