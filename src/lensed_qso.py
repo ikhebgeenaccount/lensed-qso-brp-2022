@@ -53,8 +53,9 @@ DEFAULT_AGNFITTER_SETTINGS = {
     'iprint': 1000,
     'plot_tracesburn-in': True,
     'plot_tracesmcmc': True,
-    'plot_posteriortriangle': False,
-    'realizations2int': 100,
+    'plot_posteriortriangle': True,
+    'plot_posteriortrianglewithluminosities': True,
+    'realizations2int': 2000,
     'realizations2plot': 10,
     'plotSEDrealizations': True
 }
@@ -453,7 +454,7 @@ class LensedQSO:
             return
 
         cols = ['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
-        print(path)
+
         output = pd.read_csv(os.path.join(path, par_values_file),
                              delim_whitespace=True, skiprows=4, header=None, names=cols)
 
@@ -492,7 +493,8 @@ class LensedQSO:
 
                     return new_value, new_pe, new_me
                 else:
-                    print(f'No demagnification specified for {field}')
+                    pass
+                    # print(f'No demagnification specified for {field}')
 
             elif demag:
                 raise ValueError('Don\'t demag a different component than _sub')
@@ -891,7 +893,7 @@ settings_template = "'''\n" +\
 "                                #Around 100-1000 is recomendend for computational reasons.\n" +\
 "                                #If you want to plot posterior triangles of\n" +\
 "                                #the integrated luminosities, should be > 1000.\n" +\
-"    out['plot_posteriortrianglewithluminosities'] = False  # requires out['calc_intlum']=True\n" +\
+"    out['plot_posteriortrianglewithluminosities'] = {plot_posteriortrianglewithluminosities}  # requires out['calc_intlum']=True\n" +\
 "\n" +\
 "    #INTEGRATION RANGES\n" +\
 "    out['intlum_models'] = ['sb','bbb', 'bbbdered', 'gal', 'tor','sb']  #leave 'sb' always\n" +\
