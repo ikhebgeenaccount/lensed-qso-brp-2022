@@ -11,7 +11,7 @@ from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
 from src.ned_to_sed import ned_table_to_sed
 from src.filters import populate_filter_profile_path_column
 from src.model_subtraction import model_subtraction
-from src.plots import plot_lqso_in_speagle, plot_agnf_output, plot_n_runs_pars
+from src.plots import plot_lqso_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey
 
 import src.model_sed
 
@@ -33,7 +33,7 @@ def all_galaxies(n=10, sub_folder='10runs_fixed_red'):
         lqso = LensedQSO(g)
         lqsos.append(lqso)
         print(g)
-        lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder)
+        lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
         # lqso.plot_spectrum(loglog=True)
         # plot_n_runs_pars(lqso, sub_folder=sub_folder)
 
@@ -42,7 +42,7 @@ def all_galaxies(n=10, sub_folder='10runs_fixed_red'):
             lqso.agn_fitter_output(run_time=i, sub_folder=sub_folder)
             figs, axs = plot_lqso_in_speagle(lqso, figs, axs, label=lqso.name + str(i))
 
-        lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder)
+        lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
 
         # mags_to_fluxes(lqso, components=None if g != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
 
@@ -65,8 +65,10 @@ def all_galaxies(n=10, sub_folder='10runs_fixed_red'):
     # Add Type1/2 AGN separation line as found in AGNfitter paper
     ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
     ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
+    fig.savefig(os.path.join('plots', f'EBVbbb_Nh.pdf'))
 
     plot_agnf_output(lqsos, 'SFR_IR', 'SFR_opt', color_scale_field='age', equals_line=True)
+    plot_lqsos_vs_stacey(lqsos)
 
 
 def big_plot():
