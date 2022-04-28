@@ -203,11 +203,11 @@ def plot_lqsos_vs_stacey(lqsos):
             x_labels.append(lqso.name)
 
     fig, ax = plt.subplots()
-    # ax.errorbar(range(len(x_labels)), agnf_sfr_ir, yerr=agnf_sfr_ir_err, label='This work', color='black', fmt='o', zorder=50)
-    ax.errorbar(range(len(x_labels)), np.array(stacey_sfr_ir) - np.array(agnf_sfr_ir), yerr=stacey_sfr_ir_err, label='Stacey+2018 - This work', color='black', fmt='o', zorder=0)
+    ax.errorbar(range(len(x_labels)), np.zeros(len(x_labels)), yerr=agnf_sfr_ir_err, label='This work', color='black', fmt='o', zorder=50, alpha=.6)
+    ax.errorbar(range(len(x_labels)), np.array(stacey_sfr_ir) - np.array(agnf_sfr_ir), yerr=stacey_sfr_ir_err, label='Stacey+2018', color='grey', fmt='o', zorder=0, alpha=.6)
     ax.axhline(y=0, linestyle='dashed', color='grey')
 
-    ax.set_xticks(range(len(x_labels)), x_labels, rotation=90)
+    ax.set_xticks(range(len(x_labels)), x_labels), rotation=90)
     ax.set_ylabel('$\log\mu\mathrm{SFR_{IR}}$')
     ax.legend()
 
