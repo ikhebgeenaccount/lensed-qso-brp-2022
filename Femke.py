@@ -44,21 +44,32 @@ if __name__ == '__main__':
     GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']
     PLOTS_SAVE = 'plots'
     cols = ['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
-    cols_simple = ['SFR_IR']
+    cols_simple = ['-ln_like']
     
     def all_galaxies():
         ax = None
+        lqsos=[]
         for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
             #general
             lqso = LensedQSO(g)
             #lqso.plot_spectrum(loglog=True)
-            lqso.find_best_run(run_times=10, verbose=False)#, sub_folder='5runs_100nwalkers')
+            lqso.find_best_run(run_times=10, verbose=True)
             
             #AGnfitter checking
-            print(g)       
-            for variable in cols_simple:
-                    sub_output = lqso.get_agnf_output_field(variable)[0]
-                    print(f'best value of {variable}', np.log10(sub_output))
+            for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
+                if '1330' in g:
+                    continue
+
+                lqso = LensedQSO(g)
+                lqsos.append(lqso)
+                print(g)
+                lqso.find_best_run(run_times=10, verbose=True)#, sub_folder='5runs_100nwalkers')
+                # lqso.plot_spectrum(loglog=True)
+
+                print(lqso.get_agnf_output_field('-ln_like')[0])
+                #print(lqso.get_agnf_output_field('-ln_like', demag=True)[0])
+                print("")
+                    
             
             #lqso.plot_error_percentage() #how much of the sub fluxes errors they are in percentages
             

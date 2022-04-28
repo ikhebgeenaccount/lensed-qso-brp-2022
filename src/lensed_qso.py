@@ -29,13 +29,13 @@ FILTERED_SOURCES = {
 
 
 FILTERED_SOURCES_AGNFITTER = {
-    'B1152+200': ['toft'],
+    'B1152+200': ['toft', 'Barvainis+2002_filter'],
     'B1600+434': ['munoz', 'SDSS+DR14_filter'],
     'B1608+656': [ 'luichies'],#['Koopmans+2003' ],
     'J0806+2006': ['Fadely+2011'],
     'J0924+0219': ['2MASS_filter'],
     'J1330+1810': ['Galex_filter'],
-    'J1455+1447': [],
+    'J1455+1447': ['Rusu+2016'],
     'J1524+4409': ['Oguri'],
     'J1633+3134': ['Morgan'],
     'J1650+4251': ['Morgan']
