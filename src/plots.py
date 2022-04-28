@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import os.path
+import pandas as pd
 
 from src.lensed_qso import LensedQSO
 
@@ -175,3 +176,40 @@ def plot_n_runs_pars(lqso, n=10, nrows=4, sub_folder=None):
 
     fig.tight_layout()
     fig.savefig(os.path.join('plots', f'{lqso.name}_pars.pdf'))
+
+
+def plot_lqsos_vs_stacey(lqsos):
+    x_labels = []
+    agnf_sfr_ir = []
+    agnf_sfr_ir_err = [[], []]
+    stacey_sfr_ir = []
+    stacey_sfr_ir_err = [[], []]
+
+    for lqso in lqsos:
+        if not pd.isnull(lqso.props['stacey_sfr'].values[0]):
+            # Append Stacey data
+            stacey_sfr_ir.append(lqso.props['stacey_sfr'].values[0])
+            stacey_sfr_ir_err[0].append(lqso.props['stacey_sfr_me'].values[0])
+            stacey_sfr_ir_err[1].append(lqso.props['stacey_sfr_pe'].values[0])
+
+            # Append our data
+            v, pe, me = lqso.get_agnf_output_field('SFR_IR', demag=False)  # Don't demag since Stacey doesn't either
+
+            # Take log
+            agnf_sfr_ir.append(np.log10(v))
+            agnf_sfr_ir_err[0].append(me / (v * np.log(10)))
+            agnf_sfr_ir_err[1].append(pe / (v * np.log(10)))
+
+            x_labels.append(lqso.name)
+
+    fig, ax = plt.subplots()
+    # ax.errorbar(range(len(x_labels)), agnf_sfr_ir, yerr=agnf_sfr_ir_err, label='This work', color='black', fmt='o', zorder=50)
+    ax.errorbar(range(len(x_labels)), np.array(stacey_sfr_ir) - np.array(agnf_sfr_ir), yerr=stacey_sfr_ir_err, label='Stacey+2018 - This work', color='black', fmt='o', zorder=0)
+    ax.axhline(y=0, linestyle='dashed', color='grey')
+
+    ax.set_xticks(range(len(x_labels)), x_labels, rotation=90)
+    ax.set_ylabel('$\log\mu\mathrm{SFR_{IR}}$')
+    ax.legend()
+
+    fig.savefig(os.path.join('plots', 'SFR_IR_stacey_res.pdf'))
+
