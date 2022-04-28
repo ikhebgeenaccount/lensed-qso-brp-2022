@@ -150,3 +150,24 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component=
     # fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.svg'))
 
     return fig, ax
+
+
+def plot_n_runs_pars(lqso, n=10, nrows=4, sub_folder=None):
+    pars = ['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
+
+    ncols = len(pars) // nrows
+    fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(16, 10))
+    fig.suptitle(lqso.name)
+    for i in range(n):
+        lqso.agn_fitter_output(run_time=i, sub_folder=sub_folder)
+        for j, p in enumerate(pars):
+            r = int(j / ncols)
+            c = j % ncols
+
+            val, pe, me = lqso.get_agnf_output_field(p, demag=True)
+            axs[r,c].errorbar([val], [1], xerr=[[me], [pe]], fmt='o')
+            axs[r,c].set_title(p)
+            axs[r,c].tick_params(axis='y', left=False, labelleft=False)
+
+    fig.tight_layout()
+    fig.savefig(os.path.join('plots', f'{lqso.name}_pars.pdf'))
