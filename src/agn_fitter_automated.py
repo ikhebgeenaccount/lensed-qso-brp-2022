@@ -2,7 +2,7 @@ from src.lensed_qso import LensedQSO
 import os.path
 import os
 
-RUN_TEN_MODE = 'python ../AGNfitter/RUN_AGNfitter_multi.py ../AGNfitter/example/SETTINGS_AGNfitter_{name}.py --overwrite --ncpu 6'
+RUN_TEN_MODE = 'python ../AGNfitter/RUN_AGNfitter_multi.py ../AGNfitter/example/SETTINGS_AGNfitter_{name}.py --overwrite'
 RUN_SINGLE_MODE = RUN_TEN_MODE + ' -n 0'
 
 AGN_FITTER_PATH = os.path.join(os.pardir, 'AGNfitter')
