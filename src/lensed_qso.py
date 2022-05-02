@@ -42,7 +42,7 @@ FILTERED_SOURCES_AGNFITTER = {
 }
 
 
-RADIO_CUTOFF = 	25000000  # wavelengths >1e8 Angstrom are classified as radio
+RADIO_CUTOFF = 	25000000  # wavelengths >2.5e7 Angstrom are classified as radio
 XRAY_CUTOFF = 300  # wavelengths < 300 Angstrom are classified as Xray
 
 DEFAULT_AGNFITTER_SETTINGS = {
@@ -453,8 +453,13 @@ class LensedQSO:
             # print('Are you working on vdesk or strw? If not, then this output has not been copied to our github repo, or doesn\'t exist')
             return
 
+        # Read agnfitter sed_data and sed_realizations output
+        self.agnf_sed_data = pd.read_csv(os.path.join(path, 'sed_data.csv'))
+        self.agnf_sed_realizations = pd.read_csv(os.path.join(path, 'sed_realizations.csv'))
+
         cols = ['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
 
+        # Read parameter outvalues
         output = pd.read_csv(os.path.join(path, par_values_file),
                              delim_whitespace=True, skiprows=4, header=None, names=cols)
 

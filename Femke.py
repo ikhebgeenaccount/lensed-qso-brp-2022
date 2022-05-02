@@ -19,12 +19,12 @@ if __name__ == '__main__':
     
     def single():
         #general
-        galaxy = 'J0924+0219'  
+        galaxy = 'J0806+2006'  
         lqso = LensedQSO(galaxy)
         
         #photometry
         #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
-        #lqso.plot_spectrum(loglog=True, component='_sub')
+        lqso.plot_spectrum(loglog=True)#, component='_sub')
         
         #filterprofiles
         #xml_to_txt('VLT_CONICA_H.xml', 'VLT_CONICA_H.txt')
@@ -45,7 +45,7 @@ if __name__ == '__main__':
         
         #agn_output
         #compare_test(lqso)
-        residual_plot(lqso)
+        residual_plot(lqso, errors=False)
     single()
     
     #running all galaxies

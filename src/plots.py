@@ -6,7 +6,7 @@ import pandas as pd
 import os.path
 import pandas as pd
 
-from src.lensed_qso import LensedQSO
+from src.lensed_qso import LensedQSO, RADIO_CUTOFF, XRAY_CUTOFF
 
 LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)  # Cosmological constants as Speagle uses them
 
@@ -178,33 +178,54 @@ def plot_n_runs_pars(lqso, n=10, nrows=4, sub_folder=None):
     fig.savefig(os.path.join('plots', f'{lqso.name}_pars.pdf'))
 
 
-def residual_plot(lqso):
-    realizations = pd.read_csv( os.path.join('data',lqso.name,'agnfitter', 'sed_realizations.csv'))
-    data = pd.read_csv( os.path.join('data',lqso.name,'agnfitter', 'sed_data.csv'))
+def residual_plot(lqso, errors=False):
+    #readin in the data
+    realizations = lqso.agnf_sed_realizations
+    data = lqso.agnf_sed_data
     rest_nu_rea = realizations['nu_rest']
     rest_nu_data = data['nu_rest']
 
-    fig, ax = plt.subplots(nrows=1,ncols=1, figsize=(10,8))
-    ax.set_xscale ('log')
-    ax.set_yscale('log')
+    #setting the general figure
+    fig, (ax1,ax2) = plt.subplots(nrows=2,ncols=1, figsize=(10,10), gridspec_kw={'hspace':0, 'height_ratios': [2, 1]}, sharex=True)
+    ax1.set_xscale ('log')
+    ax1.set_yscale('log')
+    ax2.set_xscale ('log')
 
+    ax1.set_title('plot of the residuals', fontsize=15)
+    ax1.set_ylabel('$\\nu \\rm{L}(\\nu)[erg \ s^{-1}]$', fontsize=14)
+    ax2.set_ylabel('$\\nu \\rm{L}(\\nu)[erg \ s^{-1}]$', fontsize=14)
+    ax2.set_xlabel('rest frame $\\nu$[Hz]', fontsize=14)
+
+    #For getting the right colors
     terms=['SBnuLnu','BBnuLnu','GAnuLnu', 'TOnuLnu','TOTALnuLnu']
     color= ['forestgreen','darkblue', 'gold', 'purple', 'red']
 
+    #first plot
     for i in range(10):
         for term in range(5) :
             #print(realizations[f'{term}{i}'])
             rea = realizations[f'{terms[term]}{i}']
-            ax.plot(rest_nu_rea, rea, color=color[term], alpha=0.5)
+            ax1.plot(rest_nu_rea, rea, color=color[term], alpha=0.5)
 
-    ax.errorbar(rest_nu_data, data['nuLnu'],yerr=data['nuLnu_err'],color='black',zorder=2, fmt='o')
+    upper = data['upp']==True
+    nupper= data['upp']== False
+    ax1.errorbar(rest_nu_data[upper], data['nuLnu'][upper],yerr=data['nuLnu_err'][upper],color='black',zorder=2, fmt='o', marker='v')
+    ax1.errorbar(rest_nu_data[nupper], data['nuLnu'][nupper],yerr=data['nuLnu_err'][nupper],color='black',zorder=2, fmt='o')
 
-    plt.legend(terms)
-    ax.set_ylim(ymin=1e44)
-    ax.set_title('plot of the residuals', fontsize=15)
-    ax.set_ylabel('$\\nu \\rm{L}(\\nu)[erg \ s^{-1}]$', fontsize=14)
+    ax1.set_ylim(ymin=1e44)
+    # ax1.set_xlim(xmin=5e11, xmax=1.2e16)
+    ax1.legend(['Starburst','Big Blue Bump','Stars', 'Torus','Total'])
 
-    #TODO upperlimits, residuals, x label, pas als allerlaatste lars zn layout doen, opslaan
+
+    #second plot
+    for i in range(10):
+        rea_interp = np.interp(x = rest_nu_data, xp=rest_nu_rea, fp=realizations[f'TOTALnuLnu{i}'])
+        if errors:
+            ax2.errorbar(rest_nu_data, data['nuLnu'] - rea_interp, yerr=data['nuLnu_err'], fmt='o' , color='black')
+        else:
+            ax2.scatter(rest_nu_data, data['nuLnu'] - rea_interp, color='black')
+    ax2.set_xlim(xmin=3e18 / XRAY_CUTOFF, xmax=3e18 / RADIO_CUTOFF)
+    ax2.axhline(0, xmin=0, xmax=1, color='black')
 
 
 def plot_lqsos_vs_stacey(lqsos):
