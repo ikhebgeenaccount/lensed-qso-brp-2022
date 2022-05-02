@@ -190,10 +190,12 @@ def residual_plot(lqso, errors=False):
     ax1.set_xscale ('log')
     ax1.set_yscale('log')
     ax2.set_xscale ('log')
+    # ax2.set_yscale('log')
 
     ax1.set_title('plot of the residuals', fontsize=15)
     ax1.set_ylabel('$\\nu \\rm{L}(\\nu)[erg \ s^{-1}]$', fontsize=14)
     ax2.set_ylabel('$\\nu \\rm{L}(\\nu)[erg \ s^{-1}]$', fontsize=14)
+    # ax2.ticklabel_format(style='scientific', axis='y')
     ax2.set_xlabel('rest frame $\\nu$[Hz]', fontsize=14)
 
     #For getting the right colors
@@ -226,6 +228,8 @@ def residual_plot(lqso, errors=False):
             ax2.scatter(rest_nu_data, data['nuLnu'] - rea_interp, color='black')
     ax2.set_xlim(xmin=3e18 / XRAY_CUTOFF, xmax=3e18 / RADIO_CUTOFF)
     ax2.axhline(0, xmin=0, xmax=1, color='black')
+
+    fig.savefig(os.path.join('plots', f'{lqso.name}_agnf_residuals.pdf'))
 
 
 def plot_lqsos_vs_stacey(lqsos):
