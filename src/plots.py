@@ -42,7 +42,7 @@ def speagle_gms(log_m_star, t, log_m_star_err=None, t_err=None):
     return log_sfr, log_sfr_err
 
 
-def plot_lqso_in_speagle(lqso, fig=None, ax=None, label=None):
+def plot_lqso_in_speagle(lqso, fig=None, ax=None, label=None, save_name='speagle'):
     # Get age
     #t = np.power(10., lqso.agn_fitter_output()['age'].iloc[2])
     #t_pe = (lqso.agn_fitter_output()['age'].iloc[3] - t) * np.log(10.) * t
@@ -102,7 +102,7 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None, label=None):
 
     ax.legend(ncol=2)
 
-    fig.savefig(os.path.join('plots', 'speagle.pdf'))
+    fig.savefig(os.path.join('plots', f'{save_name}.pdf'))
     # fig.savefig(os.path.join('plots', 'speagle.svg'))
 
     return fig, ax
