@@ -81,6 +81,11 @@ COMPONENT_ID = {
 }
 
 
+SOURCES_COLORS = {}
+
+COLORS = plt.get_cmap('tab10').colors + plt.get_cmap('Dark2').colors + plt.get_cmap('Accent').colors
+
+
 class LensedQSO:
 
     def __init__(self, name, sed_source='sed.csv',  mags_source='mags.csv', properties='properties.txt', save_all_plots=True, save_location='plots'):
@@ -230,9 +235,16 @@ class LensedQSO:
             sel_upper_limit = sel[sel[limit] == 1]
             sel_reg = sel[sel[limit] == 0]
 
+            if l in SOURCES_COLORS:
+                color = SOURCES_COLORS[l]
+            else:
+                print(len(SOURCES_COLORS))
+                color = COLORS[len(SOURCES_COLORS) + 1]
+                SOURCES_COLORS[l] = color
+
             # Plot regular data points and upper limits separately, upper limits with special marker
             # TODO: consistent colours between all plots for same sources (SDSS, PanSTARRS, etc)
-            le_1, _, _ = ax.errorbar(sel_reg.wavelength, sel_reg[data_type], sel_reg[data_err], fmt='o', label=l, **kwargs)
+            le_1, _, _ = ax.errorbar(sel_reg.wavelength, sel_reg[data_type], sel_reg[data_err], fmt='o', label=l, color=color, **kwargs)
 
             if len(sel_upper_limit) > 0:
                 le_2, _, _ = ax.errorbar(sel_upper_limit.wavelength, sel_upper_limit[data_type], sel_upper_limit[data_err],
@@ -454,8 +466,11 @@ class LensedQSO:
             return
 
         # Read agnfitter sed_data and sed_realizations output
-        self.agnf_sed_data = pd.read_csv(os.path.join(path, 'sed_data.csv'))
-        self.agnf_sed_realizations = pd.read_csv(os.path.join(path, 'sed_realizations.csv'))
+        try:
+            self.agnf_sed_data = pd.read_csv(os.path.join(path, 'sed_data.csv'))
+            self.agnf_sed_realizations = pd.read_csv(os.path.join(path, 'sed_realizations.csv'))
+        except:
+            print('No SED output found in AGNfitter output for' + self.name)
 
         cols = ['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
 
