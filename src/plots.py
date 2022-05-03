@@ -108,7 +108,7 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None, label=None, save_name='speagle
     return fig, ax
 
 
-def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component='_sub', equals_line=False):
+def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component='_sub', equals_line=False, logx=False, logy=False):
     f1vs = []
     f1es = [[],[]]
 
@@ -151,6 +151,12 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component=
     ax.set_xlabel(field_1)
     ax.set_ylabel(field_2)
 
+    if logx:
+        ax.set_xscale('log')
+    if logy:
+        ax.set_yscale('log')
+
+    fig.tight_layout()
     fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.pdf'))
     # fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.svg'))
 
@@ -265,4 +271,5 @@ def plot_lqsos_vs_stacey(lqsos):
     ax.set_ylabel('$\Delta\log\mu\mathrm{SFR_{IR}}$')
     ax.legend()
 
+    fig.tight_layout()
     fig.savefig(os.path.join('plots', 'SFR_IR_stacey_res.pdf'))
