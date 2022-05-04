@@ -21,33 +21,14 @@ if __name__ == '__main__':
         #general
         galaxy = 'B1152+200'  
         lqso = LensedQSO(galaxy)
-        
-        #photometry
-        #ned_table_to_sed(lqso,'ned_galex_wise_2mass', allowed_sources=['Chandra', 'WISE', '2MASS', 'Galex'])
-        #lqso.plot_spectrum(loglog=True)#, component='_sub')
-        
-        #filterprofiles
-        #xml_to_txt('VLT_CONICA_H.xml', 'VLT_CONICA_H.txt')
-        #tophat(230.609583,0.560, 'IRAM_1.3mm.txt',freq_Ghz=True, energy_Kev=False)
-    
-        #model subtraction
-        #m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
-        #a = fit(lqso, m)
-        #print(a)
-        #model_subtraction(lqso)
-        
-        #AGN input
-        #print(lqso.sed_to_agn_fitter(rX=False))
-        #print(lqso.agn_settings(rX=False))
-        
-        #speagle
-        #plot_lqso_in_speagle(lqso)
-        
-        #agn_output
-        #compare_test(lqso)
-        #residual_plot(lqso, errors=False)
         lqso.agn_fitter_output(check_git=True, run_time=5)
-        plot_evolution(lqso)
+        
+        #lqso.plot_spectrum(loglog=True)#, component='_sub')
+        #plot_lqso_in_speagle(lqso)
+        #compare_test(lqso)
+        #residual_plot(lqso, errors=True)
+        #plot_evolution(lqso)
+        
     single()
     
     #running all galaxies
