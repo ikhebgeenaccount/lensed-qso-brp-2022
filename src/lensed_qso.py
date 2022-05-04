@@ -493,7 +493,7 @@ class LensedQSO:
 
         return output
 
-    def get_agnf_output_field(self, field, component='_sub', demag=False):
+    def get_agnf_output_field(self, field, demag, component='_sub'):
         if hasattr(self, 'agnf_output'):
 
             if demag and component == '_sub':
