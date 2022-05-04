@@ -46,7 +46,7 @@ if __name__ == '__main__':
         #agn_output
         #compare_test(lqso)
         residual_plot(lqso, errors=False)
-    single()
+    #single()
     
     #running all galaxies
     GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']
@@ -89,6 +89,6 @@ if __name__ == '__main__':
             #          plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
             
     
-    #all_galaxies()
+    all_galaxies()
 
     plt.show()
