@@ -278,7 +278,7 @@ def plot_lqsos_vs_stacey(lqsos):
     
     
 
-def plot_evolution(lqso):
+def plot_evolution(lqso, fig=None, ax=None, single=False):
     """
     This function plots the stellar mass evolution assuming constant sfr
     under the formula M_star (t) = SFR * t + (M_star(age) - SFR * age)
@@ -308,17 +308,18 @@ def plot_evolution(lqso):
     age = LCDM.age(z).value * 1e9 #in yrs
     
     #setting up the plot
-    plt.figure(figsize=(10,8))
-    plt.xlabel('age of universe [yr]')
-    plt.ylabel('Stellar mass [solar mass]')
-    plt.title('Stellar mass evolution')
-    plt.scatter(age, M, label = f'{lqso.name}') #placing the galaxy
+    if ax is None:
+        fig,ax= plt.subplots(figsize=(10,8))
+    ax.set_xlabel('age of universe [yr]')
+    ax.set_ylabel('Stellar mass [solar mass]')
+
+    ax.scatter(age, M, label = f'{lqso.name}', zorder=100, s=49) #placing the galaxy
     
     #the constant in the formula
     b = M - (sfr_tot * age)
     
     #TODO: add real gas masses
-    M_gas= 3e9 #gas mass in solar masses
+    M_gas= 0.6*M #gas mass in solar masses
     
     #make a range of ages in order to make the evolution line
     #lower limit = where no solar mass had been formed
@@ -330,11 +331,21 @@ def plot_evolution(lqso):
     M_range = sfr_tot * age_range + b
     M_range2 = sfr_tot * age_range2 + b
     
+    if single:
+        ax.plot(age_range, M_range, color='fuchsia', label='time until galaxy formed' )
+        ax.plot(age_range2, M_range2, color='blue', label='time until gas depletes' )
+        ax.set_title(f'Stellar mass evolution of {lqso.name}')
     
-    plt.plot(age_range, M_range, label='time until galaxy formed' )
-    plt.plot(age_range2, M_range2, label='time until gas depletes' )
-    plt.legend()
+    elif lqso.name == 'J0806+2006':
+        ax.plot(age_range, M_range, color='fuchsia', label='time until galaxy formed' )
+        ax.plot(age_range2, M_range2, color='blue', label='time until gas depletes' )
+        ax.set_title('Stellar mass evolution')
+    else:
+        ax.plot(age_range, M_range, color='fuchsia')
+        ax.plot(age_range2, M_range2, color='blue')
+    ax.legend()
     
+    return fig, ax
     
 
     
