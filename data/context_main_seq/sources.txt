@@ -1,0 +1,2 @@
+file,source
+table_a2.fits,https://academic.oup.com/mnras/article/501/3/3926/6041042?login=true#224212216,Birkin+2020
