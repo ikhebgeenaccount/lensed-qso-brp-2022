@@ -42,7 +42,9 @@ def speagle_gms(log_m_star, t, log_m_star_err=None, t_err=None):
     return log_sfr, log_sfr_err
 
 
-def plot_lqso_in_speagle(lqso, fig=None, ax=None, label=None, save_name='speagle'):
+def plot_lqso_in_speagle(lqso, fig=None, ax=None, label=None, save_name='speagle', errorbar_kwargs=None):
+    if errorbar_kwargs is None:
+        errorbar_kwargs = {}
     # Get age
     #t = np.power(10., lqso.agn_fitter_output()['age'].iloc[2])
     #t_pe = (lqso.agn_fitter_output()['age'].iloc[3] - t) * np.log(10.) * t
@@ -96,7 +98,7 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None, label=None, save_name='speagle
     yerr_opt = yerr_opt / (sfr_opt * np.log(10.))  # Calculate error in SFR_opt from S
 
     # Plot galaxy
-    ax.errorbar(log_m_star, np.log10(sfr_tot), xerr=xerr, yerr=yerr_tot, label=f'{lqso.name} SFR_tot, z={lqso.props.z_qso.values[0]:.3f}' if label is None else label, fmt='o', capsize=4)
+    ax.errorbar(log_m_star, np.log10(sfr_tot), xerr=xerr, yerr=yerr_tot, label=f'{lqso.name} SFR_tot, z={lqso.props.z_qso.values[0]:.3f}' if label is None else label, fmt='o', capsize=4, **errorbar_kwargs)
     # ax.errorbar(log_m_star, np.log10(sfr_ir), xerr=xerr, yerr=yerr_ir, label=f'{lqso.name} SFR_ir, z={lqso.props.z_qso.values[0]:.3f}', fmt='o', capsize=4)
     # ax.errorbar(log_m_star, np.log10(sfr_opt), xerr=xerr, yerr=yerr_opt, label=f'{lqso.name} SFR_opt, z={lqso.props.z_qso.values[0]:.3f}', fmt='o', capsize=4)
 
@@ -273,3 +275,78 @@ def plot_lqsos_vs_stacey(lqsos):
 
     fig.tight_layout()
     fig.savefig(os.path.join('plots', 'SFR_IR_stacey_res.pdf'))
+    
+    
+
+def plot_evolution(lqso, fig=None, ax=None, single=False):
+    """
+    This function plots the stellar mass evolution assuming constant sfr
+    under the formula M_star (t) = SFR * t + (M_star(age) - SFR * age)
+    
+    This becomes 0 at t = SFR * age - M_star(age) / SFR
+    
+    The goal of this is to give a rough indication of whether your sfr's make sense
+    """
+     #redshift of the galaxy
+    z = lqso.props.z_qso.values[0]
+    
+    #stellar mass of the galaxy
+    logM , pe_logM, me_logM = lqso.get_agnf_output_field('logMstar', demag=True)  
+    M = 10 ** logM
+    
+    #TODO: calculate the non-log Mstar errors (if we want them)
+    
+    #total SFR of the galaxy
+    sfr_ir, sfr_ir_pe, sfr_ir_me = lqso.get_agnf_output_field('SFR_IR', demag=True)
+    sfr_opt, sfr_opt_pe, sfr_opt_me = lqso.get_agnf_output_field('SFR_opt', demag=True)
+
+    sfr_tot = sfr_opt + sfr_ir
+    sfr_tot_pe = np.sqrt(sfr_ir_pe ** 2. + sfr_opt_pe ** 2.)
+    sfr_tot_me = np.sqrt(sfr_ir_me ** 2. + sfr_opt_me ** 2.)
+    
+    #age of the individual galaxy, plotting this on the plot
+    age = LCDM.age(z).value * 1e9 #in yrs
+    
+    #setting up the plot
+    if ax is None:
+        fig,ax= plt.subplots(figsize=(10,8))
+    ax.set_xlabel('age of universe [yr]')
+    ax.set_ylabel('Stellar mass [solar mass]')
+
+    ax.scatter(age, M, label = f'{lqso.name}', zorder=100, s=49) #placing the galaxy
+    
+    #the constant in the formula
+    b = M - (sfr_tot * age)
+    
+    #TODO: add real gas masses
+    M_gas= 0.6*M #gas mass in solar masses
+    
+    #make a range of ages in order to make the evolution line
+    #lower limit = where no solar mass had been formed
+    #upper limit = where all the gas mass has depleted
+    age_range = np.linspace((-(M - sfr_tot * age)/sfr_tot), age, 100)
+    age_range2 = np.linspace( age,(M_gas + M - b)/sfr_tot, 100)
+    
+    #formula of the M_star assuming constant sfr
+    M_range = sfr_tot * age_range + b
+    M_range2 = sfr_tot * age_range2 + b
+    
+    if single:
+        ax.plot(age_range, M_range, color='fuchsia', label='time until galaxy formed' )
+        ax.plot(age_range2, M_range2, color='blue', label='time until gas depletes' )
+        ax.set_title(f'Stellar mass evolution of {lqso.name}')
+    
+    elif lqso.name == 'J0806+2006':
+        ax.plot(age_range, M_range, color='fuchsia', label='time until galaxy formed' )
+        ax.plot(age_range2, M_range2, color='blue', label='time until gas depletes' )
+        ax.set_title('Stellar mass evolution')
+    else:
+        ax.plot(age_range, M_range, color='fuchsia')
+        ax.plot(age_range2, M_range2, color='blue')
+    ax.legend()
+    
+    return fig, ax
+    
+
+    
+    

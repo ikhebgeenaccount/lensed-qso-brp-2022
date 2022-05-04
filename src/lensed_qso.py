@@ -456,6 +456,7 @@ class LensedQSO:
             if copy:
                 distutils.dir_util.copy_tree(path, os.path.join('data', self.name, 'agnfitter'))
         elif os.path.isdir(repo_path) and check_git:
+            # TODO: fix
             # print(re.escape(os.path.join(repo_path, f'parameter_outvalues_{self.agn_fitter_id(component=component)}')).replace('/', '\\/') + '[0-9]?\.txt')
             # par_values_file = glob.glob(re.escape(os.path.join(repo_path, f'parameter_outvalues_{self.agn_fitter_id(component=component)}')).replace('/', '\\/') + '[0-9]?\.txt')
             # print(par_values_file)
@@ -479,6 +480,10 @@ class LensedQSO:
                              delim_whitespace=True, skiprows=4, header=None, names=cols)
 
         cid = COMPONENT_ID[component]
+        
+        if not hasattr(self, 'agnf_output'):
+            self.agnf_output = [0] * len(COMPONENT_ID)
+            
         self.agnf_output[cid] = {}
         for c in cols:
             self.agnf_output[cid][c] = []
@@ -489,7 +494,7 @@ class LensedQSO:
 
         return output
 
-    def get_agnf_output_field(self, field, component='_sub', demag=False):
+    def get_agnf_output_field(self, field, demag, component='_sub'):
         if hasattr(self, 'agnf_output'):
 
             if demag and component == '_sub':
