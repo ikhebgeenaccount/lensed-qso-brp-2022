@@ -14,6 +14,7 @@ from src.plots import residual_plot, plot_evolution
 from src.percent_to_fraction import percent_to_fraction
 from src.filters import populate_filter_profile_path_column
 from src.model_sed import fit
+import src.ms_data_reader
 
 if __name__ == '__main__':
     
@@ -40,7 +41,8 @@ if __name__ == '__main__':
     
     def all_galaxies():
         ax = None
-        ax2=None
+        ax2 = None
+        ax3 = None
         for i in range(10):#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
             
             g=GALAXIES[i]
@@ -68,6 +70,28 @@ if __name__ == '__main__':
                plot_evolution(lqso, fig=fig2, ax=ax2) 
                
             plot_evolution(lqso, single=True)
+            
+            if ax3 is None:
+                fig3, ax3 = plot_evolution(lqso)
+            else:
+               plot_evolution(lqso, fig=fig3, ax=ax3) 
+               
+            plot_evolution(lqso, single=True)
+            
+        from astropy.cosmology import LambdaCDM
+        LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)
+        for label, df in src.ms_data_reader.FILES.items():
+            if 'Birkin' in label:
+                continue
+            ax2.scatter(LCDM.age(df[df['z'] > 0]['z']) * 1e9, np.power(10., df[df['z'] > 0]['logMstar']), label=label,
+                 zorder=50, s=50, alpha=.7)
+        ax2.legend()
+#        ax2.set_ylim(ymax=1e12)
+        ax2.set_xlim(xmin=3.5e9)
+        
+        fig2.savefig(os.path.join('plots', 'total_evolution_withdata.pdf'))
+
+        
         plt.show()
     all_galaxies()
     
