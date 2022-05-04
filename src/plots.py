@@ -42,7 +42,9 @@ def speagle_gms(log_m_star, t, log_m_star_err=None, t_err=None):
     return log_sfr, log_sfr_err
 
 
-def plot_lqso_in_speagle(lqso, fig=None, ax=None, label=None, save_name='speagle'):
+def plot_lqso_in_speagle(lqso, fig=None, ax=None, label=None, save_name='speagle', errorbar_kwargs=None):
+    if errorbar_kwargs is None:
+        errorbar_kwargs = {}
     # Get age
     #t = np.power(10., lqso.agn_fitter_output()['age'].iloc[2])
     #t_pe = (lqso.agn_fitter_output()['age'].iloc[3] - t) * np.log(10.) * t
@@ -96,7 +98,7 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None, label=None, save_name='speagle
     yerr_opt = yerr_opt / (sfr_opt * np.log(10.))  # Calculate error in SFR_opt from S
 
     # Plot galaxy
-    ax.errorbar(log_m_star, np.log10(sfr_tot), xerr=xerr, yerr=yerr_tot, label=f'{lqso.name} SFR_tot, z={lqso.props.z_qso.values[0]:.3f}' if label is None else label, fmt='o', capsize=4)
+    ax.errorbar(log_m_star, np.log10(sfr_tot), xerr=xerr, yerr=yerr_tot, label=f'{lqso.name} SFR_tot, z={lqso.props.z_qso.values[0]:.3f}' if label is None else label, fmt='o', capsize=4, **errorbar_kwargs)
     # ax.errorbar(log_m_star, np.log10(sfr_ir), xerr=xerr, yerr=yerr_ir, label=f'{lqso.name} SFR_ir, z={lqso.props.z_qso.values[0]:.3f}', fmt='o', capsize=4)
     # ax.errorbar(log_m_star, np.log10(sfr_opt), xerr=xerr, yerr=yerr_opt, label=f'{lqso.name} SFR_opt, z={lqso.props.z_qso.values[0]:.3f}', fmt='o', capsize=4)
 
