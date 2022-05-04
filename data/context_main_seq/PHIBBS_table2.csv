@@ -1,5 +1,4 @@
 Source	Type^a	v_rot^b	R_1/2opt^c	R_1/2CO^c	SFR^d	F(CO)^e	sigma(CO)	L(CO)^e	M_mol-gas^f	M_*^g	f_gas^h	logSigma_mol gas^i	logSigma_SFR^g	
-(km s^-1)	(kpc)	(kpc)	(M_sun yr)^-1	(Jy km s^-1)	(Jy km s^-1)	(K km s^-1 pc^-2)	(M_sun)	(M_sun)	(M_sun pc^-2)	(M_sun yr^-1 kpc^-2)	
 EGS12004280	Disk(A)	154	4.7	 ... 	100	1.24	0.24	7.9E+09	7.0E+10	4.1E+10	0.63	2.70	-0.14	
 EGS12004351	Merger	302	5.7	5.7	150	2.53	0.34	1.6E+10	1.4E+11	8.0E+10	0.64	2.84	-0.14	
 EGS12004754	Disk(A)	69	6.5	 ... 	53	0.73	0.07	4.7E+09	4.1E+10	9.3E+10	0.31	2.19	-0.70	
