@@ -11,7 +11,8 @@ from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
 from src.ned_to_sed import ned_table_to_sed
 from src.filters import populate_filter_profile_path_column
 from src.model_subtraction import model_subtraction
-from src.plots import plot_lqso_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey
+from src.plots import plot_lqso_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot
+import src.ms_data_reader
 
 import src.model_sed
 
@@ -24,42 +25,35 @@ GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447',
 PLOTS_SAVE = 'plots'
 
 
-def all_galaxies(n=10, sub_folder='10runs_fixed_red'):
+def all_galaxies(n=10, sub_folder=None):
     lqsos = []
     fig = None
     ax = None
+    figm, axm = None, None
     lqsos = []
-    for g in GALAXIES:#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
+    for g in GALAXIES:
         lqso = LensedQSO(g)
         lqsos.append(lqso)
         print(g)
-        lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
-        # lqso.plot_spectrum(loglog=True)
-        # plot_n_runs_pars(lqso, sub_folder=sub_folder)
+        lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder, copy=False)
 
-        figs, axs = None, None
-        for i in range(n):
-            lqso.agn_fitter_output(run_time=i, sub_folder=sub_folder)
-            figs, axs = plot_lqso_in_speagle(lqso, figs, axs, label=lqso.name + str(i))
+        # Plot in speagle but grouped
+        figm, axm = plot_lqso_in_speagle(lqso, figm, axm, label='This work', save_name='speagle_comp.pdf',
+                                         errorbar_kwargs={'color': 'black', 'zorder': 100, 'markersize': 6, 'alpha': .7})
 
-        lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
+        # Plot in standard speagle
+        # fig, ax = plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
 
-        # mags_to_fluxes(lqso, components=None if g != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
+        # Plot AGNfitter output stuff
+        # plot_n_runs_pars(lqso, sub_folder=sub_folder, n=n)
+        # residual_plot(lqso, errors=True)
 
-        # count = lqso.filter_sed().loc[lqso.sed['flux_G'] > 0].shape[0]
-        # print(f'{g}, {count}')
+        # figs, axs = None, None
+        # for i in range(n):
+        #     lqso.agn_fitter_output(run_time=i, sub_folder=sub_folder)
+        #     figs, axs = plot_lqso_in_speagle(lqso, figs, axs, label=lqso.name + str(i), save_name=f'{lqso.name}_speagle')
 
-        # telescope = 'Magellan'
-        # if lqso.mags.loc[lqso.mags.telescope == telescope].shape[0] > 0:
-            # print(g, 'has', telescope)
-
-        # model_subtraction(lqso)
-        # m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
-        # a = src.model_sed.fit(lqso, m)
-        # print(a)
-
-        # lqso.agn_fitter_output()
-        fig, ax = plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
+        # lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
 
     fig, ax = plot_agnf_output(lqsos, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
     # Add Type1/2 AGN separation line as found in AGNfitter paper
@@ -67,8 +61,19 @@ def all_galaxies(n=10, sub_folder='10runs_fixed_red'):
     ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
     fig.savefig(os.path.join('plots', f'EBVbbb_Nh.pdf'))
 
-    plot_agnf_output(lqsos, 'SFR_IR', 'SFR_opt', color_scale_field='age', equals_line=True)
+    plot_agnf_output(lqsos, 'SFR_IR', 'SFR_opt', color_scale_field='age', equals_line=True, logx=True, logy=True)
     plot_lqsos_vs_stacey(lqsos)
+
+    for label, df in src.ms_data_reader.FILES.items():
+        axm.errorbar(df['logMstar'], df['logSFR'],
+                     xerr=None if np.sum([df['logMstar_me'], df['logMstar_pe']]) == 0 else
+                     np.reshape([df['logMstar_me'], df['logMstar_pe']], (2, len(df['logMstar_pe']))),
+                     yerr=None if np.sum([df['logSFR_me'], df['logSFR_pe']]) == 0 else
+                     np.reshape([df['logSFR_me'], df['logSFR_pe']], (2, len(df['logSFR_pe']))), label=label, fmt='o',
+                     zorder=50, markersize=6, alpha=.7)
+
+    axm.legend([axm.get_legend().get_texts()[0].get_text(), 'This work'] + list(src.ms_data_reader.FILES.keys()))
+    figm.savefig(os.path.join('plots', 'speagle_comp.pdf'))
 
 
 def big_plot():
