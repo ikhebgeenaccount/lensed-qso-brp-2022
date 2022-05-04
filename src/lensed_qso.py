@@ -479,6 +479,10 @@ class LensedQSO:
                              delim_whitespace=True, skiprows=4, header=None, names=cols)
 
         cid = COMPONENT_ID[component]
+        
+        if not hasattr(self, 'agnf_output'):
+            self.agnf_output = [0] * len(COMPONENT_ID)
+            
         self.agnf_output[cid] = {}
         for c in cols:
             self.agnf_output[cid][c] = []

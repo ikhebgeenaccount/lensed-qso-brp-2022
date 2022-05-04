@@ -273,3 +273,67 @@ def plot_lqsos_vs_stacey(lqsos):
 
     fig.tight_layout()
     fig.savefig(os.path.join('plots', 'SFR_IR_stacey_res.pdf'))
+    
+    
+
+def plot_evolution(lqso):
+    """
+    This function plots the stellar mass evolution assuming constant sfr
+    under the formula M_star (t) = SFR * t + (M_star(age) - SFR * age)
+    
+    This becomes 0 at t = SFR * age - M_star(age) / SFR
+    
+    The goal of this is to give a rough indication of whether your sfr's make sense
+    """
+     #redshift of the galaxy
+    z = lqso.props.z_qso.values[0]
+    
+    #stellar mass of the galaxy
+    logM , pe_logM, me_logM = lqso.get_agnf_output_field('logMstar', demag=True)  
+    M = 10 ** logM
+    
+    #TODO: calculate the non-log Mstar errors (if we want them)
+    
+    #total SFR of the galaxy
+    sfr_ir, sfr_ir_pe, sfr_ir_me = lqso.get_agnf_output_field('SFR_IR', demag=True)
+    sfr_opt, sfr_opt_pe, sfr_opt_me = lqso.get_agnf_output_field('SFR_opt', demag=True)
+
+    sfr_tot = sfr_opt + sfr_ir
+    sfr_tot_pe = np.sqrt(sfr_ir_pe ** 2. + sfr_opt_pe ** 2.)
+    sfr_tot_me = np.sqrt(sfr_ir_me ** 2. + sfr_opt_me ** 2.)
+    
+    #age of the individual galaxy, plotting this on the plot
+    age = LCDM.age(z).value * 1e9 #in yrs
+    
+    #setting up the plot
+    plt.figure(figsize=(10,8))
+    plt.xlabel('age of universe [yr]')
+    plt.ylabel('Stellar mass [solar mass]')
+    plt.title('Stellar mass evolution')
+    plt.scatter(age, M, label = f'{lqso.name}') #placing the galaxy
+    
+    #the constant in the formula
+    b = M - (sfr_tot * age)
+    
+    #TODO: add real gas masses
+    M_gas= 3e9 #gas mass in solar masses
+    
+    #make a range of ages in order to make the evolution line
+    #lower limit = where no solar mass had been formed
+    #upper limit = where all the gas mass has depleted
+    age_range = np.linspace((-(M - sfr_tot * age)/sfr_tot), age, 100)
+    age_range2 = np.linspace( age,(M_gas + M - b)/sfr_tot, 100)
+    
+    #formula of the M_star assuming constant sfr
+    M_range = sfr_tot * age_range + b
+    M_range2 = sfr_tot * age_range2 + b
+    
+    
+    plt.plot(age_range, M_range, label='time until galaxy formed' )
+    plt.plot(age_range2, M_range2, label='time until gas depletes' )
+    plt.legend()
+    
+    
+
+    
+    
