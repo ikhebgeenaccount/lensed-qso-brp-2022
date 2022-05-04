@@ -80,5 +80,6 @@ FILES = {
                                                  lambda df: np.zeros(len(df['Source'])), lambda df: np.log10(df['M_*^g']),
                                                  lambda df: np.zeros(len(df['Source'])), lambda df: np.zeros(len(df['Source']))],
                                       read_csv_kwargs={'delimiter': '\t', 'skipinitialspace': True, 'na_values': ['...', '... ']}),
-    # 'SMGs, Cunha+2015':
+    'SMGs, Cunha+2015': _csv_reader([os.path.join('data', 'context_main_seq', 'Cunha.csv')], col_names=['ID', 'z_phot'] + COLUMNS[2:],
+                                    read_csv_kwargs={'delimiter': '\t'})
 }
