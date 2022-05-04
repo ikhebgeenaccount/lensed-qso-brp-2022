@@ -41,6 +41,8 @@ def _csv_reader(files, col_names, join_col=None, read_csv_kwargs=None):
     df = None
     for file in files:
         tdf= pd.read_csv(file, **read_csv_kwargs)
+        print(tdf.columns)
+        print(tdf)
 
         if df is None:
             df = tdf
@@ -77,6 +79,6 @@ FILES = {
                                       col_names=['Source', 'z_CO', lambda df: np.log10(df['SFR^d']), lambda df: np.zeros(len(df['Source'])),
                                                  lambda df: np.zeros(len(df['Source'])), lambda df: np.log10(df['M_*^g']),
                                                  lambda df: np.zeros(len(df['Source'])), lambda df: np.zeros(len(df['Source']))],
-                                      read_csv_kwargs={'delim_whitespace': True, 'na_values': '...'}),
+                                      read_csv_kwargs={'delimiter': '\t', 'skipinitialspace': True, 'na_values': ['...', '... ']}),
     # 'SMGs, Cunha+2015':
 }
