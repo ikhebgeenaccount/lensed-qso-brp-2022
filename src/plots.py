@@ -4,9 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import os.path
-import pandas as pd
 
-from src.lensed_qso import LensedQSO, RADIO_CUTOFF, XRAY_CUTOFF
 
 LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)  # Cosmological constants as Speagle uses them
 
@@ -122,7 +120,7 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
     return fig, ax
 
 
-def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component='_sub', equals_line=False, logx=False, logy=False):
+def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component='_sub', equals_line=False, logx=False, logy=False, unique_markers=True):
     f1vs = []
     f1es = [[],[]]
 
@@ -130,6 +128,7 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component=
     f2es = [[],[]]
 
     fcs = []
+    
 
     for lqso in lqsos:
         f1v, f1pe, f1me = lqso.get_agnf_output_field(field_1, component=component, demag=True)
@@ -149,6 +148,8 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component=
 
     cm = plt.cm.get_cmap('RdYlBu')
     fig, ax = plt.subplots()
+    markers=['o', 'v', '8', 's','h', 'p', 'D', 'X', '>', '<']
+    
     if color_scale_field is not None:
         ax_scatter = ax.scatter(f1vs, f2vs, c=fcs, cmap=cm, zorder=100)#, vmin=0, vmax=10000)
         ax.errorbar(f1vs, f2vs, xerr=f1es, yerr=f2es, zorder=0, fmt='o')#, vmin=0, vmax=10000)
@@ -362,6 +363,8 @@ def plot_evolution(lqso, fig=None, ax=None, single=False):
 
     if single == False:
         fig.savefig(os.path.join('plots', 'total_evolution.pdf'))
+        
+   
 
     return fig, ax
 
