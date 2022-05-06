@@ -331,7 +331,7 @@ def plot_evolution(lqso, fig=None, ax=None, single=False):
     b = M - (sfr_tot * age)
 
     #TODO: add real gas masses
-    M_gas= 0.6*M #gas mass in solar masses
+    M_gas= 0.4*M #gas mass in solar masses
 
     #make a range of ages in order to make the evolution line
     #lower limit = where no solar mass had been formed
@@ -348,6 +348,9 @@ def plot_evolution(lqso, fig=None, ax=None, single=False):
         ax.plot(age_range2, M_range2, color='blue', label='time until gas depletes' )
         ax.set_title(f'Stellar mass evolution of {lqso.name}')
 
+        fig.savefig(os.path.join('plots', f'{lqso.name}_evolution.pdf'))
+
+
     elif lqso.name == 'J0806+2006':
         ax.plot(age_range, M_range, color='fuchsia', label='time until galaxy formed' )
         ax.plot(age_range2, M_range2, color='blue', label='time until gas depletes' )
@@ -356,6 +359,9 @@ def plot_evolution(lqso, fig=None, ax=None, single=False):
         ax.plot(age_range, M_range, color='fuchsia')
         ax.plot(age_range2, M_range2, color='blue')
     ax.legend()
+
+    if single == False:
+        fig.savefig(os.path.join('plots', 'total_evolution.pdf'))
 
     return fig, ax
 
