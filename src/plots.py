@@ -237,7 +237,7 @@ def residual_plot(lqso, errors=False):
 
     ax1.set_ylim(ymin=1e44)
     # ax1.set_xlim(xmin=5e11, xmax=1.2e16)
-    ax1.legend(['Starburst','Big Blue Bump','Stars', 'Torus','Total'])
+    ax1.legend(['Starburst','Accretion disk','Stars', 'Torus','Total'])
 
 
     #second plot

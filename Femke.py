@@ -9,12 +9,12 @@ from src.ned_to_sed import ned_table_to_sed
 from src.xml_to_txt import xml_to_txt
 from src.tophat import tophat
 from src.model_subtraction import model_subtraction
-from src.plots import plot_lqso_in_speagle
-from src.plots import residual_plot, plot_evolution
+from src.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual, plot_evolution
 from src.percent_to_fraction import percent_to_fraction
 from src.filters import populate_filter_profile_path_column
 from src.model_sed import fit
 import src.ms_data_reader
+import os
 
 if __name__ == '__main__':
     
@@ -43,12 +43,14 @@ if __name__ == '__main__':
         ax = None
         ax2 = None
         ax3 = None
+        lqsos=[]
         for i in range(10):#['J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']:
             
             g=GALAXIES[i]
             print(g)
             lqso = LensedQSO(g)
             lqso.agn_fitter_output(check_git=True, run_time=run_times[i])
+            lqsos.append(lqso)
     
             #if '1330' in g:
                 #continue
@@ -63,27 +65,28 @@ if __name__ == '__main__':
 #            else:
 #                 plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
             
-            #plot evolution all galaxies
+            #plot evolution all galaxies, including the other data
             if ax2 is None:
                 fig2, ax2 = plot_evolution(lqso)
             else:
                plot_evolution(lqso, fig=fig2, ax=ax2) 
                
-            plot_evolution(lqso, single=True)
             
+            #plot evolution excluding all other data
             if ax3 is None:
                 fig3, ax3 = plot_evolution(lqso)
             else:
-               plot_evolution(lqso, fig=fig3, ax=ax3) 
+                plot_evolution(lqso, fig=fig3, ax=ax3) 
                
-            plot_evolution(lqso, single=True)
+            #plot_evolution(lqso, single=True)
             
+        
         from astropy.cosmology import LambdaCDM
         LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)
         for label, df in src.ms_data_reader.FILES.items():
             if 'Birkin' in label:
                 continue
-            ax2.scatter(LCDM.age(df[df['z'] > 0]['z']) * 1e9, np.power(10., df[df['z'] > 0]['logMstar']), label=label,
+            ax2.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label,
                  zorder=50, s=50, alpha=.7)
         ax2.legend()
 #        ax2.set_ylim(ymax=1e12)
@@ -91,7 +94,13 @@ if __name__ == '__main__':
         
         fig2.savefig(os.path.join('plots', 'total_evolution_withdata.pdf'))
 
-        
+        #obscuration plot
+        fig4, ax4 = plot_agnf_output(lqsos, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
+        # Add Type1/2 AGN separation line as found in AGNfitter paper
+        ax4.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
+        ax4.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
+        fig4.savefig(os.path.join('plots', 'EBVbbb_Nh.pdf'))
+            
         plt.show()
     all_galaxies()
     
