@@ -41,8 +41,6 @@ def _csv_reader(files, col_names, join_col=None, read_csv_kwargs=None):
     df = None
     for file in files:
         tdf= pd.read_csv(file, **read_csv_kwargs)
-        print(tdf.columns)
-        print(tdf)
 
         if df is None:
             df = tdf
@@ -66,7 +64,7 @@ def _extract_cols(df, col_names):
     return rdf
 
 
-COLUMNS = ['name', 'z', 'logSFR', 'logSFR_pe', 'logSFR_me', 'logMstar', 'logMstar_pe', 'logMstar_me']
+COLUMNS = ['name', 'redshift', 'logSFR', 'logSFR_pe', 'logSFR_me', 'logMstar', 'logMstar_pe', 'logMstar_me']
 
 FILES = {
     'SMGs, Birkin+2020': _fits_reader([os.path.join('data', 'context_main_seq', 'table_a2.fits'),
