@@ -42,7 +42,34 @@ def speagle_gms(log_m_star, t, log_m_star_err=None, t_err=None):
     return log_sfr, log_sfr_err
 
 
-def plot_lqso_in_speagle(lqso, fig=None, ax=None, label=None, save_name='speagle', errorbar_kwargs=None):
+def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_res', x_field='univ_age', x_label='Age of universe [Gyr]', errorbar_kwargs=None):
+    if errorbar_kwargs is None:
+        errorbar_kwargs = {}
+
+    if fig == ax == None:
+        fig, ax = plt.subplots()
+
+        ax.set_xlabel(x_label)
+        ax.set_ylabel('Residual with Speagle, logSFR')
+
+    df['univ_age'] = LCDM.age(df['redshift']).value
+
+    speagle_log_sfr = speagle_gms(df['logMstar'], df['univ_age'])
+
+    ax.errorbar(df[x_field], df['logSFR'] - speagle_log_sfr[0], yerr=None if np.sum([df['logSFR_me'], df[f'logSFR_pe']]) == 0 else np.reshape([df['logSFR_me'], df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o', **errorbar_kwargs)
+    ax.legend()
+
+    ax.axhline(0, xmin=0, xmax=1, color='grey', ls='--')
+
+    fig.savefig(os.path.join('plots', f'{save_name}.pdf'))
+
+    return fig, ax
+
+
+def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle', sfr_type='logSFR', group=True, errorbar_kwargs=None):
+    """
+    label must be a list when group=False
+    """
     if errorbar_kwargs is None:
         errorbar_kwargs = {}
     # Get age
@@ -55,18 +82,6 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None, label=None, save_name='speagle
 
     z_min = 1.019
     z_max = 1.589
-
-    # Star formation rate
-    sfr_ir, sfr_ir_pe, sfr_ir_me = lqso.get_agnf_output_field('SFR_IR', demag=True)
-
-    sfr_opt, sfr_opt_pe, sfr_opt_me = lqso.get_agnf_output_field('SFR_opt', demag=True)
-
-    sfr_tot = sfr_opt + sfr_ir
-    sfr_tot_pe = np.sqrt(sfr_ir_pe ** 2. + sfr_opt_pe ** 2.)
-    sfr_tot_me = np.sqrt(sfr_ir_me ** 2. + sfr_opt_me ** 2.)
-
-    # logM_star
-    log_m_star, log_m_star_pe,log_m_star_me = lqso.get_agnf_output_field('logMstar', demag=True)
 
     if ax is None:
         # These things are only done if no ax is given
@@ -85,22 +100,19 @@ def plot_lqso_in_speagle(lqso, fig=None, ax=None, label=None, save_name='speagle
         ax.set_ylabel('log SFR')
         ax.set_xlabel('log$M_*$')
 
-    # Format errors properly
-    xerr = np.array([log_m_star_me, log_m_star_pe]).reshape((2, 1))
-
-    yerr_tot = np.array([sfr_tot_me, sfr_tot_pe]).reshape((2, 1))
-    yerr_tot = yerr_tot / (sfr_tot * np.log(10.))  # Calculate error in total SFR from S
-
-    yerr_ir = np.array([sfr_ir_me, sfr_ir_pe]).reshape((2, 1))
-    yerr_ir = yerr_ir / (sfr_ir * np.log(10.))  # Calculate error in SFR_IR from S
-
-    yerr_opt = np.array([sfr_opt_me, sfr_opt_pe]).reshape((2, 1))
-    yerr_opt = yerr_opt / (sfr_opt * np.log(10.))  # Calculate error in SFR_opt from S
-
     # Plot galaxy
-    ax.errorbar(log_m_star, np.log10(sfr_tot), xerr=xerr, yerr=yerr_tot, label=f'{lqso.name} SFR_tot, z={lqso.props.z_qso.values[0]:.3f}' if label is None else label, fmt='o', capsize=4, **errorbar_kwargs)
-    # ax.errorbar(log_m_star, np.log10(sfr_ir), xerr=xerr, yerr=yerr_ir, label=f'{lqso.name} SFR_ir, z={lqso.props.z_qso.values[0]:.3f}', fmt='o', capsize=4)
-    # ax.errorbar(log_m_star, np.log10(sfr_opt), xerr=xerr, yerr=yerr_opt, label=f'{lqso.name} SFR_opt, z={lqso.props.z_qso.values[0]:.3f}', fmt='o', capsize=4)
+    if group:
+        ax.errorbar(df['logMstar'], df[sfr_type],
+                 xerr=None if np.sum([df['logMstar_me'], df['logMstar_pe']]) == 0 else
+                 np.reshape([df['logMstar_me'], df['logMstar_pe']], (2, len(df['logMstar_pe']))),
+                 yerr=None if np.sum([df[f'{sfr_type}_me'], df[f'{sfr_type}_pe']]) == 0 else
+                 np.reshape([df[f'{sfr_type}_me'], df[f'{sfr_type}_pe']], (2, len(df[f'{sfr_type}_pe']))), label=label, fmt='o',
+                 **errorbar_kwargs)
+    else:
+        for lab, r in zip(label, df.iterrows()):
+            _, row = r
+            ax.errorbar(row['logMstar'], row[sfr_type], xerr=[[row['logMstar_me']], [row['logMstar_pe']]],
+                        yerr=[[row[f'{sfr_type}_me']], [row[f'{sfr_type}_pe']]], label=lab, fmt='o', **errorbar_kwargs)
 
     ax.legend(ncol=2)
 
@@ -275,27 +287,27 @@ def plot_lqsos_vs_stacey(lqsos):
 
     fig.tight_layout()
     fig.savefig(os.path.join('plots', 'SFR_IR_stacey_res.pdf'))
-    
-    
+
+
 
 def plot_evolution(lqso, fig=None, ax=None, single=False):
     """
     This function plots the stellar mass evolution assuming constant sfr
     under the formula M_star (t) = SFR * t + (M_star(age) - SFR * age)
-    
+
     This becomes 0 at t = SFR * age - M_star(age) / SFR
-    
+
     The goal of this is to give a rough indication of whether your sfr's make sense
     """
      #redshift of the galaxy
     z = lqso.props.z_qso.values[0]
-    
+
     #stellar mass of the galaxy
-    logM , pe_logM, me_logM = lqso.get_agnf_output_field('logMstar', demag=True)  
+    logM , pe_logM, me_logM = lqso.get_agnf_output_field('logMstar', demag=True)
     M = 10 ** logM
-    
+
     #TODO: calculate the non-log Mstar errors (if we want them)
-    
+
     #total SFR of the galaxy
     sfr_ir, sfr_ir_pe, sfr_ir_me = lqso.get_agnf_output_field('SFR_IR', demag=True)
     sfr_opt, sfr_opt_pe, sfr_opt_me = lqso.get_agnf_output_field('SFR_opt', demag=True)
@@ -303,10 +315,10 @@ def plot_evolution(lqso, fig=None, ax=None, single=False):
     sfr_tot = sfr_opt + sfr_ir
     sfr_tot_pe = np.sqrt(sfr_ir_pe ** 2. + sfr_opt_pe ** 2.)
     sfr_tot_me = np.sqrt(sfr_ir_me ** 2. + sfr_opt_me ** 2.)
-    
+
     #age of the individual galaxy, plotting this on the plot
     age = LCDM.age(z).value * 1e9 #in yrs
-    
+
     #setting up the plot
     if ax is None:
         fig,ax= plt.subplots(figsize=(10,8))
@@ -314,28 +326,28 @@ def plot_evolution(lqso, fig=None, ax=None, single=False):
     ax.set_ylabel('Stellar mass [solar mass]')
 
     ax.scatter(age, M, label = f'{lqso.name}', zorder=100, s=49) #placing the galaxy
-    
+
     #the constant in the formula
     b = M - (sfr_tot * age)
-    
+
     #TODO: add real gas masses
     M_gas= 0.6*M #gas mass in solar masses
-    
+
     #make a range of ages in order to make the evolution line
     #lower limit = where no solar mass had been formed
     #upper limit = where all the gas mass has depleted
     age_range = np.linspace((-(M - sfr_tot * age)/sfr_tot), age, 100)
     age_range2 = np.linspace( age,(M_gas + M - b)/sfr_tot, 100)
-    
+
     #formula of the M_star assuming constant sfr
     M_range = sfr_tot * age_range + b
     M_range2 = sfr_tot * age_range2 + b
-    
+
     if single:
         ax.plot(age_range, M_range, color='fuchsia', label='time until galaxy formed' )
         ax.plot(age_range2, M_range2, color='blue', label='time until gas depletes' )
         ax.set_title(f'Stellar mass evolution of {lqso.name}')
-    
+
     elif lqso.name == 'J0806+2006':
         ax.plot(age_range, M_range, color='fuchsia', label='time until galaxy formed' )
         ax.plot(age_range2, M_range2, color='blue', label='time until gas depletes' )
@@ -344,9 +356,9 @@ def plot_evolution(lqso, fig=None, ax=None, single=False):
         ax.plot(age_range, M_range, color='fuchsia')
         ax.plot(age_range2, M_range2, color='blue')
     ax.legend()
-    
-    return fig, ax
-    
 
-    
-    
+    return fig, ax
+
+
+
+

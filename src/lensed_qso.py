@@ -85,6 +85,8 @@ SOURCES_COLORS = {}
 
 COLORS = plt.get_cmap('tab10').colors + plt.get_cmap('Dark2').colors + plt.get_cmap('Accent').colors
 
+AGNFITTER_FIELDS = ['tau', 'log age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
+
 
 class LensedQSO:
 
@@ -473,19 +475,17 @@ class LensedQSO:
         except:
             print('No SED output found in AGNfitter output for' + self.name)
 
-        cols = ['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
-
         # Read parameter outvalues
         output = pd.read_csv(os.path.join(path, par_values_file),
-                             delim_whitespace=True, skiprows=4, header=None, names=cols)
+                             delim_whitespace=True, skiprows=4, header=None, names=AGNFITTER_FIELDS)
 
         cid = COMPONENT_ID[component]
-        
+
         if not hasattr(self, 'agnf_output'):
             self.agnf_output = [0] * len(COMPONENT_ID)
-            
+
         self.agnf_output[cid] = {}
-        for c in cols:
+        for c in AGNFITTER_FIELDS:
             self.agnf_output[cid][c] = []
 
             self.agnf_output[cid][c].append(output[c].iloc[2])
