@@ -246,10 +246,8 @@ def residual_plot(lqso, errors=False):
     #second plot
     for i in range(10):
         rea_interp = np.interp(x = rest_nu_data, xp=rest_nu_rea, fp=realizations[f'TOTALnuLnu{i}'])
-        if errors:
-            ax2.errorbar(rest_nu_data, data['nuLnu'] - rea_interp, yerr=data['nuLnu_err'], fmt='o' , color='black')
-        else:
-            ax2.scatter(rest_nu_data, data['nuLnu'] - rea_interp, color='black')
+        ax2.errorbar(rest_nu_data[nupper], data['nuLnu'][nupper] - rea_interp[nupper], yerr=data['nuLnu_err'][nupper] if errors else None, fmt='o' , color='black')
+        ax2.errorbar(rest_nu_data[upper], data['nuLnu'][upper] - rea_interp[upper], yerr=data['nuLnu_err'][upper] if errors else None, fmt='v' , color='black')
     ax2.set_xlim(xmin=3e18 / XRAY_CUTOFF, xmax=3e18 / RADIO_CUTOFF)
     ax2.axhline(0, xmin=0, xmax=1, color='black')
 

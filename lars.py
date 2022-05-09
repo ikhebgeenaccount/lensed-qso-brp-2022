@@ -6,7 +6,7 @@ import pandas as pd
 
 from src.agn_fitter_automated import run_agn_fitter
 from src.lensed_qso import LensedQSO
-from src.latex_output import dataframe_to_latex_table, sed_to_latex_table, all_seds_plot, plots_in_subfigures
+from src.latex_output import dataframe_to_latex_table, sed_to_latex_table, plots_in_subfigures
 from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
 from src.ned_to_sed import ned_table_to_sed
 from src.filters import populate_filter_profile_path_column
@@ -79,7 +79,7 @@ def all_galaxies(n=10, sub_folder=None):
                 lqsos_dict[f'mu_{f}_me'].append(me)
 
         # Plot AGNfitter output stuff
-        # plot_n_runs_pars(lqso, sub_folder=sub_folder, n=n)
+        # plot_n_runs_pars(lqso, sub_folder=sub_folder, n=n)  # when running this one, have to run lqso.find_best_run afterwards again, otherwise stuck on last run
         # lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder, copy=False)
         residual_plot(lqso, errors=True)
 
@@ -162,69 +162,6 @@ def big_plot():
     fig.savefig(os.path.join(PLOTS_SAVE, 'SED_all.png'))
 
 
-def single_galaxy():
-    galaxy = 'J1650+4251'
-    lqso = LensedQSO(galaxy)
-    # lqso.find_best_run(run_times=5)
-
-    # print(lqso.filter_sed(disallowed_sources=src.lensed_qso.FILTERED_SOURCES_AGNFITTER[lqso.name]).sort_values(by='wavelength')[['source', 'wavelength']])
-    # print(lqso.sed_to_agn_fitter(component='_sub_demag'))
-
-    # ned_table_to_sed(lqso, ned_file='ned_wise.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
-    # ned_table_to_sed(lqso, ned_file='ned_2mass.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
-    # ned_table_to_sed(lqso, ned_file='ned_chandra.txt', allowed_sources=['Chandra', 'WISE', '2MASS'])
-
-    # mags_to_fluxes(lqso, components=None if galaxy != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
-    # m = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
-    # mag_ratio_split_total_flux(lqso, 'Koopmans+2003', overwrite=True,  components=None if galaxy != 'B1608+656' else ['_G', '_G2', '_A', '_B', '_C', '_D', ''])
-
-    # a = src.model_sed.fit(lqso, m)
-
-    model_subtraction(lqso)
-
-    lqso.plot_spectrum()
-    # lqso.plot_spectrum(component='_sub')
-    # lqso.plot_spectrum(component='_sub_demag')
-
-    # catalog, length = lqso.sed_to_agn_fitter(rX=True)
-
-    # print(catalog)
-    # print(length)
-
-    # lqso.agn_settings(rX=True)
-
-    # lqso.load_agnf_output()
-    # print(lqso.get_agnf_output_field('SFR_IR', component='_sub'))
-    # print(lqso.get_agnf_output_field('SFR_IR', component='_sub_demag_test'))
-    #print(lqso.agn_fitter_output()[['tau', 'age', 'LIR(8-1000)', 'SFR_IR', 'SFR_opt', 'logMstar']])
-    # plot_lqso_in_speagle(lqso)
-
-    # plot_agnf_output([galaxy], 'SFR_IR', 'SFR_opt', color_scale_field='age')
-
-    # fig, ax = plot_agnf_output([galaxy], 'EBVbbb', 'Nh', color_scale_field='SFR_IR')
-
-    # Add Type1/2 AGN separation line as found in AGNfitter paper
-    # ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
-    # ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
-
-
-def known_mag_gals():
-    known_mag_gals = ['J1524+4409', 'B1608+656' , 'J1455+1447']
-
-    fig, ax = None, None
-    for g in known_mag_gals:
-        lqso = LensedQSO(g)
-        fig, ax = plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
-
-    plot_agnf_output(known_mag_gals, 'SFR_IR', 'SFR_opt', color_scale_field='age')
-
-    fig, ax = plot_agnf_output(known_mag_gals, 'EBVbbb', 'Nh', color_scale_field='SFR_IR')
-
-    # Add Type1/2 AGN separation line as found in AGNfitter paper
-    ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
-    ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
-
-
 def latex():
     # Filter table to latex
     # dataframe_to_latex_table(src.filters.FILTER_PROPERTIES.loc[src.filters.FILTER_PROPERTIES['conversion'].notnull()],
@@ -239,10 +176,13 @@ def latex():
     #     sed_to_latex_table(lqso)
 
     # SED plots to latex
-    # all_seds_plot(GALAXIES)
+    # plots_in_subfigures(GALAXIES, 'SED_total', label='sed')
 
     # Foreground fit plots
-    plots_in_subfigures(GALAXIES, 'G_model_fit', 'Fits to foreground galaxy datapoints for every galaxy.')
+    # plots_in_subfigures(GALAXIES, 'G_model_fit', label='fg_fit')
+
+    # AGNfitter residuals
+    plots_in_subfigures(GALAXIES, 'agnf_residuals', label='agnf_res')
 
 
 def plot_ell_models():
@@ -263,13 +203,13 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    all_galaxies()
+    # all_galaxies()
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
     # single_galaxy()
     # known_mag_gals()
 
-    # latex()
+    latex()
 
     plt.show()
