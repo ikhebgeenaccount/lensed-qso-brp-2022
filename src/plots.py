@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import os.path
+from src.lensed_qso import XRAY_CUTOFF, RADIO_CUTOFF
 
 
 LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)  # Cosmological constants as Speagle uses them
@@ -213,7 +214,7 @@ def residual_plot(lqso, errors=False):
     ax2.set_xscale ('log')
     # ax2.set_yscale('log')
 
-    ax1.set_title('plot of the residuals', fontsize=15)
+    ax1.set_title(f'{lqso.name}', fontsize=15)
     ax1.set_ylabel('$\\nu \\rm{L}(\\nu)[erg \ s^{-1}]$', fontsize=14)
     ax2.set_ylabel('$\\nu \\rm{L}(\\nu)[erg \ s^{-1}]$', fontsize=14)
     # ax2.ticklabel_format(style='scientific', axis='y')
