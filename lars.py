@@ -42,6 +42,12 @@ def all_galaxies(n=10, sub_folder=None):
         lqsos_dict[f'{f}_pe'] = []
         lqsos_dict[f'{f}_me'] = []
 
+        # Also add magnified version
+        if f in ['SFR_IR', 'SFR_opt', 'logMstar']:
+            lqsos_dict[f'mu_{f}'] = []
+            lqsos_dict[f'mu_{f}_pe'] = []
+            lqsos_dict[f'mu_{f}_me'] = []
+
     lqsos = []
 
     for g in GALAXIES:
@@ -64,6 +70,13 @@ def all_galaxies(n=10, sub_folder=None):
             lqsos_dict[f].append(val)
             lqsos_dict[f'{f}_pe'].append(pe)
             lqsos_dict[f'{f}_me'].append(me)
+
+            # Also add magnified version
+            if f in ['SFR_IR', 'SFR_opt', 'logMstar']:
+                val, pe, me = lqso.get_agnf_output_field(f, demag=False)
+                lqsos_dict[f'mu_{f}'].append(val)
+                lqsos_dict[f'mu_{f}_pe'].append(pe)
+                lqsos_dict[f'mu_{f}_me'].append(me)
 
         # Plot in speagle but grouped
         # figm, axm = plot_lqso_in_speagle(lqso, figm, axm, label='This work', save_name='speagle_comp.pdf',
@@ -91,6 +104,11 @@ def all_galaxies(n=10, sub_folder=None):
     lqsos_df['logSFR_IR_pe'] = lqsos_df['SFR_IR_pe'] / (lqsos_df['SFR_IR'] * np.log(10.))
     lqsos_df['logSFR_IR_me'] = lqsos_df['SFR_IR_me'] / (lqsos_df['SFR_IR'] * np.log(10.))
 
+    # Calculate logmu_SFR_IR for comparison with Stacey
+    lqsos_df['logmu_SFR_IR'] = np.log10(lqsos_df['mu_SFR_IR'])
+    lqsos_df['logmu_SFR_IR_pe'] = lqsos_df['mu_SFR_IR_pe'] / (lqsos_df['mu_SFR_IR'] * np.log(10.))
+    lqsos_df['logmu_SFR_IR_me'] = lqsos_df['mu_SFR_IR_me'] / (lqsos_df['mu_SFR_IR'] * np.log(10.))
+
     lqsos_df['logSFR_opt'] = np.log10(lqsos_df['SFR_opt'])
     lqsos_df['logSFR_opt_pe'] = lqsos_df['SFR_opt_pe'] / (lqsos_df['SFR_opt'] * np.log(10.))
     lqsos_df['logSFR_opt_me'] = lqsos_df['SFR_opt_me'] / (lqsos_df['SFR_opt'] * np.log(10.))
@@ -109,14 +127,14 @@ def all_galaxies(n=10, sub_folder=None):
     plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_opt', save_name='speagle_opt')
     plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_IR', save_name='speagle_IR')
 
-    fig, ax = plot_agnf_output(lqsos, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
+    fig, ax = plot_agnf_output(lqsos_df, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub', unique_markers=True)
     # Add Type1/2 AGN separation line as found in AGNfitter paper
     ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
     ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
     fig.savefig(os.path.join('plots', 'EBVbbb_Nh.pdf'))
 
-    plot_agnf_output(lqsos, 'SFR_IR', 'SFR_opt', color_scale_field='log age', equals_line=True, logx=True, logy=True)
-    plot_lqsos_vs_stacey(lqsos)
+    plot_agnf_output(lqsos_df, 'SFR_IR', 'SFR_opt', color_scale_field='log age', equals_line=True, logx=True, logy=True, unique_markers=True)
+    plot_lqsos_vs_stacey(lqsos_df)
 
     f, a = None, None
     fr, ar = None, None

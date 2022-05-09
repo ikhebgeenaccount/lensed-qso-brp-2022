@@ -1,4 +1,8 @@
 from astropy.cosmology import LambdaCDM
+from matplotlib.cm import ScalarMappable
+from matplotlib.colors import Normalize
+
+from src.lensed_qso import RADIO_CUTOFF, XRAY_CUTOFF, PROPERTIES as LQSO_PROPERTIES
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -121,46 +125,44 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
 
 
 def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component='_sub', equals_line=False, logx=False, logy=False, unique_markers=True):
-    f1vs = []
-    f1es = [[],[]]
-
-    f2vs = []
-    f2es = [[],[]]
-
-    fcs = []
-    
-
-    for lqso in lqsos:
-        f1v, f1pe, f1me = lqso.get_agnf_output_field(field_1, component=component, demag=True)
-
-        f1vs.append(f1v)
-        f1es[1].append(f1pe)
-        f1es[0].append(f1me)
-
-        f2v, f2pe, f2me = lqso.get_agnf_output_field(field_2, component=component, demag=True)
-
-        f2vs.append(f2v)
-        f2es[1].append(f2pe)
-        f2es[0].append(f2me)
-
-        if color_scale_field is not None:
-            fcs.append(lqso.get_agnf_output_field(color_scale_field, component=component, demag=True)[0])
-
     cm = plt.cm.get_cmap('RdYlBu')
     fig, ax = plt.subplots()
     markers=['o', 'v', '8', 's','h', 'p', 'D', 'X', '>', '<']
-    
-    if color_scale_field is not None:
-        ax_scatter = ax.scatter(f1vs, f2vs, c=fcs, cmap=cm, zorder=100)#, vmin=0, vmax=10000)
-        ax.errorbar(f1vs, f2vs, xerr=f1es, yerr=f2es, zorder=0, fmt='o')#, vmin=0, vmax=10000)
-        cbar = fig.colorbar(ax_scatter, cmap=cm)
 
-        cbar.set_label(color_scale_field)
+    if not unique_markers:
+        ax_scatter = ax.scatter(lqsos[field_1], lqsos[field_2], c=lqsos[color_scale_field] if color_scale_field is not None else None, cmap=cm, zorder=100)#, vmin=0, vmax=10000)
+        ax.errorbar(lqsos[field_1], lqsos[field_2],
+                    xerr=None if np.sum([lqsos[f'{field_1}_me'], lqsos[f'{field_1}_pe']]) == 0 else
+                    np.reshape([lqsos[f'{field_1}_me'], lqsos[f'{field_1}_pe']], (2, len(lqsos[f'{field_1}_pe']))),
+                    yerr=None if np.sum([lqsos[f'{field_2}_me'], lqsos[f'{field_2}_pe']]) == 0 else
+                    np.reshape([lqsos[f'{field_2}_me'], lqsos[f'{field_2}_pe']], (2, len(lqsos[f'{field_2}_pe']))),
+                    zorder=0, fmt='o', marker=None)
+
+        if color_scale_field is not None:
+            cbar = fig.colorbar(ax_scatter, cmap=cm)
+            cbar.set_label(color_scale_field)
     else:
-        ax.errorbar(f1vs, f2vs, xerr=f1es, yerr=f2es, zorder=0, fmt='o')
+        if color_scale_field is not None:
+            vmin, vmax = np.min(lqsos[color_scale_field]), np.max(lqsos[color_scale_field])
+
+        for i, row in lqsos.iterrows():
+            ax_scatter = ax.scatter(row[field_1], row[field_2], c=row[color_scale_field] if color_scale_field is not None else None, cmap=cm, zorder=100, vmin=vmin, vmax=vmax, marker=markers[i], label=row['name'], edgecolors='black')
+            ax.errorbar(row[field_1], row[field_2],
+                        xerr=None if np.sum([row[f'{field_1}_me'], row[f'{field_1}_pe']]) == 0 else
+                        np.reshape([row[f'{field_1}_me'], row[f'{field_1}_pe']], (2, 1)),
+                        yerr=None if np.sum([row[f'{field_2}_me'], row[f'{field_2}_pe']]) == 0 else
+                        np.reshape([row[f'{field_2}_me'], row[f'{field_2}_pe']], (2, 1)),
+                        zorder=0, fmt='', marker=None, color=ax_scatter.get_fc())
+
+        if color_scale_field is not None:
+            cbar = fig.colorbar(ScalarMappable(Normalize(vmin=vmin, vmax=vmax), cmap=cm))
+            cbar.set_label(color_scale_field)
+
+    if unique_markers:
+        ax.legend()
 
     if equals_line:
-        x = np.linspace(min(np.array(f1vs) - f1es[0]), max(np.array(f1vs) + f1es[1]), 10000)
+        x = np.linspace(np.min(lqsos[field_1] - lqsos[f'{field_1}_me']), np.max(lqsos[field_1] + lqsos[f'{field_1}_pe']), 10000)
         ax.plot(x, x, linestyle='--', color='black')
 
     ax.set_xlabel(field_1)
@@ -254,35 +256,21 @@ def residual_plot(lqso, errors=False):
 
 
 def plot_lqsos_vs_stacey(lqsos):
-    x_labels = []
-    agnf_sfr_ir = []
-    agnf_sfr_ir_err = [[], []]
-    stacey_sfr_ir = []
-    stacey_sfr_ir_err = [[], []]
-
-    for lqso in lqsos:
-        if not pd.isnull(lqso.props['stacey_sfr'].values[0]):
-            # Append Stacey data
-            stacey_sfr_ir.append(lqso.props['stacey_sfr'].values[0])
-            stacey_sfr_ir_err[0].append(lqso.props['stacey_sfr_me'].values[0])
-            stacey_sfr_ir_err[1].append(lqso.props['stacey_sfr_pe'].values[0])
-
-            # Append our data
-            v, pe, me = lqso.get_agnf_output_field('SFR_IR', demag=False)  # Don't demag since Stacey doesn't either
-
-            # Take log
-            agnf_sfr_ir.append(np.log10(v))
-            agnf_sfr_ir_err[0].append(me / (v * np.log(10)))
-            agnf_sfr_ir_err[1].append(pe / (v * np.log(10)))
-
-            x_labels.append(lqso.name)
+    lqso_props = LQSO_PROPERTIES.set_index('galaxy')
+    lqso_props = lqso_props.reindex(index=lqsos['name'])
+    lqso_props = lqso_props.reset_index()
 
     fig, ax = plt.subplots()
-    ax.errorbar(range(len(x_labels)), np.zeros(len(x_labels)), yerr=agnf_sfr_ir_err, label='This work', color='blue', fmt='o', zorder=50, alpha=.6)
-    ax.errorbar(range(len(x_labels)), np.array(stacey_sfr_ir) - np.array(agnf_sfr_ir), yerr=stacey_sfr_ir_err, label='Stacey+2018', color='green', fmt='o', zorder=0, alpha=.6)
+    ax.errorbar(range(len(lqsos['name'])), np.zeros(len(lqsos['name'])),
+                yerr=np.reshape([lqsos['logmu_SFR_IR_me'], lqsos['logmu_SFR_IR_pe']], (2, len(lqsos['name']))),
+                label='This work', color='blue', fmt='o', zorder=50, alpha=.6)
+    ax.errorbar(range(len(lqsos['name'])), lqso_props['stacey_sfr'] - lqsos['logmu_SFR_IR'],
+                yerr=np.reshape([lqso_props['stacey_sfr_me'], lqso_props['stacey_sfr_pe']], (2, len(lqsos['name']))),
+                label='Stacey+2018', color='green', fmt='o', zorder=0, alpha=.6)
+
     ax.axhline(y=0, linestyle='dashed', color='grey')
 
-    ax.set_xticks(range(len(x_labels)), x_labels, rotation=90)
+    ax.set_xticks(range(len(lqsos['name'])), lqsos['name'], rotation=90)
     ax.set_ylabel('$\Delta\log\mu\mathrm{SFR_{IR}}$')
     ax.legend()
 
@@ -363,8 +351,8 @@ def plot_evolution(lqso, fig=None, ax=None, single=False):
 
     if single == False:
         fig.savefig(os.path.join('plots', 'total_evolution.pdf'))
-        
-   
+
+
 
     return fig, ax
 
