@@ -78,16 +78,10 @@ def all_galaxies(n=10, sub_folder=None):
                 lqsos_dict[f'mu_{f}_pe'].append(pe)
                 lqsos_dict[f'mu_{f}_me'].append(me)
 
-        # Plot in speagle but grouped
-        # figm, axm = plot_lqso_in_speagle(lqso, figm, axm, label='This work', save_name='speagle_comp.pdf',
-                                         # errorbar_kwargs={'color': 'black', 'zorder': 100, 'markersize': 6, 'alpha': .7})
-
-        # Plot in standard speagle
-        # fig, ax = plot_lqso_in_speagle(lqso, fig=fig, ax=ax)
-
         # Plot AGNfitter output stuff
         # plot_n_runs_pars(lqso, sub_folder=sub_folder, n=n)
-        # residual_plot(lqso, errors=True)
+        # lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder, copy=False)
+        residual_plot(lqso, errors=True)
 
         # figs, axs = None, None
         # for i in range(n):

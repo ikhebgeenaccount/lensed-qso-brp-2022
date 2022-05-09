@@ -2,7 +2,7 @@ from astropy.cosmology import LambdaCDM
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 
-from src.lensed_qso import RADIO_CUTOFF, XRAY_CUTOFF, PROPERTIES as LQSO_PROPERTIES
+from src.lensed_qso import RADIO_CUTOFF, XRAY_CUTOFF, PROPERTIES as LQSO_PROPERTIES, AGNFITTER_FIELDS
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -182,7 +182,7 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component=
 
 
 def plot_n_runs_pars(lqso, n=10, nrows=4, sub_folder=None):
-    pars = ['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
+    pars = AGNFITTER_FIELDS
 
     ncols = len(pars) // nrows
     fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(16, 10))
@@ -235,7 +235,7 @@ def residual_plot(lqso, errors=False):
 
     upper = data['upp']==True
     nupper= data['upp']== False
-    ax1.errorbar(rest_nu_data[upper], data['nuLnu'][upper],yerr=data['nuLnu_err'][upper],color='black',zorder=2, fmt='o', marker='v')
+    ax1.errorbar(rest_nu_data[upper], data['nuLnu'][upper],yerr=data['nuLnu_err'][upper],color='black',zorder=2, fmt='v')
     ax1.errorbar(rest_nu_data[nupper], data['nuLnu'][nupper],yerr=data['nuLnu_err'][nupper],color='black',zorder=2, fmt='o')
 
     ax1.set_ylim(ymin=1e44)
@@ -253,6 +253,7 @@ def residual_plot(lqso, errors=False):
     ax2.set_xlim(xmin=3e18 / XRAY_CUTOFF, xmax=3e18 / RADIO_CUTOFF)
     ax2.axhline(0, xmin=0, xmax=1, color='black')
 
+    fig.tight_layout()
     fig.savefig(os.path.join('plots', f'{lqso.name}_agnf_residuals.pdf'))
 
 
