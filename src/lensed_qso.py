@@ -506,8 +506,8 @@ class LensedQSO:
                 if field == 'SFR_IR' or field == 'SFR_opt':
                     new_value = value / mu
 
-                    new_pe = np.sqrt(np.power(value_pe / mu, 2.) + np.power(value / np.power(mu, 2.) * mu_err, 2.))
-                    new_me = np.sqrt(np.power(value_me / mu, 2.) + np.power(value / np.power(mu, 2.) * mu_err, 2.))
+                    new_pe = np.sqrt(np.power(value_pe / mu, 2.) + np.power((value / np.power(mu, 2.)) * mu_err, 2.))
+                    new_me = np.sqrt(np.power(value_me / mu, 2.) + np.power((value / np.power(mu, 2.)) * mu_err, 2.))
 
                     return new_value, new_pe, new_me
                 elif field == 'logMstar':
