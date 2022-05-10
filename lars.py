@@ -139,9 +139,9 @@ def all_galaxies(n=10, sub_folder=None):
         fr, ar = plot_speagle_residual(df, label=label, fig=fr, ax=ar, errorbar_kwargs={'markersize': 6, 'alpha':.7}, save_name='speagle_res')
         fr2, ar2 = plot_speagle_residual(df, label=label, fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'markersize': 6, 'alpha':.7}, save_name='speagle_res_logMstar')
 
-    f, a = plot_lqsos_in_speagle(lqsos_df, label='This work', fig=f, ax=a, group=True, errorbar_kwargs={'markersize': 6, 'alpha': .7, 'color': 'black'}, save_name='speagle_comp')
-    fr, ar = plot_speagle_residual(lqsos_df, label='This work', fig=fr, ax=ar, errorbar_kwargs={'markersize': 6, 'alpha': .7, 'color': 'black'}, save_name='speagle_res')
-    fr2, ar2 = plot_speagle_residual(lqsos_df, label='This work', fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'markersize': 6, 'alpha':.7, 'color': 'black'}, save_name='speagle_res_logMstar')
+    f, a = plot_lqsos_in_speagle(lqsos_df, label='This work', fig=f, ax=a, group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_comp')
+    fr, ar = plot_speagle_residual(lqsos_df, label='This work', fig=fr, ax=ar, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res')
+    fr2, ar2 = plot_speagle_residual(lqsos_df, label='This work', fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res_logMstar')
 
 
 def big_plot():
@@ -203,13 +203,13 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    # all_galaxies()
+    all_galaxies()
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
     # single_galaxy()
     # known_mag_gals()
 
-    latex()
+    # latex()
 
     plt.show()
