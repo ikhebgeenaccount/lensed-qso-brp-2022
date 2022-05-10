@@ -90,7 +90,7 @@ if __name__ == '__main__':
                  zorder=50, s=50, alpha=.7)
         ax2.legend()
 #        ax2.set_ylim(ymax=1e12)
-        ax2.set_xlim(xmin=3.5e9)
+        #ax2.set_xlim(xmin=3.5e9)
         
         fig2.savefig(os.path.join('plots', 'total_evolution_withdata.pdf'))
 
