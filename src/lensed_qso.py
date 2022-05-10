@@ -87,10 +87,12 @@ COLORS = plt.get_cmap('tab10').colors + plt.get_cmap('Dark2').colors + plt.get_c
 
 AGNFITTER_FIELDS = ['tau', 'log age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
 
+PROPERTIES = pd.read_csv(os.path.join('data', 'properties.txt'), skiprows=1)
+
 
 class LensedQSO:
 
-    def __init__(self, name, sed_source='sed.csv',  mags_source='mags.csv', properties='properties.txt', save_all_plots=True, save_location='plots'):
+    def __init__(self, name, sed_source='sed.csv',  mags_source='mags.csv', save_all_plots=True, save_location='plots'):
         """
         :param name: Name of the lensed qso.
         :param sed_source: source of the spectral energy density (SED). Must be located in 'data/[name]'. Default is
@@ -122,8 +124,7 @@ class LensedQSO:
         except FileNotFoundError:
             print('No mags file found for galaxy ' + self.name)
 
-        self.props = pd.read_csv(os.path.join('data', properties), skiprows=1)
-        self.props = self.props.loc[self.props.galaxy == self.name]
+        self.props = PROPERTIES.loc[PROPERTIES.galaxy == self.name]
 
         # filtered_sed only selects entries that have a wavelength and a flux_total
         self.filtered_sed = self.sed[(self.sed.wavelength > 0) & (self.sed.flux_total > 0)].copy()
@@ -506,8 +507,8 @@ class LensedQSO:
                 if field == 'SFR_IR' or field == 'SFR_opt':
                     new_value = value / mu
 
-                    new_pe = np.sqrt(np.power(value_pe / mu, 2.) + np.power(value / np.power(mu, 2.) * mu_err, 2.))
-                    new_me = np.sqrt(np.power(value_me / mu, 2.) + np.power(value / np.power(mu, 2.) * mu_err, 2.))
+                    new_pe = np.sqrt(np.power(value_pe / mu, 2.) + np.power((value / np.power(mu, 2.)) * mu_err, 2.))
+                    new_me = np.sqrt(np.power(value_me / mu, 2.) + np.power((value / np.power(mu, 2.)) * mu_err, 2.))
 
                     return new_value, new_pe, new_me
                 elif field == 'logMstar':

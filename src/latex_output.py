@@ -66,21 +66,22 @@ def sed_to_latex_table(lqso):
     print('\\end{landscape}')
 
 
-def plots_in_subfigures(gals, plot, caption):
+def plots_in_subfigures(gals, plot, caption=False, main_caption_text='', label=None):
     """
     Plots are found in plots/[galaxy]_[plot].pdf
     """
     print('\\begin{figure}\n\centering')
     for i, g in enumerate(gals):
-        print('\\begin{subfigure}{.5\\textwidth}\n\centering')
+        print('\\begin{subfigure}[t]{.5\\textwidth}\n\centering')
         print(f'\includegraphics[width=\linewidth]{{plots/{g}_{plot}.pdf}}')
-        # print('\caption{' + g + '}\n\label{fig:sed_' + g + '}')
+        if caption:
+            print('\caption{' + g + '}')
+
+        if label:
+            print(f'\label{{fig:{label}_' + g + '}')
         print('\end{subfigure}%' + ('\n' if i % 2 == 1 else ''))
-    print(f'\caption{{{caption}}}\n\label{{fig:all_seds}}\n\end{{figure}}')
-
-
-def all_seds_plot(gals):
-    plots_in_subfigures(gals, 'SED_total', 'Spectral energy distributions (SEDs) of all galaxies.')
-
-
-
+    if caption:
+        print(f'\caption{{{main_caption_text}}}')
+    if label:
+        print(f'\label{{fig:all_{label}}}')
+    print('\end{figure}')
