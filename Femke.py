@@ -73,7 +73,7 @@ def all_galaxies():
         lqsos.append(lqso)
         #model_subtraction(lqso)
         #lqso.plot_spectrum(loglog=True)
-        lqso.plot_error_percentage() #how much of the sub fluxes errors they are in percentages
+        #lqso.plot_error_percentage() #how much of the sub fluxes errors they are in percentages
         #residual_plot(lqso, errors=True)
         
         
@@ -116,10 +116,10 @@ def all_galaxies():
     lqsos_df['logSFR_me'] = lqsos_df['SFR_me'] / (lqsos_df['SFR'] * np.log(10.))
 
     # Make plots
-    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False)
-    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_opt', save_name='speagle_opt')
-    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_IR', save_name='speagle_IR')
-    
+#    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False)
+#    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_opt', save_name='speagle_opt')
+#    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_IR', save_name='speagle_IR')
+#    
     #obscuration plot# Add Type1/2 AGN separation line as found in AGNfitter paper
 #    fig, ax = plot_agnf_output(lqsos, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
 #    ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
