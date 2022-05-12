@@ -3,3 +3,4 @@ table_a2.fits,https://academic.oup.com/mnras/article/501/3/3926/6041042?login=tr
 PHIBBS_table1.csv,https://iopscience.iop.org/article/10.1088/0004-637X/768/1/74#apj467766s3,Tacconi+2013,MS_SFG
 PHIBBS_table2.csv,https://iopscience.iop.org/article/10.1088/0004-637X/768/1/74#apj467766s3,Tacconi+2013,MS_SFG
 Cunha.csv,https://iopscience.iop.org/article/10.1088/0004-637X/806/1/110#apj513778t2,Cunha+2015,SMGs
+sun.csv,https://iopscience.iop.org/article/10.3847/2041-8213/abb3be/meta,Sun+2020,Local SFGs
