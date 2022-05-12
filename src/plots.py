@@ -218,7 +218,7 @@ def residual_plot(lqso, errors=False):
 
     ax1.set_title(f'{lqso.name}', fontsize=15)
     ax1.set_ylabel('$\\nu \\rm{L}(\\nu)[erg \ s^{-1}]$', fontsize=14)
-    ax2.set_ylabel('$\\nu \\rm{L}(\\nu)[erg \ s^{-1}]$', fontsize=14)
+    ax2.set_ylabel('$\sigma$', fontsize=14)
     # ax2.ticklabel_format(style='scientific', axis='y')
     ax2.set_xlabel('rest frame $\\nu$[Hz]', fontsize=14)
 
@@ -246,8 +246,8 @@ def residual_plot(lqso, errors=False):
     #second plot
     for i in range(10):
         rea_interp = np.interp(x = rest_nu_data, xp=rest_nu_rea, fp=realizations[f'TOTALnuLnu{i}'])
-        ax2.errorbar(rest_nu_data[nupper], data['nuLnu'][nupper] - rea_interp[nupper], yerr=data['nuLnu_err'][nupper] if errors else None, fmt='o' , color='black')
-        ax2.errorbar(rest_nu_data[upper], data['nuLnu'][upper] - rea_interp[upper], yerr=data['nuLnu_err'][upper] if errors else None, fmt='v' , color='black')
+        ax2.errorbar(rest_nu_data[nupper], (data['nuLnu'][nupper] - rea_interp[nupper]) / data['nuLnu_err'][nupper], fmt='o' , color='black')
+        ax2.errorbar(rest_nu_data[upper], (data['nuLnu'][upper] - rea_interp[upper]) / data['nuLnu_err'][upper], fmt='v' , color='black')
     ax2.set_xlim(xmin=3e18 / XRAY_CUTOFF, xmax=3e18 / RADIO_CUTOFF)
     ax2.axhline(0, xmin=0, xmax=1, color='black')
 
