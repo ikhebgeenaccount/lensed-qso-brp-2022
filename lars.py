@@ -25,7 +25,7 @@ GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447',
 PLOTS_SAVE = 'plots'
 
 
-def all_galaxies(n=10, sub_folder=None):
+def all_galaxies(n=10, sub_folder='10runs_before_err_fix'):
     # Create dict for all lqsos
     lqsos_dict = {
         'name': [],
@@ -35,6 +35,7 @@ def all_galaxies(n=10, sub_folder=None):
         'stacey_sfr': [],
         'stacey_sfr_me': [],
         'stacey_sfr_pe': [],
+        'mu_m_gas': [],
     }
     # Add lists for all AGNfitter output fields
     for f in src.lensed_qso.AGNFITTER_FIELDS:
@@ -63,6 +64,7 @@ def all_galaxies(n=10, sub_folder=None):
         lqsos_dict['stacey_sfr'].append(lqso.props['stacey_sfr'].values[0])
         lqsos_dict['stacey_sfr_me'].append(lqso.props['stacey_sfr_me'].values[0])
         lqsos_dict['stacey_sfr_pe'].append(lqso.props['stacey_sfr_pe'].values[0])
+        lqsos_dict['mu_m_gas'].append(lqso.props['mu_m_gas'].values[0])
 
         for f in src.lensed_qso.AGNFITTER_FIELDS:
             # We set demag=True for every field, since demag only happens for logMstar, SFR_IR, SFR_opt
@@ -81,7 +83,8 @@ def all_galaxies(n=10, sub_folder=None):
         # Plot AGNfitter output stuff
         # plot_n_runs_pars(lqso, sub_folder=sub_folder, n=n)  # when running this one, have to run lqso.find_best_run afterwards again, otherwise stuck on last run
         # lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder, copy=False)
-        residual_plot(lqso, errors=True)
+
+        # residual_plot(lqso, errors=True)
 
         # figs, axs = None, None
         # for i in range(n):
@@ -116,6 +119,19 @@ def all_galaxies(n=10, sub_folder=None):
     lqsos_df['logSFR_pe'] = lqsos_df['SFR_pe'] / (lqsos_df['SFR'] * np.log(10.))
     lqsos_df['logSFR_me'] = lqsos_df['SFR_me'] / (lqsos_df['SFR'] * np.log(10.))
 
+    # Calculate gas fraction
+    lqsos_df['Mgas'] = lqsos_df['mu_m_gas'] / lqsos_df['magnification']
+    lqsos_df['Mgas_err'] = lqsos_df['mu_m_gas'] / np.square(lqsos_df['magnification']) * lqsos_df['magn_err']
+    lqsos_df['f_gas'] = lqsos_df['Mgas'] / (np.power(10., lqsos_df['logMstar']) + lqsos_df['Mgas'])
+    lqsos_df['f_gas_pe'] = np.sqrt((np.square(np.power(10., lqsos_df['logMstar']) * lqsos_df['Mgas_err']) +\
+                           np.square(lqsos_df['Mgas'] * np.log(10.) * np.power(10., lqsos_df['logMstar']) * lqsos_df['logMstar_pe'])) /\
+                           np.power(np.power(10., lqsos_df['logMstar']) + lqsos_df['Mgas'], 4.))
+    lqsos_df['f_gas_me'] = np.sqrt((np.square(np.power(10., lqsos_df['logMstar']) * lqsos_df['Mgas_err']) +\
+                           np.square(lqsos_df['Mgas'] * np.log(10.) * np.power(10., lqsos_df['logMstar']) * lqsos_df['logMstar_me'])) /\
+                           np.power(np.power(10., lqsos_df['logMstar']) + lqsos_df['Mgas'], 4.))
+
+    print(lqsos_df[['name', 'log age', 'f_gas', 'f_gas_pe', 'f_gas_me']].sort_values(by='f_gas'))
+
     # Make plots
     plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False)
     plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_opt', save_name='speagle_opt')
@@ -134,10 +150,10 @@ def all_galaxies(n=10, sub_folder=None):
     fr, ar = None, None
     fr2, ar2 = None, None
     for label, df in src.ms_data_reader.FILES.items():
-        f, a = plot_lqsos_in_speagle(df, label=label, fig=f, ax=a, group=True, errorbar_kwargs={'markersize': 6, 'alpha':.7}, save_name='speagle_comp')
+        f, a = plot_lqsos_in_speagle(df, label=label, fig=f, ax=a, group=True, errorbar_kwargs={'markersize': 3, 'alpha':.5}, save_name='speagle_comp')
 
-        fr, ar = plot_speagle_residual(df, label=label, fig=fr, ax=ar, errorbar_kwargs={'markersize': 6, 'alpha':.7}, save_name='speagle_res')
-        fr2, ar2 = plot_speagle_residual(df, label=label, fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'markersize': 6, 'alpha':.7}, save_name='speagle_res_logMstar')
+        fr, ar = plot_speagle_residual(df, label=label, fig=fr, ax=ar, errorbar_kwargs={'markersize': 3, 'alpha':.5}, save_name='speagle_res')
+        fr2, ar2 = plot_speagle_residual(df, label=label, fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'markersize': 3, 'alpha':.5}, save_name='speagle_res_logMstar')
 
     f, a = plot_lqsos_in_speagle(lqsos_df, label='This work', fig=f, ax=a, group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_comp')
     fr, ar = plot_speagle_residual(lqsos_df, label='This work', fig=fr, ax=ar, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res')
