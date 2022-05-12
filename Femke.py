@@ -71,8 +71,9 @@ def all_galaxies():
         lqso = LensedQSO(g)
         lqso.agn_fitter_output(check_git=True, run_time=run_times[i])
         lqsos.append(lqso)
+        #model_subtraction(lqso)
         #lqso.plot_spectrum(loglog=True)
-        #lqso.plot_error_percentage() #how much of the sub fluxes errors they are in percentages
+        lqso.plot_error_percentage() #how much of the sub fluxes errors they are in percentages
         #residual_plot(lqso, errors=True)
         
         
@@ -119,15 +120,14 @@ def all_galaxies():
     plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_opt', save_name='speagle_opt')
     plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_IR', save_name='speagle_IR')
     
-    #obscuration plot
-    fig, ax = plot_agnf_output(lqsos, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
-    # Add Type1/2 AGN separation line as found in AGNfitter paper
-    ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
-    ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
-    fig.savefig(os.path.join('plots', 'EBVbbb_Nh.pdf'))
+    #obscuration plot# Add Type1/2 AGN separation line as found in AGNfitter paper
+#    fig, ax = plot_agnf_output(lqsos, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
+#    ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
+#    ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
+#    fig.savefig(os.path.join('plots', 'EBVbbb_Nh.pdf'))
     
     #plot_lqsos_vs_stacey(lqsos)
-    plot_agnf_output(lqsos, 'SFR_IR', 'SFR_opt', color_scale_field='log age', equals_line=True, logx=True, logy=True)
+    #plot_agnf_output(lqsos, 'SFR_IR', 'SFR_opt', color_scale_field='log age', equals_line=True, logx=True, logy=True)
     
     
 if __name__ == '__main__':

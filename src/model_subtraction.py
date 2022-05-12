@@ -94,7 +94,7 @@ def model_subtraction(lqso):
             average_model = np.average (y_model_range, weights=weights_filter)
             #average_error = np.average (error_range, weights=weights_filter)
 
-            average_error = (1 / len(weights_filter)*np.sum(weights_filter)) * \
+            average_error = (1 / np.sum(weights_filter)) * \
                 np.sqrt (np.sum (np.square(weights_filter * error_range)))
 
 

@@ -282,6 +282,8 @@ class LensedQSO:
         fig, ax = plt.subplots(figsize=(10, 8))
         ratio=self.sed['flux_sub_err']/self.sed['flux_sub'] *100
         ax.scatter(self.sed['wavelength'][ratio<=100],ratio[ratio<=100])
+        ratio2=self.sed['flux_err']/self.sed['flux_total'] *100
+        ax.scatter(self.sed['wavelength'][ratio2<=100],ratio2[ratio2<=100])
         ax.set_xscale('log')
         ax.set_ylabel('errors of sub in percentage', fontsize=15)
         ax.set_title(f'{self.name} percentage error')
