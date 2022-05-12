@@ -99,12 +99,13 @@ FILES = {
     # 'ULIRGS, Cunha+2010': _csv_reader([os.path.join('data', 'context_main_seq', 'ulirgs_cunha1.csv'),
     #                                    os.path.join('data', 'context_main_seq', 'ulirgs_cunha2.csv')], join_col='Galaxy',
     #                                   col_names=['Galaxy', 'z'] + COLUMNS[2:], read_csv_kwargs={'delimiter': '\t'}),
-    'COSMOS, Laigle+2016': _fits_reader([os.path.join('data', 'context_main_seq', 'COSMOS2015_Laigle+_v1.1.fits')],
-                                        col_names=['NUMBER', 'ZPDF', 'SFR_MED', 'SFR_MED_MAX68', 'SFR_MED_MIN68',
-                                                   'MASS_MED', 'MASS_MED_MAX68', 'MASS_MED_MIN68'],
-                                        fits_open_kwargs={'mmap': False},
-                                        post_filter=lambda df: df[(df['TYPE'] == 0) & (df['ZPDF'] > .9) & (df['ZPDF'] < 1.6)
-                                                                  & (df['SFR_MED'] > 0.) & (df['MASS_MED'] > 6.)]),
+    # COSMOS is a lot
+    # 'COSMOS, Laigle+2016': _fits_reader([os.path.join('data', 'context_main_seq', 'COSMOS2015_Laigle+_v1.1.fits')],
+    #                                     col_names=['NUMBER', 'ZPDF', 'SFR_MED', 'SFR_MED_MAX68', 'SFR_MED_MIN68',
+    #                                                'MASS_MED', 'MASS_MED_MAX68', 'MASS_MED_MIN68'],
+    #                                     fits_open_kwargs={'mmap': False},
+    #                                     post_filter=lambda df: df[(df['TYPE'] == 0) & (df['ZPDF'] > .9) & (df['ZPDF'] < 1.6)
+    #                                                               & (df['SFR_MED'] > 0.) & (df['MASS_MED'] > 6.)]),
 }
 
-print(FILES['COSMOS, Laigle+2016'].shape)
+# print(FILES['COSMOS, Laigle+2016'].shape)
