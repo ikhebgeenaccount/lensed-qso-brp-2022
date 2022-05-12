@@ -59,7 +59,9 @@ def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_
 
     speagle_log_sfr = speagle_gms(df['logMstar'], df['univ_age'])
 
-    ax.errorbar(df[x_field], df['logSFR'] - speagle_log_sfr[0], yerr=None if np.sum([df['logSFR_me'], df[f'logSFR_pe']]) == 0 else np.reshape([df['logSFR_me'], df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o', **errorbar_kwargs)
+    ax.errorbar(df[x_field], df['logSFR'] - speagle_log_sfr[0], yerr=None if np.sum([df['logSFR_me'],\
+                   df[f'logSFR_pe']]) == 0 else np.reshape([df['logSFR_me'], \
+                    df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o', **errorbar_kwargs)
     ax.legend()
 
     ax.axhline(0, xmin=0, xmax=1, color='grey', ls='--')
@@ -123,6 +125,9 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
     # fig.savefig(os.path.join('plots', 'speagle.svg'))
 
     return fig, ax
+
+def hist_stellarmass(df, fig, ax,label, zorder=1, binwidth=0.25, alpha=0.5):
+    ax.hist(df['logMstar'], zorder=zorder, bins=np.arange(8, 12.5, binwidth), alpha=alpha,density=True, label=label, edgecolor='black')
 
 
 def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component='_sub', equals_line=False, logx=False, logy=False, unique_markers=True):

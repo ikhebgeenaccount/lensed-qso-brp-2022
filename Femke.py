@@ -9,7 +9,7 @@ from src.ned_to_sed import ned_table_to_sed
 from src.xml_to_txt import xml_to_txt
 from src.tophat import tophat
 from src.model_subtraction import model_subtraction
-from src.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual, plot_evolution
+from src.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual, plot_evolution, hist_stellarmass
 from src.percent_to_fraction import percent_to_fraction
 from src.filters import populate_filter_profile_path_column
 from src.model_sed import fit
@@ -100,7 +100,6 @@ def all_galaxies():
     lqsos_df['logSFR_IR'] = np.log10(lqsos_df['SFR_IR'])
     lqsos_df['logSFR_IR_pe'] = lqsos_df['SFR_IR_pe'] / (lqsos_df['SFR_IR'] * np.log(10.))
     lqsos_df['logSFR_IR_me'] = lqsos_df['SFR_IR_me'] / (lqsos_df['SFR_IR'] * np.log(10.))
-    print(lqsos_df['logSFR_IR'], lqsos_df['logSFR_IR_pe'], lqsos_df['logSFR_IR_me'])
 
     lqsos_df['logSFR_opt'] = np.log10(lqsos_df['SFR_opt'])
     lqsos_df['logSFR_opt_pe'] = lqsos_df['SFR_opt_pe'] / (lqsos_df['SFR_opt'] * np.log(10.))
@@ -129,6 +128,13 @@ def all_galaxies():
     #plot_lqsos_vs_stacey(lqsos)
     #plot_agnf_output(lqsos, 'SFR_IR', 'SFR_opt', color_scale_field='log age', equals_line=True, logx=True, logy=True)
     
+    f , a =plt.subplots(figsize=(10,8))
+    hist_stellarmass(lqsos_df, f, a, label = 'our sample', zorder=10)
+    for label, df in src.ms_data_reader.FILES.items():
+        hist_stellarmass(df, f, a, label = label)
+    a.legend()
+    a.set_xlabel('Log M_star', fontsize=14)
+    a.set_ylabel('normalised number density', fontsize=14)
     
 if __name__ == '__main__':
     #single()
