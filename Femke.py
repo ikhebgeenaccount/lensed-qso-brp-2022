@@ -9,7 +9,7 @@ from src.ned_to_sed import ned_table_to_sed
 from src.xml_to_txt import xml_to_txt
 from src.tophat import tophat
 from src.model_subtraction import model_subtraction
-from src.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual, plot_evolution, hist_stellarmass
+from src.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual, plot_evolution, hist_stellarmass, plot_evolution_df
 from src.percent_to_fraction import percent_to_fraction
 from src.filters import populate_filter_profile_path_column
 from src.model_sed import fit
@@ -55,6 +55,7 @@ def all_galaxies():
         'stacey_sfr': [],
         'stacey_sfr_me': [],
         'stacey_sfr_pe': [],
+        'mu_m_gas':[],
     }
     
 # Add lists for all AGNfitter output fields
@@ -78,18 +79,8 @@ def all_galaxies():
         #residual_plot(lqso, errors=True)
         
         
-        #plot evolution all galaxies, including the other data
-        if ax2 is None:
-            fig2, ax2 = plot_evolution(lqso)
-        else:
-            plot_evolution(lqso, fig=fig2, ax=ax2) 
-          
-        
-        #plot evolution excluding all other data
-        if ax3 is None:
-            fig3, ax3 = plot_evolution(lqso)
-        else:
-            plot_evolution(lqso, fig=fig3, ax=ax3) 
+
+
           
         #plot_evolution(lqso, single=True)
         
@@ -101,6 +92,7 @@ def all_galaxies():
         lqsos_dict['stacey_sfr'].append(lqso.props['stacey_sfr'].values[0])
         lqsos_dict['stacey_sfr_me'].append(lqso.props['stacey_sfr_me'].values[0])
         lqsos_dict['stacey_sfr_pe'].append(lqso.props['stacey_sfr_pe'].values[0])
+        lqsos_dict['mu_m_gas'].append(lqso.props['mu_m_gas'].values[0])
         
         for f in src.lensed_qso.AGNFITTER_FIELDS:
         # We set demag=True for every field, since demag only happens for logMstar, SFR_IR, SFR_opt
@@ -110,19 +102,6 @@ def all_galaxies():
             lqsos_dict[f'{f}_me'].append(me)
 
             
-    #Adding the other data to evolution plot
-    from astropy.cosmology import LambdaCDM
-    LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)
-    for label, df in src.ms_data_reader.FILES.items():
-        if 'Birkin' in label:
-            continue
-        ax2.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label,
-            zorder=50, s=50, alpha=.7)
-    ax2.legend()
-#   ax2.set_ylim(ymax=1e12)
-    #ax2.set_xlim(xmin=3.5e9)
-    
-    fig2.savefig(os.path.join('plots', 'total_evolution_withdata.pdf'))
     
     #make the dataframe        
     lqsos_df = pd.DataFrame(lqsos_dict)
@@ -144,6 +123,16 @@ def all_galaxies():
     lqsos_df['logSFR'] = np.log10(lqsos_df['SFR'])
     lqsos_df['logSFR_pe'] = lqsos_df['SFR_pe'] / (lqsos_df['SFR'] * np.log(10.))
     lqsos_df['logSFR_me'] = lqsos_df['SFR_me'] / (lqsos_df['SFR'] * np.log(10.))
+    
+    lqsos_df['Mgas'] = lqsos_df['mu_m_gas'] / lqsos_df['magnification']
+    lqsos_df['Mgas_err'] = lqsos_df['mu_m_gas'] / np.square(lqsos_df['magnification']) * lqsos_df['magn_err']
+    lqsos_df['f_gas'] = lqsos_df['Mgas'] / (np.power(10., lqsos_df['logMstar']) + lqsos_df['Mgas'])
+    lqsos_df['f_gas_pe'] = np.sqrt((np.square(np.power(10., lqsos_df['logMstar']) * lqsos_df['Mgas_err']) +\
+                           np.square(lqsos_df['Mgas'] * np.log(10.) * np.power(10., lqsos_df['logMstar']) * lqsos_df['logMstar_pe'])) /\
+                           np.power(np.power(10., lqsos_df['logMstar']) + lqsos_df['Mgas'], 4.))
+    lqsos_df['f_gas_me'] = np.sqrt((np.square(np.power(10., lqsos_df['logMstar']) * lqsos_df['Mgas_err']) +\
+                           np.square(lqsos_df['Mgas'] * np.log(10.) * np.power(10., lqsos_df['logMstar']) * lqsos_df['logMstar_me'])) /\
+                           np.power(np.power(10., lqsos_df['logMstar']) + lqsos_df['Mgas'], 4.))
 
     # Make plots
 #    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False)
@@ -166,6 +155,30 @@ def all_galaxies():
     a.legend()
     a.set_xlabel('Log M_star', fontsize=14)
     a.set_ylabel('normalised number density', fontsize=14)
+    
+    #plot evolution all galaxies, including the other data
+    fig2, ax2 = plot_evolution_df(lqsos_df)
+    
+
+    
+    #plot evolution excluding all other data
+
+    fig3, ax3 = plot_evolution_df(lqsos_df)
+    
+    #Adding the other data to evolution plot
+    from astropy.cosmology import LambdaCDM
+    LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)
+    for label, df in src.ms_data_reader.FILES.items():
+        if 'Birkin' in label:
+            continue
+        ax2.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label,
+            zorder=50, s=50, alpha=.7)
+    ax2.legend()
+#   ax2.set_ylim(ymax=1e12)
+    #ax2.set_xlim(xmin=3.5e9)
+    
+    fig2.savefig(os.path.join('plots', 'total_evolution_withdata.pdf'))
+    
     
 if __name__ == '__main__':
     #single()

@@ -126,8 +126,8 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
 
     return fig, ax
 
-def hist_stellarmass(df, fig, ax,label, zorder=1, binwidth=0.25, alpha=0.5):
-    ax.hist(df['logMstar'], zorder=zorder, bins=np.arange(8, 12.5, binwidth), alpha=alpha,density=True, label=label, edgecolor='black')
+def hist_stellarmass(df, fig, ax,label, zorder=1, binwidth=0.25, alpha=0.5, density=True):
+    ax.hist(df['logMstar'], zorder=zorder, bins=np.arange(8, 12.5, binwidth), alpha=alpha,density=density, label=label, edgecolor='black')
 
 
 def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component='_sub', equals_line=False, logx=False, logy=False, unique_markers=True):
@@ -324,8 +324,8 @@ def plot_evolution(lqso, fig=None, ax=None, single=False):
     #the constant in the formula
     b = M - (sfr_tot * age)
 
-    #TODO: add real gas masses
-    M_gas= 0.4*M #gas mass in solar masses
+    #TODO: add real gas masses and error prop
+    M_gas= lqso.props['mu_m_gas'].values[0]/lqso.props['magnification'].values[0]#gas mass in solar masses
 
     #make a range of ages in order to make the evolution line
     #lower limit = where no solar mass had been formed
@@ -362,5 +362,75 @@ def plot_evolution(lqso, fig=None, ax=None, single=False):
     return fig, ax
 
 
+
+def plot_evolution_df(df, fig=None, ax=None):
+    """
+    This function plots the stellar mass evolution assuming constant sfr
+    under the formula M_star (t) = SFR * t + (M_star(age) - SFR * age)
+
+    This becomes 0 at t = SFR * age - M_star(age) / SFR
+
+    The goal of this is to give a rough indication of whether your sfr's make sense
+    """
+     #redshift of the galaxy
+    z = df['redshift']
+    
+    
+    #stellar mass of the galaxy
+    logM , pe_logM, me_logM = df['logMstar'],  df['logMstar_pe'], df['logMstar_me']
+    M = 10 ** logM
+    
+
+    #total SFR of the galaxy
+    sfr_tot = df['SFR']
+    sfr_tot_pe = df['SFR_pe']
+    sfr_tot_me = df['SFR_me']
+
+    #age of the individual galaxy, plotting this on the plot
+    age = LCDM.age(z).value * 1e9 #in yrs
+
+    #setting up the plot
+    if ax is None:
+        fig,ax= plt.subplots(figsize=(10,8))
+    ax.set_xlabel('age of universe [yr]')
+    ax.set_ylabel('Stellar mass [solar mass]')
+
+    
+    #TODO: add error prop
+    M_gas= df['Mgas']
+    M_gas_err=df['Mgas_err']
+
+    #make a range of ages in order to make the evolution line
+    #lower limit = where no solar mass had been formed
+    #upper limit = where all the gas mass has depleted
+    for i in range(len(z)):
+        #the constant in the formula
+        b = M[i] - (sfr_tot[i] * age[i])
+        name = df['name'].values[i]
+        ax.scatter(age[i], M[i], label = f'{name}', zorder=100, s=49) #placing the galaxy
+        
+        
+        age_range = np.linspace((-(b)/sfr_tot[i]), age[i], 100)
+        age_range2 = np.linspace( age[i],(M_gas[i] + M[i] - b)/sfr_tot[i], 100)
+    
+        #formula of the M_star assuming constant sfr
+        
+        M_range = sfr_tot[i] * age_range + b
+        M_range2 = sfr_tot[i] * age_range2 + b
+
+        if i==0:
+            ax.plot(age_range, M_range, color='fuchsia', label='time until galaxy formed' )
+            ax.plot(age_range2, M_range2, color='blue', label='time until gas depletes' )
+            ax.set_title('Stellar mass evolution')
+        else:
+            ax.plot(age_range, M_range, color='fuchsia')
+            ax.plot(age_range2, M_range2, color='blue')
+            
+    ax.legend()
+    fig.savefig(os.path.join('plots', 'evolution.pdf'))
+    
+
+
+    return fig, ax
 
 
