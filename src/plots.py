@@ -62,7 +62,8 @@ def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_
     ax.errorbar(df[x_field], df['logSFR'] - speagle_log_sfr[0], yerr=None if np.sum([df['logSFR_me'],\
                    df[f'logSFR_pe']]) == 0 else np.reshape([df['logSFR_me'], \
                     df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o', **errorbar_kwargs)
-    ax.legend()
+    ax.legend(loc='center right', bbox_to_anchor=(1.4, 0.5),
+          ncol=1, fancybox=True, shadow=True)
 
     ax.axhline(0, xmin=0, xmax=1, color='grey', ls='--')
 
@@ -102,7 +103,7 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
 
         ax.fill_between(log_m_stars, sp_ms - sp_ms_err, sp_ms_max + sp_ms_err_max, alpha=.4, color='grey', label=f'Speagle+2014, z=[{z_min},{z_max}]')
 
-        ax.set_ylabel('log SFR')
+        ax.set_ylabel(sfr_type)
         ax.set_xlabel('log$M_*$')
 
     # Plot galaxy
@@ -261,16 +262,12 @@ def residual_plot(lqso, errors=False):
 
 
 def plot_lqsos_vs_stacey(lqsos):
-    lqso_props = LQSO_PROPERTIES.set_index('galaxy')
-    lqso_props = lqso_props.reindex(index=lqsos['name'])
-    lqso_props = lqso_props.reset_index()
-
     fig, ax = plt.subplots()
     ax.errorbar(range(len(lqsos['name'])), np.zeros(len(lqsos['name'])),
                 yerr=np.reshape([lqsos['logmu_SFR_IR_me'], lqsos['logmu_SFR_IR_pe']], (2, len(lqsos['name']))),
                 label='This work', color='blue', fmt='o', zorder=50, alpha=.6)
-    ax.errorbar(range(len(lqsos['name'])), lqso_props['stacey_sfr'] - lqsos['logmu_SFR_IR'],
-                yerr=np.reshape([lqso_props['stacey_sfr_me'], lqso_props['stacey_sfr_pe']], (2, len(lqsos['name']))),
+    ax.errorbar(range(len(lqsos['name'])), lqsos['stacey_sfr'] - lqsos['logmu_SFR_IR'],
+                yerr=np.reshape([lqsos['stacey_sfr_me'], lqsos['stacey_sfr_pe']], (2, len(lqsos['name']))),
                 label='Stacey+2018', color='green', fmt='o', zorder=0, alpha=.6)
 
     ax.axhline(y=0, linestyle='dashed', color='grey')

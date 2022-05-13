@@ -96,9 +96,11 @@ FILES = {
                                                    lambda df: np.zeros(len(df['galaxy'])), lambda df: np.zeros(len(df['galaxy']))],
                                         read_csv_kwargs={'delim_whitespace': True}),
     # ULIRGs from Cunha+2010 don't work: they list specific star formation rate instead of star formation rate.
-    # 'ULIRGS, Cunha+2010': _csv_reader([os.path.join('data', 'context_main_seq', 'ulirgs_cunha1.csv'),
-    #                                    os.path.join('data', 'context_main_seq', 'ulirgs_cunha2.csv')], join_col='Galaxy',
-    #                                   col_names=['Galaxy', 'z'] + COLUMNS[2:], read_csv_kwargs={'delimiter': '\t'}),
+    'ULIRGS, Cunha+2010': _csv_reader([os.path.join('data', 'context_main_seq', 'ulirgs_cunha1.csv'),
+                                        os.path.join('data', 'context_main_seq', 'ulirgs_cunha2.csv')], join_col='Galaxy',
+                                      col_names=['Galaxy', 'z', lambda df: df['logsSFR'] + df['logMstar'],
+                                                 lambda df: np.zeros(len(df['Galaxy'])), lambda df: np.zeros(len(df['Galaxy']))] +
+                                      COLUMNS[-3:], read_csv_kwargs={'delimiter': '\t'}),
     # COSMOS is a lot
     # 'COSMOS, Laigle+2016': _fits_reader([os.path.join('data', 'context_main_seq', 'COSMOS2015_Laigle+_v1.1.fits')],
     #                                     col_names=['NUMBER', 'ZPDF', 'SFR_MED', 'SFR_MED_MAX68', 'SFR_MED_MIN68',
@@ -106,6 +108,10 @@ FILES = {
     #                                     fits_open_kwargs={'mmap': False},
     #                                     post_filter=lambda df: df[(df['TYPE'] == 0) & (df['ZPDF'] > .9) & (df['ZPDF'] < 1.6)
     #                                                               & (df['SFR_MED'] > 0.) & (df['MASS_MED'] > 6.)]),
+    'QSOs, Jarvis+2020': _csv_reader([os.path.join('data', 'context_main_seq', 'qsos_jarvis.csv')],
+                                     col_names=['Name', 'z', lambda df: np.log10(df['SFR']), lambda df: df['SFR_pe'] / (df['SFR'] * np.log(10.)),
+                                                lambda df: df['SFR_me'] / (df['SFR'] * np.log(10.))] + COLUMNS[-3:],
+                                     read_csv_kwargs={'delimiter': '\t'})
 }
 
 # print(FILES['COSMOS, Laigle+2016'].shape)

@@ -4,3 +4,5 @@ PHIBBS_table1.csv,https://iopscience.iop.org/article/10.1088/0004-637X/768/1/74#
 PHIBBS_table2.csv,https://iopscience.iop.org/article/10.1088/0004-637X/768/1/74#apj467766s3,Tacconi+2013,MS_SFG
 Cunha.csv,https://iopscience.iop.org/article/10.1088/0004-637X/806/1/110#apj513778t2,Cunha+2015,SMGs
 sun.csv,https://iopscience.iop.org/article/10.3847/2041-8213/abb3be/meta,Sun+2020,Local SFGs
+ulirgs_cunha.csv,https://arxiv.org/abs/1008.2000,Cunha+2010,High z ULIRGS
+qsos_jarvis.csv,https://academic.oup.com/mnras/article/498/2/1560/5903287,Jarvis+2020,Local QSOs
