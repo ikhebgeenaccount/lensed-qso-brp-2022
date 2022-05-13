@@ -25,7 +25,7 @@ GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447',
 PLOTS_SAVE = 'plots'
 
 
-def all_galaxies(n=10, sub_folder='10runs_before_err_fix'):
+def _init_lqsos_dict():
     # Create dict for all lqsos
     lqsos_dict = {
         'name': [],
@@ -49,50 +49,39 @@ def all_galaxies(n=10, sub_folder='10runs_before_err_fix'):
             lqsos_dict[f'mu_{f}_pe'] = []
             lqsos_dict[f'mu_{f}_me'] = []
 
-    lqsos = []
+    return lqsos_dict
 
-    for g in GALAXIES:
-        lqso = LensedQSO(g)
-        lqsos.append(lqso)
-        print(g)
-        lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder, copy=False)
 
+def _update_lqsos_dict(lqsos_dict, lqso, name=None):
+    if name is None:
         lqsos_dict['name'].append(lqso.name)
-        lqsos_dict['redshift'].append(lqso.props['z_qso'].values[0])
-        lqsos_dict['magnification'].append(lqso.props['magnification'].values[0])
-        lqsos_dict['magn_err'].append(lqso.props['magn_err'].values[0])
-        lqsos_dict['stacey_sfr'].append(lqso.props['stacey_sfr'].values[0])
-        lqsos_dict['stacey_sfr_me'].append(lqso.props['stacey_sfr_me'].values[0])
-        lqsos_dict['stacey_sfr_pe'].append(lqso.props['stacey_sfr_pe'].values[0])
-        lqsos_dict['mu_m_gas'].append(lqso.props['mu_m_gas'].values[0])
+    else:
+        lqsos_dict['name'].append(name)
 
-        for f in src.lensed_qso.AGNFITTER_FIELDS:
-            # We set demag=True for every field, since demag only happens for logMstar, SFR_IR, SFR_opt
-            val, pe, me = lqso.get_agnf_output_field(f, demag=True)
-            lqsos_dict[f].append(val)
-            lqsos_dict[f'{f}_pe'].append(pe)
-            lqsos_dict[f'{f}_me'].append(me)
+    lqsos_dict['redshift'].append(lqso.props['z_qso'].values[0])
+    lqsos_dict['magnification'].append(lqso.props['magnification'].values[0])
+    lqsos_dict['magn_err'].append(lqso.props['magn_err'].values[0])
+    lqsos_dict['stacey_sfr'].append(lqso.props['stacey_sfr'].values[0])
+    lqsos_dict['stacey_sfr_me'].append(lqso.props['stacey_sfr_me'].values[0])
+    lqsos_dict['stacey_sfr_pe'].append(lqso.props['stacey_sfr_pe'].values[0])
+    lqsos_dict['mu_m_gas'].append(lqso.props['mu_m_gas'].values[0])
 
-            # Also add magnified version
-            if f in ['SFR_IR', 'SFR_opt', 'logMstar']:
-                val, pe, me = lqso.get_agnf_output_field(f, demag=False)
-                lqsos_dict[f'mu_{f}'].append(val)
-                lqsos_dict[f'mu_{f}_pe'].append(pe)
-                lqsos_dict[f'mu_{f}_me'].append(me)
+    for f in src.lensed_qso.AGNFITTER_FIELDS:
+        # We set demag=True for every field, since demag only happens for logMstar, SFR_IR, SFR_opt
+        val, pe, me = lqso.get_agnf_output_field(f, demag=True)
+        lqsos_dict[f].append(val)
+        lqsos_dict[f'{f}_pe'].append(pe)
+        lqsos_dict[f'{f}_me'].append(me)
 
-        # Plot AGNfitter output stuff
-        # plot_n_runs_pars(lqso, sub_folder=sub_folder, n=n)  # when running this one, have to run lqso.find_best_run afterwards again, otherwise stuck on last run
-        # lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder, copy=False)
+        # Also add magnified version
+        if f in ['SFR_IR', 'SFR_opt', 'logMstar']:
+            val, pe, me = lqso.get_agnf_output_field(f, demag=False)
+            lqsos_dict[f'mu_{f}'].append(val)
+            lqsos_dict[f'mu_{f}_pe'].append(pe)
+            lqsos_dict[f'mu_{f}_me'].append(me)
 
-        # residual_plot(lqso, errors=True)
 
-        # figs, axs = None, None
-        # for i in range(n):
-        #     lqso.agn_fitter_output(run_time=i, sub_folder=sub_folder)
-        #     figs, axs = plot_lqso_in_speagle(lqso, figs, axs, label=lqso.name + str(i),
-        #                                       save_name=f'{lqso.name}_speagle', errorbar_kwargs={'alpha': .6})
-        # lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
-
+def _lqsos_dict_to_df(lqsos_dict):
     # Turn lqsos into a dataframe
     lqsos_df = pd.DataFrame(lqsos_dict)
 
@@ -130,12 +119,50 @@ def all_galaxies(n=10, sub_folder='10runs_before_err_fix'):
                            np.square(lqsos_df['Mgas'] * np.log(10.) * np.power(10., lqsos_df['logMstar']) * lqsos_df['logMstar_me'])) /\
                            np.power(np.power(10., lqsos_df['logMstar']) + lqsos_df['Mgas'], 4.))
 
+    return lqsos_df
+
+
+def all_galaxies(n=10, sub_folder=None):
+    lqsos_dict = _init_lqsos_dict()
+
+    lqsos_all_runs_df = {}
+
+    for g in GALAXIES:
+        lqso = LensedQSO(g)
+        print(g)
+        lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder, copy=False)
+        _update_lqsos_dict(lqsos_dict, lqso)
+
+        residual_plot(lqso, errors=True)
+
+        # Fill DataFrame with every run's output
+        d = _init_lqsos_dict()
+        for i in range(n):
+            lqso.agn_fitter_output(run_time=i, sub_folder=sub_folder)
+            _update_lqsos_dict(d, lqso, name=g + str(i))
+
+            # figs, axs = plot_lqso_in_speagle(lqso, figs, axs, label=lqso.name + str(i),
+            #                                   save_name=f'{lqso.name}_speagle', errorbar_kwargs={'alpha': .6})
+        lqsos_all_runs_df[g] = _lqsos_dict_to_df(d)
+
+        # Plot AGNfitter output stuff
+        plot_n_runs_pars(lqso, sub_folder=sub_folder, n=n)  # when running this one, have to run lqso.find_best_run afterwards again, otherwise stuck on last run
+
+        # Reload best run
+        lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
+
+    lqsos_df = _lqsos_dict_to_df(lqsos_dict)
+
     print(lqsos_df[['name', 'log age', 'f_gas', 'f_gas_pe', 'f_gas_me']].sort_values(by='f_gas'))
 
     # Make plots
     plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False)
     plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_opt', save_name='speagle_opt')
     plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_IR', save_name='speagle_IR')
+
+    # Make speagle plot for every galaxy of all runs
+    for gal, df in lqsos_all_runs_df.items():
+        plot_lqsos_in_speagle(df, label=df['name'], group=False, save_name=f'{gal}_speagle', errorbar_kwargs={'alpha': .6})
 
     fig, ax = plot_agnf_output(lqsos_df, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub', unique_markers=True)
     # Add Type1/2 AGN separation line as found in AGNfitter paper
@@ -219,7 +246,8 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    all_galaxies()
+    model_subtraction(LensedQSO('B1608+656'))
+    # all_galaxies()
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
