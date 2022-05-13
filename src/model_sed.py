@@ -122,7 +122,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     mults = []
 
     single_g = False        # TODO: some column names contain spaces? Like log Mstar
-    if lqso.name in ['J1650+4251', 'J1455+1447']:
+    if lqso.name in ['J1650+4251', 'J1455+1447', 'B1608+656']:
         # Fit only selection of models
         models = ['NGC_3265', 'NGC_0855', 'NGC_4621', 'NGC_4660', 'NGC_4458']
 
@@ -202,7 +202,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
     # Combine N models
     N = LQSO_NO_MODELS[lqso.name]
-    
+
 
     if N != 0:
 
