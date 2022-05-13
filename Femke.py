@@ -9,7 +9,7 @@ from src.ned_to_sed import ned_table_to_sed
 from src.xml_to_txt import xml_to_txt
 from src.tophat import tophat
 from src.model_subtraction import model_subtraction
-from src.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual, plot_evolution
+from src.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual, plot_evolution, hist_stellarmass
 from src.percent_to_fraction import percent_to_fraction
 from src.filters import populate_filter_profile_path_column
 from src.model_sed import fit
@@ -72,6 +72,7 @@ def all_galaxies():
         lqso = LensedQSO(g)
         lqso.agn_fitter_output(check_git=True, run_time=run_times[i])
         lqsos.append(lqso)
+        #model_subtraction(lqso)
         #lqso.plot_spectrum(loglog=True)
         #lqso.plot_error_percentage() #how much of the sub fluxes errors they are in percentages
         #residual_plot(lqso, errors=True)
@@ -130,7 +131,6 @@ def all_galaxies():
     lqsos_df['logSFR_IR'] = np.log10(lqsos_df['SFR_IR'])
     lqsos_df['logSFR_IR_pe'] = lqsos_df['SFR_IR_pe'] / (lqsos_df['SFR_IR'] * np.log(10.))
     lqsos_df['logSFR_IR_me'] = lqsos_df['SFR_IR_me'] / (lqsos_df['SFR_IR'] * np.log(10.))
-    print(lqsos_df['logSFR_IR'], lqsos_df['logSFR_IR_pe'], lqsos_df['logSFR_IR_me'])
 
     lqsos_df['logSFR_opt'] = np.log10(lqsos_df['SFR_opt'])
     lqsos_df['logSFR_opt_pe'] = lqsos_df['SFR_opt_pe'] / (lqsos_df['SFR_opt'] * np.log(10.))
@@ -146,20 +146,26 @@ def all_galaxies():
     lqsos_df['logSFR_me'] = lqsos_df['SFR_me'] / (lqsos_df['SFR'] * np.log(10.))
 
     # Make plots
-    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False)
-    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_opt', save_name='speagle_opt')
-    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_IR', save_name='speagle_IR')
-    
-    #obscuration plot
-    fig, ax = plot_agnf_output(lqsos_df, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
-    # Add Type1/2 AGN separation line as found in AGNfitter paper
-    ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
-    ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
-    fig.savefig(os.path.join('plots', 'EBVbbb_Nh.pdf'))
+#    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False)
+#    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_opt', save_name='speagle_opt')
+#    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_IR', save_name='speagle_IR')
+#    
+    #obscuration plot# Add Type1/2 AGN separation line as found in AGNfitter paper
+#    fig, ax = plot_agnf_output(lqsos, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
+#    ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
+#    ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
+#    fig.savefig(os.path.join('plots', 'EBVbbb_Nh.pdf'))
     
     #plot_lqsos_vs_stacey(lqsos)
-    plot_agnf_output(lqsos_df, 'SFR_IR', 'SFR_opt', color_scale_field='log age', equals_line=True, logx=True, logy=True)
+    #plot_agnf_output(lqsos, 'SFR_IR', 'SFR_opt', color_scale_field='log age', equals_line=True, logx=True, logy=True)
     
+    f , a =plt.subplots(figsize=(10,8))
+    hist_stellarmass(lqsos_df, f, a, label = 'our sample', zorder=10)
+    for label, df in src.ms_data_reader.FILES.items():
+        hist_stellarmass(df, f, a, label = label)
+    a.legend()
+    a.set_xlabel('Log M_star', fontsize=14)
+    a.set_ylabel('normalised number density', fontsize=14)
     
 if __name__ == '__main__':
     #single()

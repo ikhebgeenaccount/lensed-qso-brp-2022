@@ -59,7 +59,9 @@ def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_
 
     speagle_log_sfr = speagle_gms(df['logMstar'], df['univ_age'])
 
-    ax.errorbar(df[x_field], df['logSFR'] - speagle_log_sfr[0], yerr=None if np.sum([df['logSFR_me'], df[f'logSFR_pe']]) == 0 else np.reshape([df['logSFR_me'], df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o', **errorbar_kwargs)
+    ax.errorbar(df[x_field], df['logSFR'] - speagle_log_sfr[0], yerr=None if np.sum([df['logSFR_me'],\
+                   df[f'logSFR_pe']]) == 0 else np.reshape([df['logSFR_me'], \
+                    df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o', **errorbar_kwargs)
     ax.legend()
 
     ax.axhline(0, xmin=0, xmax=1, color='grey', ls='--')
@@ -123,6 +125,9 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
     # fig.savefig(os.path.join('plots', 'speagle.svg'))
 
     return fig, ax
+
+def hist_stellarmass(df, fig, ax,label, zorder=1, binwidth=0.25, alpha=0.5):
+    ax.hist(df['logMstar'], zorder=zorder, bins=np.arange(8, 12.5, binwidth), alpha=alpha,density=True, label=label, edgecolor='black')
 
 
 def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component='_sub', equals_line=False, logx=False, logy=False, unique_markers=True):
@@ -218,7 +223,7 @@ def residual_plot(lqso, errors=False):
 
     ax1.set_title(f'{lqso.name}', fontsize=15)
     ax1.set_ylabel('$\\nu \\rm{L}(\\nu)[erg \ s^{-1}]$', fontsize=14)
-    ax2.set_ylabel('$\\nu \\rm{L}(\\nu)[erg \ s^{-1}]$', fontsize=14)
+    ax2.set_ylabel('$\sigma$', fontsize=14)
     # ax2.ticklabel_format(style='scientific', axis='y')
     ax2.set_xlabel('rest frame $\\nu$[Hz]', fontsize=14)
 
@@ -246,8 +251,8 @@ def residual_plot(lqso, errors=False):
     #second plot
     for i in range(10):
         rea_interp = np.interp(x = rest_nu_data, xp=rest_nu_rea, fp=realizations[f'TOTALnuLnu{i}'])
-        ax2.errorbar(rest_nu_data[nupper], data['nuLnu'][nupper] - rea_interp[nupper], yerr=data['nuLnu_err'][nupper] if errors else None, fmt='o' , color='black')
-        ax2.errorbar(rest_nu_data[upper], data['nuLnu'][upper] - rea_interp[upper], yerr=data['nuLnu_err'][upper] if errors else None, fmt='v' , color='black')
+        ax2.errorbar(rest_nu_data[nupper], (data['nuLnu'][nupper] - rea_interp[nupper]) / data['nuLnu_err'][nupper], fmt='o' , color='black')
+        ax2.errorbar(rest_nu_data[upper], (data['nuLnu'][upper] - rea_interp[upper]) / data['nuLnu_err'][upper], fmt='v' , color='black')
     ax2.set_xlim(xmin=3e18 / XRAY_CUTOFF, xmax=3e18 / RADIO_CUTOFF)
     ax2.axhline(0, xmin=0, xmax=1, color='black')
 

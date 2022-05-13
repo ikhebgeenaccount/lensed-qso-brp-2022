@@ -202,6 +202,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
     # Combine N models
     N = LQSO_NO_MODELS[lqso.name]
+    
 
     if N != 0:
 

@@ -20,10 +20,13 @@ order of names in col_names must obey the order of names in the list above. col_
 columns that only need a namechange, or callables (functions/lamba expressions) for columns that require some
 arithmetic or other change.
 """
-def _fits_reader(files, col_names, join_col=None, hdu_index=1):
+def _fits_reader(files, col_names, join_col=None, hdu_index=1, fits_open_kwargs=None, post_filter=None):
+    if fits_open_kwargs is None:
+        fits_open_kwargs = {}
+
     df = None
     for file in files:
-        with fits.open(file) as hdul:
+        with fits.open(file, **fits_open_kwargs) as hdul:
 
             if df is None:
                 df = Table(hdul[hdu_index].data).to_pandas()
@@ -31,10 +34,13 @@ def _fits_reader(files, col_names, join_col=None, hdu_index=1):
                 odf = Table(hdul[hdu_index].data).to_pandas()
                 df = df.merge(odf, on=join_col, how='left')
 
+    if callable(post_filter):
+        df= post_filter(df)
+
     return _extract_cols(df, col_names)
 
 
-def _csv_reader(files, col_names, join_col=None, read_csv_kwargs=None):
+def _csv_reader(files, col_names, join_col=None, read_csv_kwargs=None, post_filter=None):
     if read_csv_kwargs is None:
         read_csv_kwargs = {}
 
@@ -46,6 +52,9 @@ def _csv_reader(files, col_names, join_col=None, read_csv_kwargs=None):
             df = tdf
         else:
             df = df.merge(tdf, on=join_col, how='left')
+
+    if callable(post_filter):
+        df= post_filter(df)
 
     return _extract_cols(df, col_names)
 
@@ -74,10 +83,29 @@ FILES = {
                                                                lambda df: df['Mstar_u'] - df['Mstar'], lambda df: df['Mstar'] - df['Mstar_l']]),
     'SFGs, Tacconi+2013': _csv_reader([os.path.join('data', 'context_main_seq', 'PHIBBS_table1.csv'),
                                        os.path.join('data', 'context_main_seq', 'PHIBBS_table2.csv')], join_col='Source',
-                                      col_names=['Source', 'z_CO', lambda df: np.log10(df['SFR^d']), lambda df: np.zeros(len(df['Source'])),
-                                                 lambda df: np.zeros(len(df['Source'])), lambda df: np.log10(df['M_*^g']),
-                                                 lambda df: np.zeros(len(df['Source'])), lambda df: np.zeros(len(df['Source']))],
+                                      col_names=['Source', 'z_CO', lambda df: np.log10(df['SFR^d']), lambda df: .35 * df['SFR^d'] / (df['SFR^d'] * np.log(10.)),
+                                                 lambda df: .35 * df['SFR^d'] / (df['SFR^d'] * np.log(10.)), lambda df: np.log10(df['M_*^g']),
+                                                 lambda df: .3 * df['M_*^g'] / (df['M_*^g'] * np.log(10.)), lambda df: .3 * df['M_*^g'] / (df['M_*^g'] * np.log(10.))],
                                       read_csv_kwargs={'delimiter': '\t', 'skipinitialspace': True, 'na_values': ['...', '... ']}),
     'SMGs, Cunha+2015': _csv_reader([os.path.join('data', 'context_main_seq', 'Cunha.csv')], col_names=['ID', 'z_phot'] + COLUMNS[2:],
                                     read_csv_kwargs={'delimiter': '\t'}),
+    'Local SFGs, Sun+2020': _csv_reader([os.path.join('data', 'context_main_seq', 'sun.csv')],
+                                        col_names=['galaxy', lambda df: df['d'] * 70 / 3e5, lambda df: np.log10(df['SFR']),
+                                                   lambda df: np.zeros(len(df['galaxy'])), lambda df: np.zeros(len(df['galaxy'])),
+                                                   lambda df: np.log10(df['Mstar'] * 1e9),
+                                                   lambda df: np.zeros(len(df['galaxy'])), lambda df: np.zeros(len(df['galaxy']))],
+                                        read_csv_kwargs={'delim_whitespace': True}),
+    # ULIRGs from Cunha+2010 don't work: they list specific star formation rate instead of star formation rate.
+    # 'ULIRGS, Cunha+2010': _csv_reader([os.path.join('data', 'context_main_seq', 'ulirgs_cunha1.csv'),
+    #                                    os.path.join('data', 'context_main_seq', 'ulirgs_cunha2.csv')], join_col='Galaxy',
+    #                                   col_names=['Galaxy', 'z'] + COLUMNS[2:], read_csv_kwargs={'delimiter': '\t'}),
+    # COSMOS is a lot
+    # 'COSMOS, Laigle+2016': _fits_reader([os.path.join('data', 'context_main_seq', 'COSMOS2015_Laigle+_v1.1.fits')],
+    #                                     col_names=['NUMBER', 'ZPDF', 'SFR_MED', 'SFR_MED_MAX68', 'SFR_MED_MIN68',
+    #                                                'MASS_MED', 'MASS_MED_MAX68', 'MASS_MED_MIN68'],
+    #                                     fits_open_kwargs={'mmap': False},
+    #                                     post_filter=lambda df: df[(df['TYPE'] == 0) & (df['ZPDF'] > .9) & (df['ZPDF'] < 1.6)
+    #                                                               & (df['SFR_MED'] > 0.) & (df['MASS_MED'] > 6.)]),
 }
+
+# print(FILES['COSMOS, Laigle+2016'].shape)
