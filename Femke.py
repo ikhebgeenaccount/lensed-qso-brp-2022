@@ -133,11 +133,16 @@ def all_galaxies():
     lqsos_df['f_gas_me'] = np.sqrt((np.square(np.power(10., lqsos_df['logMstar']) * lqsos_df['Mgas_err']) +\
                            np.square(lqsos_df['Mgas'] * np.log(10.) * np.power(10., lqsos_df['logMstar']) * lqsos_df['logMstar_me'])) /\
                            np.power(np.power(10., lqsos_df['logMstar']) + lqsos_df['Mgas'], 4.))
-
+    print(lqsos_df['f_gas'])
     # Make plots
-#    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False)
-#    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_opt', save_name='speagle_opt')
-#    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_IR', save_name='speagle_IR')
+    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False)
+    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_opt', save_name='speagle_opt')
+    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_IR', save_name='speagle_IR')
+
+    # Make speagle plot for every galaxy of all runs
+    # for gal, df in lqsos_all_runs_df.items():
+    #     plot_lqsos_in_speagle(df, label=df['name'], group=False, save_name=f'{gal}_speagle', errorbar_kwargs={'alpha': .6})
+
 #    
     #obscuration plot# Add Type1/2 AGN separation line as found in AGNfitter paper
 #    fig, ax = plot_agnf_output(lqsos, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub')
@@ -149,9 +154,12 @@ def all_galaxies():
     #plot_agnf_output(lqsos, 'SFR_IR', 'SFR_opt', color_scale_field='log age', equals_line=True, logx=True, logy=True)
     
     f , a =plt.subplots(figsize=(10,8))
+    f4, a4 = None, None
     hist_stellarmass(lqsos_df, f, a, label = 'our sample', zorder=10)
     for label, df in src.ms_data_reader.FILES.items():
         hist_stellarmass(df, f, a, label = label)
+        f4, a4 = plot_lqsos_in_speagle(df, label=label, fig=f4, ax=a4, group=True, errorbar_kwargs={'markersize': 3, 'alpha':.5}, save_name='speagle_comp')
+    f4, a4 = plot_lqsos_in_speagle(lqsos_df, label='This work', fig=f4, ax=a4, group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_comp')
     a.legend()
     a.set_xlabel('Log M_star', fontsize=14)
     a.set_ylabel('normalised number density', fontsize=14)
@@ -170,6 +178,8 @@ def all_galaxies():
     LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)
     for label, df in src.ms_data_reader.FILES.items():
         if 'Birkin' in label:
+            continue
+        if 'Sun' in label:
             continue
         ax2.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label,
             zorder=50, s=50, alpha=.7)
