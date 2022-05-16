@@ -63,7 +63,7 @@ def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_
                    df[f'logSFR_pe']]) == 0 else np.reshape([df['logSFR_me'], \
                     df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o', **errorbar_kwargs)
     ax.legend(loc='center right', bbox_to_anchor=(1.4, 0.5),
-          ncol=1, fancybox=True, shadow=True)
+              ncol=1, fancybox=True, shadow=True)
 
     ax.axhline(0, xmin=0, xmax=1, color='grey', ls='--')
 
@@ -128,7 +128,13 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
     return fig, ax
 
 def hist_stellarmass(df, fig, ax,label, zorder=1, binwidth=0.25, alpha=0.5, density=True):
+    if fig is None:
+        fig, ax = plt.subplots()
+
     ax.hist(df['logMstar'], zorder=zorder, bins=np.arange(8, 12.5, binwidth), alpha=alpha,density=density, label=label, edgecolor='black')
+    ax.legend()
+    fig.savefig(os.path.join('plots', 'hist_stellarmass.pdf'))
+    return fig, ax
 
 
 def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component='_sub', equals_line=False, logx=False, logy=False, unique_markers=True):
@@ -371,12 +377,12 @@ def plot_evolution_df(df, fig=None, ax=None):
     """
      #redshift of the galaxy
     z = df['redshift']
-    
-    
+
+
     #stellar mass of the galaxy
     logM , pe_logM, me_logM = df['logMstar'],  df['logMstar_pe'], df['logMstar_me']
     M = 10 ** logM
-    
+
 
     #total SFR of the galaxy
     sfr_tot = df['SFR']
@@ -392,7 +398,7 @@ def plot_evolution_df(df, fig=None, ax=None):
     ax.set_xlabel('age of universe [yr]')
     ax.set_ylabel('Stellar mass [solar mass]')
 
-    
+
     #TODO: add error prop
     M_gas= df['Mgas']
     M_gas_err=df['Mgas_err']
@@ -405,13 +411,13 @@ def plot_evolution_df(df, fig=None, ax=None):
         b = M[i] - (sfr_tot[i] * age[i])
         name = df['name'].values[i]
         ax.scatter(age[i], M[i], label = f'{name}', zorder=100, s=49) #placing the galaxy
-        
-        
+
+
         age_range = np.linspace((-(b)/sfr_tot[i]), age[i], 100)
         age_range2 = np.linspace( age[i],(M_gas[i] + M[i] - b)/sfr_tot[i], 100)
-    
+
         #formula of the M_star assuming constant sfr
-        
+
         M_range = sfr_tot[i] * age_range + b
         M_range2 = sfr_tot[i] * age_range2 + b
 
@@ -422,10 +428,10 @@ def plot_evolution_df(df, fig=None, ax=None):
         else:
             ax.plot(age_range, M_range, color='fuchsia')
             ax.plot(age_range2, M_range2, color='blue')
-            
+
     ax.legend()
     fig.savefig(os.path.join('plots', 'evolution.pdf'))
-    
+
 
 
     return fig, ax
