@@ -20,8 +20,8 @@ import os
 
 plt.style.use('brp.mplstyle')
 
-GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']
-
+GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'J1633+3134', 'J1650+4251']
+#'B1608+656',
 PLOTS_SAVE = 'plots'
 
 
@@ -133,27 +133,24 @@ def all_galaxies(n=10, sub_folder=None):
         lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder, copy=False)
         _update_lqsos_dict(lqsos_dict, lqso)
 
-        residual_plot(lqso, errors=True)
+        # residual_plot(lqso, errors=True)
 
-        # Fill DataFrame with every run's output
-        d = _init_lqsos_dict()
-        for i in range(n):
-            lqso.agn_fitter_output(run_time=i, sub_folder=sub_folder)
-            _update_lqsos_dict(d, lqso, name=g + str(i))
+        # # Fill DataFrame with every run's output
+        # d = _init_lqsos_dict()
+        # for i in range(n):
+        #     lqso.agn_fitter_output(run_time=i, sub_folder=sub_folder)
+        #     _update_lqsos_dict(d, lqso, name=g + str(i))
+        # lqsos_all_runs_df[g] = _lqsos_dict_to_df(d)
 
-            # figs, axs = plot_lqso_in_speagle(lqso, figs, axs, label=lqso.name + str(i),
-            #                                   save_name=f'{lqso.name}_speagle', errorbar_kwargs={'alpha': .6})
-        lqsos_all_runs_df[g] = _lqsos_dict_to_df(d)
+        # # Plot AGNfitter output stuff
+        # plot_n_runs_pars(lqso, sub_folder=sub_folder, n=n)  # when running this one, have to run lqso.find_best_run afterwards again, otherwise stuck on last run
 
-        # Plot AGNfitter output stuff
-        plot_n_runs_pars(lqso, sub_folder=sub_folder, n=n)  # when running this one, have to run lqso.find_best_run afterwards again, otherwise stuck on last run
-
-        # Reload best run
-        lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
+        # # Reload best run
+        # lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
 
     lqsos_df = _lqsos_dict_to_df(lqsos_dict)
 
-    print(lqsos_df[['name', 'log age', 'f_gas', 'f_gas_pe', 'f_gas_me']].sort_values(by='f_gas'))
+    print(lqsos_df[['name', 'Mgas', 'f_gas', 'f_gas_pe', 'f_gas_me']].sort_values(by='f_gas'))
 
     # Make plots
     plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False)
@@ -171,7 +168,7 @@ def all_galaxies(n=10, sub_folder=None):
     fig.savefig(os.path.join('plots', 'EBVbbb_Nh.pdf'))
 
     plot_agnf_output(lqsos_df, 'SFR_IR', 'SFR_opt', color_scale_field='log age', equals_line=True, logx=True, logy=True, unique_markers=True)
-    plot_lqsos_vs_stacey(lqsos_df)
+    plot_lqsos_vs_stacey(lqsos_df[lqsos_df['stacey_sfr'] > 0])
 
     f, a = None, None
     fr, ar = None, None
@@ -246,8 +243,7 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    model_subtraction(LensedQSO('B1608+656'))
-    # all_galaxies()
+    all_galaxies()
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
