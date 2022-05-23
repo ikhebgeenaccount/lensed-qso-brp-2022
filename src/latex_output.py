@@ -1,3 +1,5 @@
+import pandas as pd
+
 NOTHING_FORMATTER = lambda s: str(s)
 FLUX_FORMATTER = lambda s: '{:.3e}'.format(s) if s != 0. else '-'
 
@@ -66,7 +68,7 @@ def sed_to_latex_table(lqso):
     print('\\end{landscape}')
 
 
-def plots_in_subfigures(gals, plot, caption=False, main_caption_text='', label=None):
+def plots_in_subfigures(gals, plot, caption=True, main_caption_text='', label=None):
     """
     Plots are found in plots/[galaxy]_[plot].pdf
     """
@@ -74,6 +76,7 @@ def plots_in_subfigures(gals, plot, caption=False, main_caption_text='', label=N
     for i, g in enumerate(gals):
         print('\\begin{subfigure}[t]{.5\\textwidth}\n\centering')
         print(f'\includegraphics[width=\linewidth]{{plots/{g}_{plot}.pdf}}')
+
         if caption:
             print('\caption{' + g + '}')
 
@@ -85,3 +88,61 @@ def plots_in_subfigures(gals, plot, caption=False, main_caption_text='', label=N
     if label:
         print(f'\label{{fig:all_{label}}}')
     print('\end{figure}')
+
+
+def agnf_output_table(lqsos_df, cols, col_names=None, label=''):
+    df_copy = lqsos_df.copy()
+
+    # Table environment: first col is right aligned, rest left
+    print('\\begin{table}\n\\caption{}\\label{' + label + '}\\begin{tabular}{|r|' + 'l|' * len(cols) + '}')
+
+    # Create table header with col_names
+    header = ''
+    for i in range(len(cols)):
+        header += (col_names[i] + '&') if col_names else (cols[i] +'&')
+    # Exchange last & with newline \\
+    header = header[:-1] + '\\\\'
+
+    print(header)
+    print('\\hline')  # horizontal line between header and data
+
+    def custom_format(f):
+        if f > 1e4 or f < -1e4:
+            return '{:.2e}'.format(f).replace('e+', 'e')
+        else:
+            return '{:.2f}'.format(f)
+
+    # Create data table
+    lqsos_out = pd.DataFrame()
+    for i, c in enumerate(cols):
+        has_single_err = has_double_err = False
+
+        if f'{c}_err' in df_copy.columns:
+            has_single_err = True
+        if f'{c}_pe' in df_copy.columns:
+            has_double_err = True
+
+        err_string = ''
+        if has_single_err:
+            err_string = ' \\pm ' + df_copy[f'{c}_err'].map(custom_format)
+        elif has_double_err:
+            err_string = '^{' + df_copy[f'{c}_pe'].map(custom_format) + '}_{' + df_copy[f'{c}_me'].map(custom_format) + '}'
+
+        is_float = df_copy[c].dtype == float
+
+        if is_float:
+            data_col = '$' + df_copy[c].map(custom_format) + err_string + '$'
+        else:
+            data_col = df_copy[c]
+
+        if i == 0:  # First column
+            lqsos_out['out'] = data_col + ' & '
+        elif i == len(cols) - 1:  # Last columns
+            lqsos_out['out'] += data_col + ' \\\\'
+        else:
+            lqsos_out['out'] += data_col + ' & '
+
+    for i in range(len(lqsos_out)):
+        print(lqsos_out['out'].iloc[i])
+
+    print('\\end{tabular}\n\\end{table}')

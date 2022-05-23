@@ -6,12 +6,12 @@ import pandas as pd
 
 from src.agn_fitter_automated import run_agn_fitter
 from src.lensed_qso import LensedQSO
-from src.latex_output import dataframe_to_latex_table, sed_to_latex_table, plots_in_subfigures
+from src.latex_output import dataframe_to_latex_table, sed_to_latex_table, plots_in_subfigures,agnf_output_table
 from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
 from src.ned_to_sed import ned_table_to_sed
 from src.filters import populate_filter_profile_path_column
 from src.model_subtraction import model_subtraction
-from src.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual
+from src.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual, hist_stellarmass
 import src.ms_data_reader
 
 import src.model_sed
@@ -20,8 +20,8 @@ import os
 
 plt.style.use('brp.mplstyle')
 
-GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'J1633+3134', 'J1650+4251']
-#'B1608+656',
+GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']
+
 PLOTS_SAVE = 'plots'
 
 
@@ -153,19 +153,15 @@ def all_galaxies(n=10, sub_folder=None):
     print(lqsos_df[['name', 'Mgas', 'f_gas', 'f_gas_pe', 'f_gas_me']].sort_values(by='f_gas'))
 
     # Make plots
-    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False)
-    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_opt', save_name='speagle_opt')
-    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'], group=False, sfr_type='logSFR_IR', save_name='speagle_IR')
+    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'] + ', z=' + lqsos_df['redshift'].astype(str), group=False)
+    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'] + ', z=' + lqsos_df['redshift'].astype(str), group=False, sfr_type='logSFR_opt', save_name='speagle_opt')
+    plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'] + ', z=' + lqsos_df['redshift'].astype(str), group=False, sfr_type='logSFR_IR', save_name='speagle_IR')
 
     # Make speagle plot for every galaxy of all runs
     for gal, df in lqsos_all_runs_df.items():
         plot_lqsos_in_speagle(df, label=df['name'], group=False, save_name=f'{gal}_speagle', errorbar_kwargs={'alpha': .6})
 
     fig, ax = plot_agnf_output(lqsos_df, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub', unique_markers=True)
-    # Add Type1/2 AGN separation line as found in AGNfitter paper
-    ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
-    ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
-    fig.savefig(os.path.join('plots', 'EBVbbb_Nh.pdf'))
 
     plot_agnf_output(lqsos_df, 'SFR_IR', 'SFR_opt', color_scale_field='log age', equals_line=True, logx=True, logy=True, unique_markers=True)
     plot_lqsos_vs_stacey(lqsos_df[lqsos_df['stacey_sfr'] > 0])
@@ -173,15 +169,26 @@ def all_galaxies(n=10, sub_folder=None):
     f, a = None, None
     fr, ar = None, None
     fr2, ar2 = None, None
-    for label, df in src.ms_data_reader.FILES.items():
-        f, a = plot_lqsos_in_speagle(df, label=label, fig=f, ax=a, group=True, errorbar_kwargs={'markersize': 3, 'alpha':.5}, save_name='speagle_comp')
+    fh, ah = None, None
 
-        fr, ar = plot_speagle_residual(df, label=label, fig=fr, ax=ar, errorbar_kwargs={'markersize': 3, 'alpha':.5}, save_name='speagle_res')
-        fr2, ar2 = plot_speagle_residual(df, label=label, fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'markersize': 3, 'alpha':.5}, save_name='speagle_res_logMstar')
+    fh, ah = hist_stellarmass(lqsos_df, fh, ah, label = 'our sample', zorder=10)
+    for label, df in src.ms_data_reader.FILES.items():
+        fh, ah = hist_stellarmass(df, fh, ah, label = label)
+        f, a = plot_lqsos_in_speagle(df, label=label, fig=f, ax=a, group=True, errorbar_kwargs={'markersize': 3, 'alpha':.5, 'capsize': 3}, save_name='speagle_comp')
+
+        fr, ar = plot_speagle_residual(df, label=label, fig=fr, ax=ar, errorbar_kwargs={'markersize': 3, 'alpha':.5, 'capsize': 3}, save_name='speagle_res')
+        fr2, ar2 = plot_speagle_residual(df, label=label, fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'markersize': 3, 'alpha':.5, 'capsize': 3}, save_name='speagle_res_logMstar')
 
     f, a = plot_lqsos_in_speagle(lqsos_df, label='This work', fig=f, ax=a, group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_comp')
     fr, ar = plot_speagle_residual(lqsos_df, label='This work', fig=fr, ax=ar, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res')
     fr2, ar2 = plot_speagle_residual(lqsos_df, label='This work', fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res_logMstar')
+
+    print(lqsos_df.columns)
+
+    # AGNfitter output table
+    # agnf_output_table(lqsos_df, cols=['name'] + src.lensed_qso.AGNFITTER_FIELDS[0:10], label='tab:agnf_output_pars')
+
+    agnf_output_table(lqsos_df, cols=['name', 'logSFR_IR', 'logSFR_opt', 'logSFR', 'logMstar', 'Mgas', 'f_gas'], label='tab:results_sfrs_ms')
 
 
 def big_plot():

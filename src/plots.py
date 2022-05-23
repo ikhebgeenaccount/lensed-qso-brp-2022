@@ -62,12 +62,12 @@ def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_
     ax.errorbar(df[x_field], df['logSFR'] - speagle_log_sfr[0], yerr=None if np.sum([df['logSFR_me'],\
                    df[f'logSFR_pe']]) == 0 else np.reshape([df['logSFR_me'], \
                     df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o', **errorbar_kwargs)
-    ax.legend(loc='center right', bbox_to_anchor=(1.4, 0.5),
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.4, 0.5),
               ncol=1, fancybox=True, shadow=True)
 
     ax.axhline(0, xmin=0, xmax=1, color='grey', ls='--')
 
-    fig.savefig(os.path.join('plots', f'{save_name}.pdf'))
+    fig.savefig(os.path.join('plots', f'{save_name}.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
 
     return fig, ax
 
@@ -120,10 +120,11 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
             ax.errorbar(row['logMstar'], row[sfr_type], xerr=[[row['logMstar_me']], [row['logMstar_pe']]],
                         yerr=[[row[f'{sfr_type}_me']], [row[f'{sfr_type}_pe']]], label=lab, fmt='o', **errorbar_kwargs)
 
-    ax.legend(ncol=2)
+    ax.set_ylim(ymax=4.1)
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.53, 0.5),
+              ncol=1, fancybox=True, shadow=True)
 
-    fig.tight_layout()
-    fig.savefig(os.path.join('plots', f'{save_name}.pdf'))
+    fig.savefig(os.path.join('plots', f'{save_name}.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
     # fig.savefig(os.path.join('plots', 'speagle.svg'))
 
     return fig, ax
@@ -173,7 +174,8 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component=
             cbar.set_label(color_scale_field)
 
     if unique_markers:
-        ax.legend()
+        lgd = ax.legend(loc='center right', bbox_to_anchor=(1.55, 0.5),
+                  ncol=1, fancybox=True, shadow=True)
 
     if equals_line:
         x = np.linspace(np.min(lqsos[field_1] - lqsos[f'{field_1}_me']), np.max(lqsos[field_1] + lqsos[f'{field_1}_pe']), 10000)
@@ -182,13 +184,17 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component=
     ax.set_xlabel(field_1)
     ax.set_ylabel(field_2)
 
+    if field_1 == 'EBVbbb' and field_2 == 'Nh':
+        # Add Type1/2 AGN separation line as found in AGNfitter paper
+        ax.vlines(0.2, ymin=21.5, ymax=25, color='black', ls='--')
+        ax.hlines(21.5, xmin=0.2, xmax=1, color='black', ls='--')
+
     if logx:
         ax.set_xscale('log')
     if logy:
         ax.set_yscale('log')
 
-    fig.tight_layout()
-    fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.pdf'))
+    fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
     # fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.svg'))
 
     return fig, ax
@@ -229,11 +235,11 @@ def residual_plot(lqso, errors=False):
     ax2.set_xscale ('log')
     # ax2.set_yscale('log')
 
-    ax1.set_title(f'{lqso.name}', fontsize=15)
-    ax1.set_ylabel('$\\nu \\rm{L}(\\nu)[erg \ s^{-1}]$', fontsize=14)
-    ax2.set_ylabel('$\sigma$', fontsize=14)
+    # ax1.set_title(f'{lqso.name}', fontsize=15)
+    ax1.set_ylabel('$\\nu \\rm{L}(\\nu)[erg \ s^{-1}]$')
+    ax2.set_ylabel('$\sigma$')
     # ax2.ticklabel_format(style='scientific', axis='y')
-    ax2.set_xlabel('rest frame $\\nu$[Hz]', fontsize=14)
+    ax2.set_xlabel('rest frame $\\nu$[Hz]')
 
     #For getting the right colors
     terms=['SBnuLnu','BBnuLnu','GAnuLnu', 'TOnuLnu','TOTALnuLnu']
