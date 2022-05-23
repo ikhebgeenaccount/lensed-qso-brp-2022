@@ -122,6 +122,7 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
 
     ax.legend(ncol=2)
 
+    fig.tight_layout()
     fig.savefig(os.path.join('plots', f'{save_name}.pdf'))
     # fig.savefig(os.path.join('plots', 'speagle.svg'))
 

@@ -18,7 +18,7 @@ LQSO_NO_MODELS = {
     'J1455+1447': 5, #1 datapoint
     'J1524+4409': 5, #not clear, made guess
     'B1600+434': 4, #spiral>take best 5, changed to 4 since 4/5 best models have Herschel data
-    'B1608+656': 5, #semi clear
+    'B1608+656': 3, #semi clear
     'J1633+3134': 1, #very clear
     'J1650+4251': 5 #1 datapoint
 }
@@ -122,7 +122,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     mults = []
 
     single_g = False        # TODO: some column names contain spaces? Like log Mstar
-    if lqso.name in ['J1650+4251', 'J1455+1447', 'B1608+656']:
+    if lqso.name in ['J1650+4251', 'J1455+1447']:
         # Fit only selection of models
         models = ['NGC_3265', 'NGC_0855', 'NGC_4621', 'NGC_4660', 'NGC_4458']
 
@@ -130,7 +130,15 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
         single_g = True
 
-    if lqso.name == 'B1600+434':
+    elif lqso.name == 'B1608+656':
+        # Fit only selection of models
+        models = ['NGC_3265', 'NGC_4660', 'NGC_4458']
+
+        model_set_is = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['name'].isin(models)].index
+
+        single_g = True
+
+    elif lqso.name == 'B1600+434':
         # Only fit good fitting spiral models with Herschel data
         models = ['UGC_12150', 'NGC_5104', 'NGC_5033', 'NGC_4594']
 

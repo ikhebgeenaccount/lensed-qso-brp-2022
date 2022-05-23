@@ -121,7 +121,7 @@ def model_subtraction(lqso):
     # Change upper limits with errors to upper limit = upper limit + error
     lqso.sed['flux_sub_demag'].loc[lqso.sed['upper_limit'] == 1] += lqso.sed['flux_sub_demag_err'].loc[lqso.sed['upper_limit'] == 1]
     lqso.sed['flux_sub_demag_err'].loc[lqso.sed['upper_limit'] == 1] = 0
-    
+
     """
     when done remove from here:
     """
@@ -138,8 +138,6 @@ def model_subtraction(lqso):
     """
 
     fig, ax, _, _ = lqso.plot_spectrum(component='_sub')
-    fig.savefig(os.path.join('plots', lqso.name, f'{lqso.name}_sub.jpg'))
-    fig.savefig(os.path.join('plots', lqso.name, f'{lqso.name}_sub.pdf'))
     plt.vlines(np.max(wavelength), 0.9*np.min(list_sub), np.max(lqso.sed['flux_total']), alpha=0.5)
     plt.vlines(np.min(wavelength), 0.9*np.min(list_sub), np.max(lqso.sed['flux_total']), alpha=0.5, label='model boundary')
     lqso.save_sed()
