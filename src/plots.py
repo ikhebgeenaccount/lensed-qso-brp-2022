@@ -62,7 +62,7 @@ def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_
     ax.errorbar(df[x_field], df['logSFR'] - speagle_log_sfr[0], yerr=None if np.sum([df['logSFR_me'],\
                    df[f'logSFR_pe']]) == 0 else np.reshape([df['logSFR_me'], \
                     df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o', **errorbar_kwargs)
-    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.4, 0.5),
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.5, 0.5),
               ncol=1, fancybox=True, shadow=True)
 
     ax.axhline(0, xmin=0, xmax=1, color='grey', ls='--')
@@ -121,7 +121,7 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
                         yerr=[[row[f'{sfr_type}_me']], [row[f'{sfr_type}_pe']]], label=lab, fmt='o', **errorbar_kwargs)
 
     ax.set_ylim(ymax=4.1)
-    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.53, 0.5),
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.65, 0.5),
               ncol=1, fancybox=True, shadow=True)
 
     fig.savefig(os.path.join('plots', f'{save_name}.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
@@ -157,11 +157,12 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component=
             cbar = fig.colorbar(ax_scatter, cmap=cm)
             cbar.set_label(color_scale_field)
     else:
+        vmin, vmax = None, None
         if color_scale_field is not None:
             vmin, vmax = np.min(lqsos[color_scale_field]), np.max(lqsos[color_scale_field])
 
         for i, row in lqsos.iterrows():
-            ax_scatter = ax.scatter(row[field_1], row[field_2], c=row[color_scale_field] if color_scale_field is not None else None, cmap=cm, zorder=100, vmin=vmin, vmax=vmax, marker=markers[i], label=row['name'], edgecolors='black')
+            ax_scatter = ax.scatter(row[field_1], row[field_2], c=row[color_scale_field] if color_scale_field is not None else None, cmap=cm, zorder=100, vmin=vmin, vmax=vmax, marker=markers[i] if color_scale_field else None, label=row['name'], edgecolors='black' if color_scale_field else None)
             ax.errorbar(row[field_1], row[field_2],
                         xerr=None if np.sum([row[f'{field_1}_me'], row[f'{field_1}_pe']]) == 0 else
                         np.reshape([row[f'{field_1}_me'], row[f'{field_1}_pe']], (2, 1)),
@@ -174,7 +175,11 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component=
             cbar.set_label(color_scale_field)
 
     if unique_markers:
-        lgd = ax.legend(loc='center right', bbox_to_anchor=(1.55, 0.5),
+        if color_scale_field:
+            bbox_h = 1.65
+        else:
+            bbox_h = 1.35
+        lgd = ax.legend(loc='center right', bbox_to_anchor=(bbox_h, 0.5),
                   ncol=1, fancybox=True, shadow=True)
 
     if equals_line:

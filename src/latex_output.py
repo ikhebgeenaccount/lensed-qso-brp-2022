@@ -74,7 +74,7 @@ def plots_in_subfigures(gals, plot, caption=True, main_caption_text='', label=No
     """
     print('\\begin{figure}\n\centering')
     for i, g in enumerate(gals):
-        print('\\begin{subfigure}[t]{.5\\textwidth}\n\centering')
+        print('\\begin{subfigure}[t]{.7\\textwidth}\n\centering\n\hspace*{-2.3in}')
         print(f'\includegraphics[width=\linewidth]{{plots/{g}_{plot}.pdf}}')
 
         if caption:
@@ -126,7 +126,7 @@ def agnf_output_table(lqsos_df, cols, col_names=None, label=''):
         if has_single_err:
             err_string = ' \\pm ' + df_copy[f'{c}_err'].map(custom_format)
         elif has_double_err:
-            err_string = '^{' + df_copy[f'{c}_pe'].map(custom_format) + '}_{' + df_copy[f'{c}_me'].map(custom_format) + '}'
+            err_string = '^{+' + df_copy[f'{c}_pe'].map(custom_format) + '}_{-' + df_copy[f'{c}_me'].map(custom_format) + '}'
 
         is_float = df_copy[c].dtype == float
 

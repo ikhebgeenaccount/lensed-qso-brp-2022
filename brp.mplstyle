@@ -1,12 +1,12 @@
 # Axes
-axes.titlesize : 16
-axes.labelsize : 16
+axes.titlesize : 20
+axes.labelsize : 20
 
 # Graphs
 lines.linewidth : 1
 lines.markersize : 8
-xtick.labelsize : 16
-ytick.labelsize : 16
+xtick.labelsize : 20
+ytick.labelsize : 20
 
 errorbar.capsize : 5
 
@@ -18,11 +18,11 @@ figure.subplot.bottom: 0.12
 figure.subplot.top: 0.95
 
 # Legend
-legend.fontsize : 16
+legend.fontsize : 20
 
 # Savefig
 savefig.format : pdf
 
 # Font
 # text.Text properties
-font.size : 16
+font.size : 20

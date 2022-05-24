@@ -122,7 +122,7 @@ def _lqsos_dict_to_df(lqsos_dict):
     return lqsos_df
 
 
-def all_galaxies(n=10, sub_folder=None):
+def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False):
     lqsos_dict = _init_lqsos_dict()
 
     lqsos_all_runs_df = {}
@@ -133,22 +133,33 @@ def all_galaxies(n=10, sub_folder=None):
         lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder, copy=False)
         _update_lqsos_dict(lqsos_dict, lqso)
 
-        # residual_plot(lqso, errors=True)
+        if generate_lqso_plots:
+            lqso.plot_spectrum()
+            lqso.plot_spectrum(component='_sub')
 
-        # # Fill DataFrame with every run's output
-        # d = _init_lqsos_dict()
-        # for i in range(n):
-        #     lqso.agn_fitter_output(run_time=i, sub_folder=sub_folder)
-        #     _update_lqsos_dict(d, lqso, name=g + str(i))
-        # lqsos_all_runs_df[g] = _lqsos_dict_to_df(d)
+            model_subtraction(lqso)
 
-        # # Plot AGNfitter output stuff
-        # plot_n_runs_pars(lqso, sub_folder=sub_folder, n=n)  # when running this one, have to run lqso.find_best_run afterwards again, otherwise stuck on last run
+            residual_plot(lqso, errors=True)
 
-        # # Reload best run
-        # lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
+            # Fill DataFrame with every run's output
+            d = _init_lqsos_dict()
+            for i in range(n):
+                lqso.agn_fitter_output(run_time=i, sub_folder=sub_folder)
+                _update_lqsos_dict(d, lqso, name=g + str(i))
+            lqsos_all_runs_df[g] = _lqsos_dict_to_df(d)
+
+            # Plot AGNfitter output stuff
+            plot_n_runs_pars(lqso, sub_folder=sub_folder, n=n)  # when running this one, have to run lqso.find_best_run afterwards again, otherwise stuck on last run
+
+            # Reload best run
+            lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
 
     lqsos_df = _lqsos_dict_to_df(lqsos_dict)
+
+    return lqsos_df, lqsos_all_runs_df
+
+
+def generate_context_plots(lqsos_df, lqsos_all_runs_df):
 
     print(lqsos_df[['name', 'Mgas', 'f_gas', 'f_gas_pe', 'f_gas_me']].sort_values(by='f_gas'))
 
@@ -163,7 +174,7 @@ def all_galaxies(n=10, sub_folder=None):
 
     fig, ax = plot_agnf_output(lqsos_df, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub', unique_markers=True)
 
-    plot_agnf_output(lqsos_df, 'SFR_IR', 'SFR_opt', color_scale_field='log age', equals_line=True, logx=True, logy=True, unique_markers=True)
+    plot_agnf_output(lqsos_df, 'SFR_IR', 'SFR_opt', equals_line=True, logx=True, logy=True, unique_markers=True)
     plot_lqsos_vs_stacey(lqsos_df[lqsos_df['stacey_sfr'] > 0])
 
     f, a = None, None
@@ -182,13 +193,6 @@ def all_galaxies(n=10, sub_folder=None):
     f, a = plot_lqsos_in_speagle(lqsos_df, label='This work', fig=f, ax=a, group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_comp')
     fr, ar = plot_speagle_residual(lqsos_df, label='This work', fig=fr, ax=ar, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res')
     fr2, ar2 = plot_speagle_residual(lqsos_df, label='This work', fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res_logMstar')
-
-    print(lqsos_df.columns)
-
-    # AGNfitter output table
-    # agnf_output_table(lqsos_df, cols=['name'] + src.lensed_qso.AGNFITTER_FIELDS[0:10], label='tab:agnf_output_pars')
-
-    agnf_output_table(lqsos_df, cols=['name', 'logSFR_IR', 'logSFR_opt', 'logSFR', 'logMstar', 'Mgas', 'f_gas'], label='tab:results_sfrs_ms')
 
 
 def big_plot():
@@ -209,7 +213,7 @@ def big_plot():
     fig.savefig(os.path.join(PLOTS_SAVE, 'SED_all.png'))
 
 
-def latex():
+def latex(lqsos_df):
     # Filter table to latex
     # dataframe_to_latex_table(src.filters.FILTER_PROPERTIES.loc[src.filters.FILTER_PROPERTIES['conversion'].notnull()],
     #                                usecols=['telescope', 'filtername', 'central_wavelength', 'conversion', 'zeropoint'],
@@ -229,7 +233,13 @@ def latex():
     # plots_in_subfigures(GALAXIES, 'G_model_fit', label='fg_fit')
 
     # AGNfitter residuals
-    plots_in_subfigures(GALAXIES, 'agnf_residuals', label='agnf_res')
+    # plots_in_subfigures(GALAXIES, 'agnf_residuals', label='agnf_res')
+
+    # AGNfitter output table
+    # print(lqsos_df.columns)
+    # agnf_output_table(lqsos_df, cols=['name'] + src.lensed_qso.AGNFITTER_FIELDS[0:10], label='tab:agnf_output_pars')
+
+    agnf_output_table(lqsos_df, cols=['name', 'logSFR_IR', 'logSFR_opt', 'logSFR', 'logMstar', 'Mgas', 'f_gas'], label='tab:results_sfrs_ms')
 
 
 def plot_ell_models():
@@ -250,13 +260,15 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    all_galaxies()
+    lqsos_df, lqsos_all_runs_df = load_all_galaxies()
+
+    generate_context_plots(lqsos_df, lqsos_all_runs_df)
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
     # single_galaxy()
     # known_mag_gals()
 
-    # latex()
+    # latex(lqsos_df)
 
     plt.show()

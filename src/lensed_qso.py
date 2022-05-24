@@ -241,7 +241,6 @@ class LensedQSO:
             if l in SOURCES_COLORS:
                 color = SOURCES_COLORS[l]
             else:
-                print(len(SOURCES_COLORS))
                 color = COLORS[len(SOURCES_COLORS) + 1]
                 SOURCES_COLORS[l] = color
 
@@ -259,7 +258,7 @@ class LensedQSO:
             # upper_limits += (le_2, )
 
         # ax.legend(legend_list + [upper_limits], list(self.sed.source.unique()) + ['upper limit'], loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
-        ax.legend(legend_list, plotted_sources, loc='upper left', handler_map={tuple: HandlerTuple(ndivide=None)})
+        ax.legend(legend_list, plotted_sources, handler_map={tuple: HandlerTuple(ndivide=None)})
         ax.set_xscale('log')
 
         if loglog:
