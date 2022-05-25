@@ -96,11 +96,11 @@ FILES = {
                                                    lambda df: np.zeros(len(df['galaxy'])), lambda df: np.zeros(len(df['galaxy']))],
                                         read_csv_kwargs={'delim_whitespace': True}),
     # ULIRGs from Cunha+2010 don't work: they list specific star formation rate instead of star formation rate.
-    # 'ULIRGS, Cunha+2010': _csv_reader([os.path.join('data', 'context_main_seq', 'ulirgs_cunha1.csv'),
-    #                                     os.path.join('data', 'context_main_seq', 'ulirgs_cunha2.csv')], join_col='Galaxy',
-    #                                   col_names=['Galaxy', 'z', lambda df: df['logsSFR'] + df['logMstar'],
-    #                                              lambda df: np.zeros(len(df['Galaxy'])), lambda df: np.zeros(len(df['Galaxy']))] +
-    #                                   COLUMNS[-3:], read_csv_kwargs={'delimiter': '\t'}),
+    'ULIRGs, Cunha+2010, z=[0.03-0.5]': _csv_reader([os.path.join('data', 'context_main_seq', 'ulirgs_cunha1.csv'),
+                                        os.path.join('data', 'context_main_seq', 'ulirgs_cunha2.csv')], join_col='Galaxy',
+                                      col_names=['Galaxy', 'z', lambda df: df['logsSFR'] + df['logMstar'],
+                                                  lambda df: np.zeros(len(df['Galaxy'])), lambda df: np.zeros(len(df['Galaxy']))] +
+                                      COLUMNS[-3:], read_csv_kwargs={'delimiter': '\t'}),
     # COSMOS is a lot
     # 'COSMOS, Laigle+2016': _fits_reader([os.path.join('data', 'context_main_seq', 'COSMOS2015_Laigle+_v1.1.fits')],
     #                                     col_names=['NUMBER', 'ZPDF', 'SFR_MED', 'SFR_MED_MAX68', 'SFR_MED_MIN68',
@@ -114,4 +114,4 @@ FILES = {
                                      read_csv_kwargs={'delimiter': '\t'})
 }
 
-#print(np.min(FILES['QSOs, Jarvis+2020']['redshift']), np.max(FILES['QSOs, Jarvis+2020']['redshift']))
+# print(np.min(FILES['ULIRGS, Cunha+2010']['redshift']), np.max(FILES['ULIRGS, Cunha+2010']['redshift']))

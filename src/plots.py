@@ -46,6 +46,14 @@ def speagle_gms(log_m_star, t, log_m_star_err=None, t_err=None):
     return log_sfr, log_sfr_err
 
 
+def speagle_gms_residual(df):
+    df['univ_age'] = LCDM.age(df['redshift']).value
+
+    lsfr, lsfr_err = speagle_gms(df['logMstar'], df['univ_age'])
+
+    return df['logSFR'] - lsfr, lsfr_err
+
+
 def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_res', x_field='univ_age', x_label='Age of universe [Gyr]', errorbar_kwargs=None):
     if errorbar_kwargs is None:
         errorbar_kwargs = {}
@@ -56,17 +64,17 @@ def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_
         ax.set_xlabel(x_label)
         ax.set_ylabel('Residual with Speagle, logSFR')
 
-    df['univ_age'] = LCDM.age(df['redshift']).value
+    speagle_res = speagle_gms_residual(df)
 
-    speagle_log_sfr = speagle_gms(df['logMstar'], df['univ_age'])
-
-    ax.errorbar(df[x_field], df['logSFR'] - speagle_log_sfr[0], yerr=None if np.sum([df['logSFR_me'],\
+    ax.errorbar(df[x_field], speagle_res[0], yerr=None if np.sum([df['logSFR_me'],\
                    df[f'logSFR_pe']]) == 0 else np.reshape([df['logSFR_me'], \
                     df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o', **errorbar_kwargs)
-    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.5, 0.5),
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.65, 0.5),
               ncol=1, fancybox=True, shadow=True)
 
     ax.axhline(0, xmin=0, xmax=1, color='grey', ls='--')
+    ax.axhline(0.65, xmin=0, xmax=1, color='grey', ls='--')
+    ax.axhline(-0.65, xmin=0, xmax=1, color='grey', ls='--')
 
     fig.savefig(os.path.join('plots', f'{save_name}.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
 
@@ -130,11 +138,61 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
 
     return fig, ax
 
-def hist_stellarmass(df, fig, ax,label, zorder=1, binwidth=0.25, alpha=0.5, density=True):
+def plot_lqsos_in_speagle_z_scaled(df, fig=None, ax=None, label=None, save_name='speagle', group=True, errorbar_kwargs=None):
+    """
+    Plots all entries in df on Speagle ms, as if they are at redshift 1.5 using their residual to the Speagle main sequence.
+    label must be a list when group=False
+    """
+    if errorbar_kwargs is None:
+        errorbar_kwargs = {}
+
+    z = 1.5
+
+    gms, gms_err = speagle_gms(log_m_stars, LCDM.age(z).value)
+
+    df['gms_logsfr'] = np.interp(df['logMstar'], log_m_stars, gms)
+    df['gms_res'] = speagle_gms_residual(df)[0]
+
+    if ax is None:
+        # These things are only done if no ax is given
+        fig, ax = plt.subplots(figsize=(10,8))
+
+        ax.plot(log_m_stars, gms, color='black', label='Speagle MS $\pm 1\sigma$')
+        ax.plot(log_m_stars, gms + gms_err, color='black', linestyle='--')
+        ax.plot(log_m_stars, gms - gms_err, color='black', linestyle='--')
+
+        ax.set_ylabel('logSFR')
+        ax.set_xlabel('log$M_*$')
+
+    # Plot galaxy
+    if group:
+        ax.errorbar(df['logMstar'], df['gms_logsfr'] + df['gms_res'],
+                 xerr=None if np.sum([df['logMstar_me'], df['logMstar_pe']]) == 0 else
+                 np.reshape([df['logMstar_me'], df['logMstar_pe']], (2, len(df['logMstar_pe']))),
+                 yerr=None if np.sum([df[f'logSFR_me'], df[f'logSFR_pe']]) == 0 else
+                 np.reshape([df[f'logSFR_me'], df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o',
+                 **errorbar_kwargs)
+    else:
+        for lab, r in zip(label, df.iterrows()):
+            _, row = r
+            ax.errorbar(row['logMstar'], row['logSFR'], xerr=[[row['logMstar_me']], [row['logMstar_pe']]],
+                        yerr=[[row[f'logSFR_me']], [row[f'logSFR_pe']]], label=lab, fmt='o', **errorbar_kwargs)
+
+    ax.set_ylim(ymax=4.1)
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.65, 0.5),
+              ncol=1, fancybox=True, shadow=True)
+
+    fig.savefig(os.path.join('plots', f'{save_name}.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
+    # fig.savefig(os.path.join('plots', 'speagle.svg'))
+
+    return fig, ax
+
+
+def hist_stellarmass(df, fig, ax,label, zorder=1, binwidth=0.20, alpha=0.5, density=True):
     if fig is None:
         fig, ax = plt.subplots()
 
-    ax.hist(df['logMstar'], zorder=zorder, bins=np.arange(8, 12.5, binwidth), alpha=alpha,density=density, label=label, edgecolor='black')
+    ax.hist(df['logMstar'], zorder=zorder, bins=np.arange(int(min(df['logMstar'])), 12.5, binwidth), alpha=alpha,density=density, label=label, edgecolor='black')
     ax.set_xlabel('Log M_star', fontsize=14)
     ax.set_ylabel('normalised number density', fontsize=14)
     lgd = ax.legend(loc='center right', bbox_to_anchor=(1.65, 0.5),
@@ -385,7 +443,7 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
 
     if context==True:
         fig.savefig(os.path.join('plots', 'total_evolution_withdata.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
-        
+
     if context==False:
         fig.savefig(os.path.join('plots', 'evolution.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
 
