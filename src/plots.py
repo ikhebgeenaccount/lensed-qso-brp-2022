@@ -69,7 +69,8 @@ def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_
     ax.errorbar(df[x_field], speagle_res[0], yerr=None if np.sum([df['logSFR_me'],\
                    df[f'logSFR_pe']]) == 0 else np.reshape([df['logSFR_me'], \
                     df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o', **errorbar_kwargs)
-    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.65, 0.5),
+
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.7, 0.5),
               ncol=1, fancybox=True, shadow=True)
 
     ax.axhline(0, xmin=0, xmax=1, color='grey', ls='--')
@@ -396,7 +397,7 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
     if ax is None:
         fig,ax= plt.subplots(figsize=(10,8))
     ax.set_xlabel('age of universe [yr]')
-    ax.set_ylabel('Stellar mass [solar mass]')
+    ax.set_ylabel('$M_\star /M_{\odot}$')
 
 
     #TODO: add error prop
@@ -406,6 +407,8 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
     #make a range of ages in order to make the evolution line
     #lower limit = where no solar mass had been formed
     #upper limit = where all the gas mass has depleted
+    if context == True:
+        axins = ax.inset_axes([0.9, 0.39, 0.8, 0.6])
     for i in range(len(z)):
         #the constant in the formula
         b = M[i] - (sfr_tot[i] * age[i])
@@ -424,12 +427,19 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
         if i==0:
             ax.plot(age_range, M_range, color='fuchsia', label='time until galaxy formed' )
             ax.plot(age_range2, M_range2, color='blue', label='time until gas depletes' )
-            ax.set_title('Stellar mass evolution')
         else:
             ax.plot(age_range, M_range, color='fuchsia')
             ax.plot(age_range2, M_range2, color='blue')
 
+        if context == True:
+            axins.plot(age_range, M_range, color='fuchsia')
+            axins.plot(age_range2, M_range2, color='blue')
+            axins.scatter(age[i], M[i], label = f'{name}', zorder=100, s=49) #placing the galaxy
+
     if context == True:
+
+        ax.set_xlim(8e8,6e9)
+
         for label, df in src.ms_data_reader.FILES.items():
             if 'Birkin' in label:
                 continue
@@ -438,13 +448,28 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
             ax.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label,
                 zorder=50, s=50, alpha=.7)
 
-    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.5, 0.5),
-              ncol=1, fancybox=True, shadow=True)
+            axins.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label, zorder=50, s=50, alpha=.7)
+
+        x1, x2, y1, y2 = 3.3e9, 5.3e9, 0, 1.1e11
+        axins.set_xlim(x1, x2)
+        axins.set_ylim(y1, y2)
+        ax.indicate_inset_zoom(axins, edgecolor="black")
+
+
 
     if context==True:
+        lgd = ax.legend(loc='center right', bbox_to_anchor=(1.7, 0.19),
+                  ncol=2, fancybox=True, shadow=True)
         fig.savefig(os.path.join('plots', 'total_evolution_withdata.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
+<<<<<<< HEAD
 
+=======
+
+
+>>>>>>> ec27e85d231b654e21e880146378f7fbb660d625
     if context==False:
+        lgd = ax.legend(loc='center right', bbox_to_anchor=(1.3, 0.5),
+                  ncol=1, fancybox=True, shadow=True)
         fig.savefig(os.path.join('plots', 'evolution.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
 
     return fig, ax
