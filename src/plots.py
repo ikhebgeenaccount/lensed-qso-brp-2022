@@ -441,10 +441,10 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
         ax.set_xlim(8e8,6e9)
 
         for label, df in src.ms_data_reader.FILES.items():
-            if 'Birkin' in label:
-                continue
-            if 'Sun' in label:
-                continue
+            # if 'Birkin' in label:
+            #     continue
+            # if 'Sun' in label:
+            #     continue
             ax.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label,
                 zorder=50, s=50, alpha=.7)
 
