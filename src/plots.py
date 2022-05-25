@@ -14,7 +14,7 @@ import src.ms_data_reader
 
 LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)  # Cosmological constants as Speagle uses them
 
-log_m_stars = np.linspace(7, 13, num=10000)
+log_m_stars = np.linspace(8, 13, num=10000)
 
 # Speagle GMS constants
 a = 0.84
@@ -131,7 +131,7 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
                         yerr=[[row[f'{sfr_type}_me']], [row[f'{sfr_type}_pe']]], label=lab, fmt='o', **errorbar_kwargs)
 
     ax.set_ylim(ymax=4.1)
-    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.65, 0.5),
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.7, 0.5),
               ncol=1, fancybox=True, shadow=True)
 
     fig.savefig(os.path.join('plots', f'{save_name}.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
@@ -180,7 +180,7 @@ def plot_lqsos_in_speagle_z_scaled(df, fig=None, ax=None, label=None, save_name=
                         yerr=[[row[f'logSFR_me']], [row[f'logSFR_pe']]], label=lab, fmt='o', **errorbar_kwargs)
 
     ax.set_ylim(ymax=4.1)
-    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.65, 0.5),
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.7, 0.5),
               ncol=1, fancybox=True, shadow=True)
 
     fig.savefig(os.path.join('plots', f'{save_name}.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
@@ -461,12 +461,6 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
         lgd = ax.legend(loc='center right', bbox_to_anchor=(1.7, 0.19),
                   ncol=2, fancybox=True, shadow=True)
         fig.savefig(os.path.join('plots', 'total_evolution_withdata.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
-<<<<<<< HEAD
-
-=======
-
-
->>>>>>> ec27e85d231b654e21e880146378f7fbb660d625
     if context==False:
         lgd = ax.legend(loc='center right', bbox_to_anchor=(1.3, 0.5),
                   ncol=1, fancybox=True, shadow=True)
