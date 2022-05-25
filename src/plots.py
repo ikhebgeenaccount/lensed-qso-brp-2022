@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os.path
 from src.lensed_qso import XRAY_CUTOFF, RADIO_CUTOFF
+import src.ms_data_reader
 
 
 LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)  # Cosmological constants as Speagle uses them
@@ -134,8 +135,12 @@ def hist_stellarmass(df, fig, ax,label, zorder=1, binwidth=0.25, alpha=0.5, dens
         fig, ax = plt.subplots()
 
     ax.hist(df['logMstar'], zorder=zorder, bins=np.arange(8, 12.5, binwidth), alpha=alpha,density=density, label=label, edgecolor='black')
-    ax.legend()
-    fig.savefig(os.path.join('plots', 'hist_stellarmass.pdf'))
+    ax.set_xlabel('Log M_star', fontsize=14)
+    ax.set_ylabel('normalised number density', fontsize=14)
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.65, 0.5),
+              ncol=1, fancybox=True, shadow=True)
+
+    fig.savefig(os.path.join('plots', 'hist_stellarmass.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
     return fig, ax
 
 
@@ -299,86 +304,11 @@ def plot_lqsos_vs_stacey(lqsos):
 
 
 
-def plot_evolution(lqso, fig=None, ax=None, single=False):
-    """
-    This function plots the stellar mass evolution assuming constant sfr
-    under the formula M_star (t) = SFR * t + (M_star(age) - SFR * age)
-
-    This becomes 0 at t = SFR * age - M_star(age) / SFR
-
-    The goal of this is to give a rough indication of whether your sfr's make sense
-    """
-     #redshift of the galaxy
-    z = lqso.props.z_qso.values[0]
-
-    #stellar mass of the galaxy
-    logM , pe_logM, me_logM = lqso.get_agnf_output_field('logMstar', demag=True)
-    M = 10 ** logM
-
-    #TODO: calculate the non-log Mstar errors (if we want them)
-
-    #total SFR of the galaxy
-    sfr_ir, sfr_ir_pe, sfr_ir_me = lqso.get_agnf_output_field('SFR_IR', demag=True)
-    sfr_opt, sfr_opt_pe, sfr_opt_me = lqso.get_agnf_output_field('SFR_opt', demag=True)
-
-    sfr_tot = sfr_opt + sfr_ir
-    sfr_tot_pe = np.sqrt(sfr_ir_pe ** 2. + sfr_opt_pe ** 2.)
-    sfr_tot_me = np.sqrt(sfr_ir_me ** 2. + sfr_opt_me ** 2.)
-
-    #age of the individual galaxy, plotting this on the plot
-    age = LCDM.age(z).value * 1e9 #in yrs
-
-    #setting up the plot
-    if ax is None:
-        fig,ax= plt.subplots(figsize=(10,8))
-    ax.set_xlabel('age of universe [yr]')
-    ax.set_ylabel('Stellar mass [solar mass]')
-
-    ax.scatter(age, M, label = f'{lqso.name}', zorder=100, s=49) #placing the galaxy
-
-    #the constant in the formula
-    b = M - (sfr_tot * age)
-
-    #TODO: add real gas masses and error prop
-    M_gas= lqso.props['mu_m_gas'].values[0]/lqso.props['magnification'].values[0]#gas mass in solar masses
-
-    #make a range of ages in order to make the evolution line
-    #lower limit = where no solar mass had been formed
-    #upper limit = where all the gas mass has depleted
-    age_range = np.linspace((-(M - sfr_tot * age)/sfr_tot), age, 100)
-    age_range2 = np.linspace( age,(M_gas + M - b)/sfr_tot, 100)
-
-    #formula of the M_star assuming constant sfr
-    M_range = sfr_tot * age_range + b
-    M_range2 = sfr_tot * age_range2 + b
-
-    if single:
-        ax.plot(age_range, M_range, color='fuchsia', label='time until galaxy formed' )
-        ax.plot(age_range2, M_range2, color='blue', label='time until gas depletes' )
-        ax.set_title(f'Stellar mass evolution of {lqso.name}')
-
-        fig.savefig(os.path.join('plots', f'{lqso.name}_evolution.pdf'))
-
-
-    elif lqso.name == 'J0806+2006':
-        ax.plot(age_range, M_range, color='fuchsia', label='time until galaxy formed' )
-        ax.plot(age_range2, M_range2, color='blue', label='time until gas depletes' )
-        ax.set_title('Stellar mass evolution')
-    else:
-        ax.plot(age_range, M_range, color='fuchsia')
-        ax.plot(age_range2, M_range2, color='blue')
-    ax.legend()
-
-    if single == False:
-        fig.savefig(os.path.join('plots', 'total_evolution.pdf'))
 
 
 
-    return fig, ax
 
-
-
-def plot_evolution_df(df, fig=None, ax=None):
+def plot_evolution_df(df, fig=None, ax=None, context=True):
     """
     This function plots the stellar mass evolution assuming constant sfr
     under the formula M_star (t) = SFR * t + (M_star(age) - SFR * age)
@@ -441,10 +371,23 @@ def plot_evolution_df(df, fig=None, ax=None):
             ax.plot(age_range, M_range, color='fuchsia')
             ax.plot(age_range2, M_range2, color='blue')
 
-    ax.legend()
-    fig.savefig(os.path.join('plots', 'evolution.pdf'))
+    if context == True:
+        for label, df in src.ms_data_reader.FILES.items():
+            if 'Birkin' in label:
+                continue
+            if 'Sun' in label:
+                continue
+            ax.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label,
+                zorder=50, s=50, alpha=.7)
 
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.5, 0.5),
+              ncol=1, fancybox=True, shadow=True)
 
+    if context==True:
+        fig.savefig(os.path.join('plots', 'total_evolution_withdata.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
+        
+    if context==False:
+        fig.savefig(os.path.join('plots', 'evolution.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
 
     return fig, ax
 

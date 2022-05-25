@@ -9,7 +9,7 @@ from src.ned_to_sed import ned_table_to_sed
 from src.xml_to_txt import xml_to_txt
 from src.tophat import tophat
 from src.model_subtraction import model_subtraction
-from src.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual, plot_evolution, hist_stellarmass, plot_evolution_df
+from src.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual, hist_stellarmass, plot_evolution_df
 from src.percent_to_fraction import percent_to_fraction
 from src.filters import populate_filter_profile_path_column
 from src.model_sed import fit
@@ -38,7 +38,7 @@ GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447',
 PLOTS_SAVE = 'plots'
 cols = ['tau', 'age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
 cols_simple = ['-ln_like']
-run_times = [2,1,1,0,8,9,2,9,2,6]
+run_times = [2,1,1,0,8,9,2,3,2,6]
     
 def all_galaxies():
     ax = None
@@ -157,12 +157,14 @@ def all_galaxies():
     f4, a4 = None, None
     hist_stellarmass(lqsos_df, f, a, label = 'our sample', zorder=10)
     for label, df in src.ms_data_reader.FILES.items():
+        # if 'Jarvis' in label:
+        #     continue
+        # if 'Sun' in label:
+        #     continue
         hist_stellarmass(df, f, a, label = label)
         f4, a4 = plot_lqsos_in_speagle(df, label=label, fig=f4, ax=a4, group=True, errorbar_kwargs={'markersize': 3, 'alpha':.5}, save_name='speagle_comp')
     f4, a4 = plot_lqsos_in_speagle(lqsos_df, label='This work', fig=f4, ax=a4, group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_comp')
-    a.legend()
-    a.set_xlabel('Log M_star', fontsize=14)
-    a.set_ylabel('normalised number density', fontsize=14)
+
     
     #plot evolution all galaxies, including the other data
     fig2, ax2 = plot_evolution_df(lqsos_df)
@@ -171,24 +173,27 @@ def all_galaxies():
     
     #plot evolution excluding all other data
 
-    fig3, ax3 = plot_evolution_df(lqsos_df)
+    fig3, ax3 = plot_evolution_df(lqsos_df, context=False)
     
     #Adding the other data to evolution plot
     from astropy.cosmology import LambdaCDM
     LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)
+
+    f5,a5=None, None
+    fr, ar = None, None
+    fr2, ar2 = None, None
+    fh, ah = None, None
+
     for label, df in src.ms_data_reader.FILES.items():
-        if 'Birkin' in label:
-            continue
-        if 'Sun' in label:
-            continue
-        ax2.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label,
-            zorder=50, s=50, alpha=.7)
-    ax2.legend()
-#   ax2.set_ylim(ymax=1e12)
-    #ax2.set_xlim(xmin=3.5e9)
-    
-    fig2.savefig(os.path.join('plots', 'total_evolution_withdata.pdf'))
-    
+
+        fr, ar = plot_speagle_residual(df, label=label, fig=fr, ax=ar, errorbar_kwargs={'markersize': 3, 'alpha':.5, 'capsize': 3}, save_name='speagle_res')
+        fr2, ar2 = plot_speagle_residual(df, label=label, fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'markersize': 3, 'alpha':.5, 'capsize': 3}, save_name='speagle_res_logMstar')
+
+ 
+    fr, ar = plot_speagle_residual(lqsos_df, label='This work', fig=fr, ax=ar, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res')
+    fr2, ar2 = plot_speagle_residual(lqsos_df, label='This work', fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res_logMstar')
+
+
     
 if __name__ == '__main__':
     #single()
