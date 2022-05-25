@@ -441,10 +441,10 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
         ax.set_xlim(8e8,6e9)
 
         for label, df in src.ms_data_reader.FILES.items():
-            if 'Birkin' in label:
-                continue
-            if 'Sun' in label:
-                continue
+            # if 'Birkin' in label:
+            #     continue
+            # if 'Sun' in label:
+            #     continue
             ax.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label,
                 zorder=50, s=50, alpha=.7)
 
@@ -461,12 +461,7 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
         lgd = ax.legend(loc='center right', bbox_to_anchor=(1.7, 0.19),
                   ncol=2, fancybox=True, shadow=True)
         fig.savefig(os.path.join('plots', 'total_evolution_withdata.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
-<<<<<<< HEAD
 
-=======
-
-
->>>>>>> ec27e85d231b654e21e880146378f7fbb660d625
     if context==False:
         lgd = ax.legend(loc='center right', bbox_to_anchor=(1.3, 0.5),
                   ncol=1, fancybox=True, shadow=True)

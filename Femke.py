@@ -169,20 +169,12 @@ def all_galaxies():
     #plot evolution all galaxies, including the other data
     fig2, ax2 = plot_evolution_df(lqsos_df)
     
-
-    
     #plot evolution excluding all other data
 
     fig3, ax3 = plot_evolution_df(lqsos_df, context=False)
-    
-    #Adding the other data to evolution plot
-    from astropy.cosmology import LambdaCDM
-    LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)
 
-    f5,a5=None, None
     fr, ar = None, None
     fr2, ar2 = None, None
-    fh, ah = None, None
 
     for label, df in src.ms_data_reader.FILES.items():
 
