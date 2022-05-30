@@ -189,17 +189,17 @@ def plot_lqsos_in_speagle_z_scaled(df, fig=None, ax=None, label=None, save_name=
     return fig, ax
 
 
-def hist_stellarmass(df, fig, ax,label, zorder=1, binwidth=0.20, alpha=0.5, density=True):
+def hist_stellarmass(df, fig, ax,label, zorder=1, binwidth=0.20, alpha=0.5, density=True, field='logMstar'):
     if fig is None:
         fig, ax = plt.subplots()
 
-    ax.hist(df['logMstar'], zorder=zorder, bins=np.arange(int(min(df['logMstar'])), 12.5, binwidth), alpha=alpha,density=density, label=label, edgecolor='black')
-    ax.set_xlabel('Log M_star', fontsize=14)
+    ax.hist(df[field], zorder=zorder, bins=np.arange(int(min(df[field])), int(max(df[field])), binwidth), alpha=alpha,density=density, label=label, edgecolor='black')
+    ax.set_xlabel(field, fontsize=14)
     ax.set_ylabel('normalised number density', fontsize=14)
     lgd = ax.legend(loc='center right', bbox_to_anchor=(1.65, 0.5),
               ncol=1, fancybox=True, shadow=True)
 
-    fig.savefig(os.path.join('plots', 'hist_stellarmass.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
+    fig.savefig(os.path.join('plots', f'hist_{field}.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
     return fig, ax
 
 
