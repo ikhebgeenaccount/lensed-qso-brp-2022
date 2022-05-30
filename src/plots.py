@@ -113,8 +113,8 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
 
         ax.fill_between(log_m_stars, sp_ms - sp_ms_err, sp_ms_max + sp_ms_err_max, alpha=.4, color='grey', label=f'Speagle+2014, z=[{z_min},{z_max}]')
 
-        ax.set_ylabel(sfr_type)
-        ax.set_xlabel('log$M_*$')
+        ax.set_ylabel(f'{sfr_type}/($M_\odot$/yr)')
+        ax.set_xlabel('log$(M_*/M_\odot)$')
 
     # Plot galaxy
     if group:
