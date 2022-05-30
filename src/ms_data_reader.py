@@ -100,7 +100,7 @@ FILES = {
                                                  lambda df: .35 * df['SFR^d'] / (df['SFR^d'] * np.log(10.)), lambda df: np.log10(df['M_*^g']),
                                                  lambda df: .3 * df['M_*^g'] / (df['M_*^g'] * np.log(10.)), lambda df: .3 * df['M_*^g'] / (df['M_*^g'] * np.log(10.))],
                                       read_csv_kwargs={'delimiter': '\t', 'skipinitialspace': True, 'na_values': ['...', '... ']}),
- 
+
 
     # ULIRGs from Cunha+2010 don't work: they list specific star formation rate instead of star formation rate.
 
@@ -115,11 +115,11 @@ FILES = {
                                      col_names=['Name', 'z', lambda df: np.log10(df['SFR']), lambda df: df['SFR_pe'] / (df['SFR'] * np.log(10.)),
                                                 lambda df: df['SFR_me'] / (df['SFR'] * np.log(10.))] + COLUMNS[-3:],
                                      read_csv_kwargs={'delimiter': '\t'}),
-    'Local catalog, Salim+2018' : _csv_reader([os.path.join('data', 'context_main_seq', 'GSWLC-D2.dat')],
-                                              col_names=['objid', 'z', 'logSFR', 'logSFR_err', 'logSFR_err', 'logMstar', 'logMstar_err', 'logMstar_err'],
-                                              read_csv_kwargs={'delim_whitespace': True, 'index_col': False},
-                                              post_filter=lambda df: df[np.random.choice(a=[True, False], size=len(df), p=[1000/50000, 1-1000/50000]) &
-                                                                        (df['logMstar'] > -99)])
+    # 'Local catalog, Salim+2018' : _csv_reader([os.path.join('data', 'context_main_seq', 'GSWLC-D2.dat')],
+    #                                           col_names=['objid', 'z', 'logSFR', 'logSFR_err', 'logSFR_err', 'logMstar', 'logMstar_err', 'logMstar_err'],
+    #                                           read_csv_kwargs={'delim_whitespace': True, 'index_col': False},
+    #                                           post_filter=lambda df: df[np.random.choice(a=[True, False], size=len(df), p=[1000/50000, 1-1000/50000]) &
+    #                                                                     (df['logMstar'] > -99)])
 }
 
 # print(np.min(FILES['ULIRGS, Cunha+2010']['redshift']), np.max(FILES['ULIRGS, Cunha+2010']['redshift']))

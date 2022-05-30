@@ -162,8 +162,8 @@ def plot_lqsos_in_speagle_z_scaled(df, fig=None, ax=None, label=None, save_name=
         ax.plot(log_m_stars, gms + gms_err, color='black', linestyle='--')
         ax.plot(log_m_stars, gms - gms_err, color='black', linestyle='--')
 
-        ax.set_ylabel('logSFR')
-        ax.set_xlabel('log$M_*$')
+        ax.set_ylabel(f'logSFR/($M_\odot$/yr)')
+        ax.set_xlabel('log$(M_*/M_\odot)$')
 
     # Plot galaxy
     if group:

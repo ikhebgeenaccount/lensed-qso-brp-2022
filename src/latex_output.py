@@ -107,7 +107,7 @@ def agnf_output_table(lqsos_df, cols, col_names=None, label=''):
     print('\\hline')  # horizontal line between header and data
 
     def custom_format(f):
-        if f > 1e4 or f < -1e4:
+        if f > 1e2:# or f < 1e-3:
             return '{:.2e}'.format(f).replace('e+', 'e')
         else:
             return '{:.2f}'.format(f)
