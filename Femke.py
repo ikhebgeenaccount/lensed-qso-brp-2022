@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+from astropy.cosmology import LambdaCDM
+
 
 
 from src.lensed_qso import LensedQSO
@@ -9,14 +11,14 @@ from src.ned_to_sed import ned_table_to_sed
 from src.xml_to_txt import xml_to_txt
 from src.tophat import tophat
 from src.model_subtraction import model_subtraction
-from src.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual, hist_stellarmass, plot_evolution_df
+from src.plots import speagle_gms, plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual, hist_stellarmass, plot_evolution_df
 from src.percent_to_fraction import percent_to_fraction
 from src.filters import populate_filter_profile_path_column
 from src.model_sed import fit
 import src.ms_data_reader
 import os
 
-
+plt.style.use('brp.mplstyle')
 
 
 def single():
@@ -29,7 +31,7 @@ def single():
     #plot_lqso_in_speagle(lqso)
     #compare_test(lqso)
     #residual_plot(lqso, errors=True)
-    plot_evolution(lqso)
+    #plot_evolution(lqso)
     
 
     
@@ -185,7 +187,19 @@ def all_galaxies():
     fr, ar = plot_speagle_residual(lqsos_df, label='This work', fig=fr, ax=ar, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res')
     fr2, ar2 = plot_speagle_residual(lqsos_df, label='This work', fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res_logMstar')
 
-
+    LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)  # Cosmological constants as Speagle uses them
+    fig8, ax8 =plt.subplots()
+    M_range=np.linspace(9.7,11.2,100)
+    for z in [0,1,4]:
+        t=LCDM.age(z)
+        SFR, err_sfr=speagle_gms(M_range, t.value)
+        ax8.fill_between(M_range, y1=SFR - err_sfr, y2=SFR+err_sfr, alpha=0.5)
+        ax8.plot(M_range, SFR, label=f'z={z}')
+    ax8.legend()
+    ax8.set_ylabel(f'log(SFR /($M_\odot$/yr))')
+    ax8.set_xlabel('log$(M_*/M_\odot)$')
+    fig8.savefig(os.path.join('plots', 'speagle_plot.pdf'), bbox_inches='tight')
+    plt.show()
     
 if __name__ == '__main__':
     #single()
