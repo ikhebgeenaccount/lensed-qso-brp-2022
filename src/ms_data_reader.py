@@ -81,26 +81,29 @@ FILES = {
                                      join_col='ID', col_names=['ID', 'z_phot', 'SFR', lambda df: df['SFR_u'] - df['SFR'],
                                                                lambda df: df['SFR'] - df['SFR_l'], 'Mstar',
                                                                lambda df: df['Mstar_u'] - df['Mstar'], lambda df: df['Mstar'] - df['Mstar_l']]),
-    'SFGs, Tacconi+2013, z=[1-2.4]': _csv_reader([os.path.join('data', 'context_main_seq', 'PHIBBS_table1.csv'),
-                                       os.path.join('data', 'context_main_seq', 'PHIBBS_table2.csv')], join_col='Source',
-                                      col_names=['Source', 'z_CO', lambda df: np.log10(df['SFR^d']), lambda df: .35 * df['SFR^d'] / (df['SFR^d'] * np.log(10.)),
-                                                 lambda df: .35 * df['SFR^d'] / (df['SFR^d'] * np.log(10.)), lambda df: np.log10(df['M_*^g']),
-                                                 lambda df: .3 * df['M_*^g'] / (df['M_*^g'] * np.log(10.)), lambda df: .3 * df['M_*^g'] / (df['M_*^g'] * np.log(10.))],
-                                      read_csv_kwargs={'delimiter': '\t', 'skipinitialspace': True, 'na_values': ['...', '... ']}),
-    'SMGs, Cunha+2015, z=[1.3-6.1]': _csv_reader([os.path.join('data', 'context_main_seq', 'Cunha.csv')], col_names=['ID', 'z_phot'] + COLUMNS[2:],
+    'SMGs, Da Cunha+2015, z=[1.3-6.1]': _csv_reader([os.path.join('data', 'context_main_seq', 'Cunha.csv')], col_names=['ID', 'z_phot'] + COLUMNS[2:],
                                     read_csv_kwargs={'delimiter': '\t'}),
+    'ULIRGs, Da Cunha+2010, z=[0.03-0.5]': _csv_reader([os.path.join('data', 'context_main_seq', 'ulirgs_cunha1.csv'),
+                                        os.path.join('data', 'context_main_seq', 'ulirgs_cunha2.csv')], join_col='Galaxy',
+                                      col_names=['Galaxy', 'z', lambda df: df['logsSFR'] + df['logMstar'],
+                                                  lambda df: np.zeros(len(df['Galaxy'])), lambda df: np.zeros(len(df['Galaxy']))] +
+                                      COLUMNS[-3:], read_csv_kwargs={'delimiter': '\t'}),
     'Local SFGs, Sun+2020, z=0': _csv_reader([os.path.join('data', 'context_main_seq', 'sun.csv')],
                                         col_names=['galaxy', lambda df: df['d'] * 70 / 3e5, lambda df: np.log10(df['SFR']),
                                                    lambda df: np.zeros(len(df['galaxy'])), lambda df: np.zeros(len(df['galaxy'])),
                                                    lambda df: np.log10(df['Mstar'] * 1e9),
                                                    lambda df: np.zeros(len(df['galaxy'])), lambda df: np.zeros(len(df['galaxy']))],
                                         read_csv_kwargs={'delim_whitespace': True}),
+    'SFGs, Tacconi+2013, z=[1-2.4]': _csv_reader([os.path.join('data', 'context_main_seq', 'PHIBBS_table1.csv'),
+                                       os.path.join('data', 'context_main_seq', 'PHIBBS_table2.csv')], join_col='Source',
+                                      col_names=['Source', 'z_CO', lambda df: np.log10(df['SFR^d']), lambda df: .35 * df['SFR^d'] / (df['SFR^d'] * np.log(10.)),
+                                                 lambda df: .35 * df['SFR^d'] / (df['SFR^d'] * np.log(10.)), lambda df: np.log10(df['M_*^g']),
+                                                 lambda df: .3 * df['M_*^g'] / (df['M_*^g'] * np.log(10.)), lambda df: .3 * df['M_*^g'] / (df['M_*^g'] * np.log(10.))],
+                                      read_csv_kwargs={'delimiter': '\t', 'skipinitialspace': True, 'na_values': ['...', '... ']}),
+ 
+
     # ULIRGs from Cunha+2010 don't work: they list specific star formation rate instead of star formation rate.
-    'ULIRGs, Cunha+2010, z=[0.03-0.5]': _csv_reader([os.path.join('data', 'context_main_seq', 'ulirgs_cunha1.csv'),
-                                        os.path.join('data', 'context_main_seq', 'ulirgs_cunha2.csv')], join_col='Galaxy',
-                                      col_names=['Galaxy', 'z', lambda df: df['logsSFR'] + df['logMstar'],
-                                                  lambda df: np.zeros(len(df['Galaxy'])), lambda df: np.zeros(len(df['Galaxy']))] +
-                                      COLUMNS[-3:], read_csv_kwargs={'delimiter': '\t'}),
+
     # COSMOS is a lot
     # 'COSMOS, Laigle+2016': _fits_reader([os.path.join('data', 'context_main_seq', 'COSMOS2015_Laigle+_v1.1.fits')],
     #                                     col_names=['NUMBER', 'ZPDF', 'SFR_MED', 'SFR_MED_MAX68', 'SFR_MED_MIN68',
