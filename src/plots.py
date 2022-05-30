@@ -395,7 +395,7 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
 
     #setting up the plot
     if ax is None:
-        fig,ax= plt.subplots(figsize=(10,8))
+        fig,ax= plt.subplots(figsize=(10,10))
     ax.set_xlabel('age of universe [yr]')
     ax.set_ylabel('$M_\star /M_{\odot}$')
 
@@ -408,7 +408,7 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
     #lower limit = where no solar mass had been formed
     #upper limit = where all the gas mass has depleted
     if context == True:
-        axins = ax.inset_axes([0.9, 0.39, 0.8, 0.6])
+        axins = ax.inset_axes([1.1, 0.5, 1.05, 0.48])
     for i in range(len(z)):
         #the constant in the formula
         b = M[i] - (sfr_tot[i] * age[i])
@@ -439,18 +439,18 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
     if context == True:
 
         ax.set_xlim(8e8,6e9)
+        ax.set_ylim(ymax=8e11)
 
         for label, df in src.ms_data_reader.FILES.items():
-            # if 'Birkin' in label:
-            #     continue
-            # if 'Sun' in label:
-            #     continue
+            if max(df['redshift']) < 0.5:
+                continue
+
             ax.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label,
                 zorder=50, s=50, alpha=.7)
 
             axins.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label, zorder=50, s=50, alpha=.7)
 
-        x1, x2, y1, y2 = 3.3e9, 5.3e9, 0, 1.1e11
+        x1, x2, y1, y2 = 3.3e9, 5.3e9, 0, 1.3e11
         axins.set_xlim(x1, x2)
         axins.set_ylim(y1, y2)
         ax.indicate_inset_zoom(axins, edgecolor="black")
@@ -458,7 +458,7 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
 
 
     if context==True:
-        lgd = ax.legend(loc='center right', bbox_to_anchor=(1.7, 0.19),
+        lgd = ax.legend(loc='center right', bbox_to_anchor=(2.2, 0.19),
                   ncol=2, fancybox=True, shadow=True)
         fig.savefig(os.path.join('plots', 'total_evolution_withdata.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
     if context==False:

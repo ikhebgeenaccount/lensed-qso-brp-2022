@@ -11,7 +11,7 @@ from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
 from src.ned_to_sed import ned_table_to_sed
 from src.filters import populate_filter_profile_path_column
 from src.model_subtraction import model_subtraction
-from src.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual, hist_stellarmass
+from src.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual, hist_stellarmass, plot_lqsos_in_speagle_z_scaled, plot_evolution_df
 import src.ms_data_reader
 
 import src.model_sed
@@ -182,17 +182,36 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
     fr2, ar2 = None, None
     fh, ah = None, None
 
-    fh, ah = hist_stellarmass(lqsos_df, fh, ah, label = 'our sample', zorder=10)
+    fres, ares = None, None
+
+    # Stellar mass hist figs and axs
+    flz, alz = None, None
+    flz, alz = hist_stellarmass(lqsos_df, flz, alz, label='This work')
+    fhz, ahz = None, None
+    fhz, ahz = hist_stellarmass(lqsos_df, fhz, ahz, label='This work')
+
+    fh, ah = hist_stellarmass(lqsos_df, fh, ah, label = 'This work', zorder=10)
     for label, df in src.ms_data_reader.FILES.items():
+        if max(df['redshift']) > 0.5:
+            fhz, ahz = hist_stellarmass(df, fhz, ahz, label)
+        else:
+            flz, alz = hist_stellarmass(df, flz, alz, label)
+
         fh, ah = hist_stellarmass(df, fh, ah, label = label)
-        f, a = plot_lqsos_in_speagle(df, label=label, fig=f, ax=a, group=True, errorbar_kwargs={'markersize': 3, 'alpha':.5, 'capsize': 3}, save_name='speagle_comp')
+        f, a = plot_lqsos_in_speagle(df, label=label, fig=f, ax=a, group=True, errorbar_kwargs={'markersize': 5, 'alpha':.7, 'capsize': 0, 'linewidth': 0}, save_name='speagle_comp')
 
         fr, ar = plot_speagle_residual(df, label=label, fig=fr, ax=ar, errorbar_kwargs={'markersize': 3, 'alpha':.5, 'capsize': 3}, save_name='speagle_res')
         fr2, ar2 = plot_speagle_residual(df, label=label, fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'markersize': 3, 'alpha':.5, 'capsize': 3}, save_name='speagle_res_logMstar')
 
+        fres, ares = plot_lqsos_in_speagle_z_scaled(df, label=label, fig=fres, ax=ares, group=True, errorbar_kwargs={'markersize': 5, 'alpha':.7, 'capsize': 0, 'linewidth': 0}, save_name='speagle_comp_z_scaled')
+
     f, a = plot_lqsos_in_speagle(lqsos_df, label='This work', fig=f, ax=a, group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_comp')
+    fres, ares = plot_lqsos_in_speagle_z_scaled(lqsos_df, label='This work', fig=fres, ax=ares, group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_comp_z_scaled')
     fr, ar = plot_speagle_residual(lqsos_df, label='This work', fig=fr, ax=ar, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res')
     fr2, ar2 = plot_speagle_residual(lqsos_df, label='This work', fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res_logMstar')
+
+    plot_evolution_df(lqsos_df, context=False)
+    plot_evolution_df(lqsos_df)
 
 
 def big_plot():
