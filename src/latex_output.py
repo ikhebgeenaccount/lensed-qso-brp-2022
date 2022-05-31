@@ -42,19 +42,21 @@ def dataframe_to_latex_table(dfr, outline=None, usecols=None, label=None, captio
 
     _escape_underscore_str_cols(df)
 
-    print(df.to_latex(columns=usecols, index=False, label=label, caption=caption, header=header, escape=False, formatters=formatters, **kwargs))
+    return df.to_latex(columns=usecols, index=False, label=label, caption=caption, header=header, escape=False, formatters=formatters, **kwargs)
 
 
 def sed_to_latex_table(lqso):
     print('\\begin{landscape}')
     print(f'\\subsection{{{lqso.name}}}')
-    df = lqso.filter_sed()
+    df = lqso.filter_sed(rX=False)
 
     formatters = []
     usecols = []
     header = []
 
-    for col in df.columns:
+    # lambda, total flux, foreground, sub, source, tel+filter
+
+    for col in ['wavelength', 'flux_total', 'flux_err', 'flux_G', 'flux_G_err', 'flux_sub', 'flux_sub_err', 'source', 'telescope', 'filter']:
         if 'flux' in col and sum(df[col]) > 0 and 'demag' not in col:
             formatters.append(FLUX_FORMATTER)
             usecols.append(col)
@@ -64,7 +66,9 @@ def sed_to_latex_table(lqso):
             usecols.append(col)
             header.append(_get_header(col))
 
-    dataframe_to_latex_table(df, usecols=usecols, label=f'sed_table:{lqso.name}', formatters=formatters, header=header, position='h!')
+    out = dataframe_to_latex_table(df, usecols=usecols, label=f'sed_table:{lqso.name}', formatters=formatters, header=header, position='h!')
+    out = out.replace('\label', '\small\setlength\\tabcolsep{3pt}\def\\arraystretch{1}\label').replace('\centering', '')
+    print(out)
     print('\\end{landscape}')
 
 
