@@ -70,7 +70,7 @@ def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_
                    df[f'logSFR_pe']]) == 0 else np.reshape([df['logSFR_me'], \
                     df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o', **errorbar_kwargs)
 
-    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.7, 0.5),
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.75, 0.5),
               ncol=1, fancybox=True, shadow=True)
 
     ax.axhline(0, xmin=0, xmax=1, color='grey', ls='--')
@@ -131,7 +131,7 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
                         yerr=[[row[f'{sfr_type}_me']], [row[f'{sfr_type}_pe']]], label=lab, fmt='o', **errorbar_kwargs)
 
     ax.set_ylim(ymax=4.1)
-    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.7, 0.5),
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.65, 0.5),
               ncol=1, fancybox=True, shadow=True)
 
     fig.savefig(os.path.join('plots', f'{save_name}.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
@@ -180,7 +180,7 @@ def plot_lqsos_in_speagle_z_scaled(df, fig=None, ax=None, label=None, save_name=
                         yerr=[[row[f'logSFR_me']], [row[f'logSFR_pe']]], label=lab, fmt='o', **errorbar_kwargs)
 
     ax.set_ylim(ymax=4.1)
-    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.7, 0.5),
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.75, 0.5),
               ncol=1, fancybox=True, shadow=True)
 
     fig.savefig(os.path.join('plots', f'{save_name}.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
@@ -458,7 +458,7 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
 
 
     if context==True:
-        lgd = ax.legend(loc='center right', bbox_to_anchor=(2.2, 0.19),
+        lgd = ax.legend(loc='center right', bbox_to_anchor=(2.25, 0.19),
                   ncol=2, fancybox=True, shadow=True)
         fig.savefig(os.path.join('plots', 'total_evolution_withdata.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
     if context==False:

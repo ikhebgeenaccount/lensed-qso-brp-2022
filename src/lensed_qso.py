@@ -15,16 +15,16 @@ import warnings
 
 
 FILTERED_SOURCES = {
-    'B1152+200': ['panstarrs'],
-    'B1600+434': ['panstarrs'],
-    'B1608+656': [ 'luichies'],#['Koopmans+2003' ],
-    'J0806+2006': ['panstarrs'],
-    'J0924+0219': ['panstarrs', 'faure'],
-    'J1330+1810': ['panstarrs'],
-    'J1455+1447': ['panstarrs'],
-    'J1524+4409': ['panstarrs'],
-    'J1633+3134': ['panstarrs'],
-    'J1650+4251': ['panstarrs']
+    'B1152+200': ['panstarrs', 'filter'],
+    'B1600+434': ['panstarrs', 'filter'],
+    'B1608+656': [ 'luichies', 'filter'],#['Koopmans+2003' ],
+    'J0806+2006': ['panstarrs', 'filter'],
+    'J0924+0219': ['panstarrs', 'filter', 'faure'],
+    'J1330+1810': ['panstarrs', 'filter'],
+    'J1455+1447': ['panstarrs', 'filter'],
+    'J1524+4409': ['panstarrs', 'filter'],
+    'J1633+3134': ['panstarrs', 'filter'],
+    'J1650+4251': ['panstarrs', 'filter']
 }
 
 
