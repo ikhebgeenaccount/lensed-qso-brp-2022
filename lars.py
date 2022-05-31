@@ -109,8 +109,9 @@ def _lqsos_dict_to_df(lqsos_dict):
     lqsos_df['logSFR_me'] = lqsos_df['SFR_me'] / (lqsos_df['SFR'] * np.log(10.))
 
     # Calculate gas fraction
-    lqsos_df['Mgas'] = lqsos_df['mu_m_gas'] / lqsos_df['magnification']
-    lqsos_df['Mgas_err'] = lqsos_df['mu_m_gas'] / np.square(lqsos_df['magnification']) * lqsos_df['magn_err']
+    alpha_CO = 3.6
+    lqsos_df['Mgas'] = alpha_CO * lqsos_df['mu_m_gas'] / lqsos_df['magnification']
+    lqsos_df['Mgas_err'] = alpha_CO * lqsos_df['mu_m_gas'] / np.square(lqsos_df['magnification']) * lqsos_df['magn_err']
     lqsos_df['f_gas'] = lqsos_df['Mgas'] / (np.power(10., lqsos_df['logMstar']) + lqsos_df['Mgas'])
     lqsos_df['f_gas_pe'] = np.sqrt((np.square(np.power(10., lqsos_df['logMstar']) * lqsos_df['Mgas_err']) +\
                            np.square(lqsos_df['Mgas'] * np.log(10.) * np.power(10., lqsos_df['logMstar']) * lqsos_df['logMstar_pe'])) /\
@@ -161,7 +162,8 @@ def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False):
 
 def generate_context_plots(lqsos_df, lqsos_all_runs_df):
 
-    print(lqsos_df[['name', 'Mgas', 'f_gas', 'f_gas_pe', 'f_gas_me']].sort_values(by='f_gas'))
+    print(lqsos_df[['name', 'Mgas', 'Mgas_err', 'f_gas', 'f_gas_pe', 'f_gas_me']])
+    print(lqsos_df.columns)
 
     # Make plots
     plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'] + ', z=' + lqsos_df['redshift'].astype(str), group=False)
@@ -175,6 +177,10 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
     fig, ax = plot_agnf_output(lqsos_df, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub', unique_markers=True)
 
     plot_agnf_output(lqsos_df, 'SFR_IR', 'SFR_opt', equals_line=True, logx=True, logy=True, unique_markers=True)
+
+    plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='Lbb(0.1-1)', unique_markers=True)
+    plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='f_gas', unique_markers=True)
+
     plot_lqsos_vs_stacey(lqsos_df[lqsos_df['stacey_sfr'] > 0])
 
     f, a = None, None
@@ -190,6 +196,9 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
     fhz, ahz = None, None
     fhz, ahz = hist_stellarmass(lqsos_df, fhz, ahz, label='This work')
 
+    # SFR hist
+    fhs, ahs = None, None
+
     fh, ah = hist_stellarmass(lqsos_df, fh, ah, label = 'This work', zorder=10)
     for label, df in src.ms_data_reader.FILES.items():
         if max(df['redshift']) > 0.5:
@@ -204,6 +213,9 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
         fr2, ar2 = plot_speagle_residual(df, label=label, fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'markersize': 3, 'alpha':.5, 'capsize': 3}, save_name='speagle_res_logMstar')
 
         fres, ares = plot_lqsos_in_speagle_z_scaled(df, label=label, fig=fres, ax=ares, group=True, errorbar_kwargs={'markersize': 5, 'alpha':.7, 'capsize': 0, 'linewidth': 0}, save_name='speagle_comp_z_scaled')
+
+        if 'SMG' in label:
+            fhs, ahs = hist_stellarmass(df, fhs, ahs, label=label, field='logSFR')
 
     f, a = plot_lqsos_in_speagle(lqsos_df, label='This work', fig=f, ax=a, group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_comp')
     fres, ares = plot_lqsos_in_speagle_z_scaled(lqsos_df, label='This work', fig=fres, ax=ares, group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_comp_z_scaled')
@@ -234,16 +246,16 @@ def big_plot():
 
 def latex(lqsos_df):
     # Filter table to latex
-    # dataframe_to_latex_table(src.filters.FILTER_PROPERTIES.loc[src.filters.FILTER_PROPERTIES['conversion'].notnull()],
+    # print(dataframe_to_latex_table(src.filters.FILTER_PROPERTIES.loc[src.filters.FILTER_PROPERTIES['conversion'].notnull()],
     #                                usecols=['telescope', 'filtername', 'central_wavelength', 'conversion', 'zeropoint'],
     #                                header=['Telescope', 'Filter', 'Central wavelength ($\\unit{\\angstrom}$)', 'Conversion', 'Zeropoint ($\\unit{\milli\jansky}$)'],
-    #                                label='table:filter_conv', caption='All filters for which magnitudes were found, with their respective conversion methods and zeropoints.')
+    #                                label='table:filter_conv', caption='All filters for which magnitudes were found, with their respective conversion methods and zeropoints.'))
 
     # Galaxy SEDs to latex
-    # for g in GALAXIES:
-    #     lqso = LensedQSO(g)
+    for g in GALAXIES:
+        lqso = LensedQSO(g)
 
-    #     sed_to_latex_table(lqso)
+        sed_to_latex_table(lqso)
 
     # SED plots to latex
     # plots_in_subfigures(GALAXIES, 'SED_total', label='sed')
@@ -256,9 +268,9 @@ def latex(lqsos_df):
 
     # AGNfitter output table
     # print(lqsos_df.columns)
-    # agnf_output_table(lqsos_df, cols=['name'] + src.lensed_qso.AGNFITTER_FIELDS[0:10], label='tab:agnf_output_pars')
+    # agnf_output_table(lqsos_df, cols=['name'] + src.lensed_qso.AGNFITTER_FIELDS[0:10] + ['-ln_like'], label='tab:agnf_output_pars')
 
-    agnf_output_table(lqsos_df, cols=['name', 'logSFR_IR', 'logSFR_opt', 'logSFR', 'logMstar', 'Mgas', 'f_gas'], label='tab:results_sfrs_ms')
+    # agnf_output_table(lqsos_df, cols=['name', 'logSFR_IR', 'logSFR_opt', 'logSFR', 'logMstar', 'Mgas', 'f_gas'], label='tab:results_sfrs_ms')
 
 
 def plot_ell_models():
