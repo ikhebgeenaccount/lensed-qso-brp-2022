@@ -119,50 +119,59 @@ def _lqsos_dict_to_df(lqsos_dict):
     lqsos_df['f_gas_me'] = np.sqrt((np.square(np.power(10., lqsos_df['logMstar']) * lqsos_df['Mgas_err']) +\
                            np.square(lqsos_df['Mgas'] * np.log(10.) * np.power(10., lqsos_df['logMstar']) * lqsos_df['logMstar_me'])) /\
                            np.power(np.power(10., lqsos_df['logMstar']) + lqsos_df['Mgas'], 4.))
+    lqsos_df['t_dep'] = lqsos_df['Mgas'] / lqsos_df['SFR']
 
     return lqsos_df
 
 
-def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False):
-    lqsos_dict = _init_lqsos_dict()
+def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False, from_file=False):
+    if not from_file:
+        lqsos_dict = _init_lqsos_dict()
 
-    lqsos_all_runs_df = {}
+        lqsos_all_runs_df = {}
 
-    for g in GALAXIES:
-        lqso = LensedQSO(g)
-        print(g)
-        lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder, copy=False)
-        _update_lqsos_dict(lqsos_dict, lqso)
+        for g in GALAXIES:
+            lqso = LensedQSO(g)
+            print(g)
+            lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder, copy=False)
+            _update_lqsos_dict(lqsos_dict, lqso)
 
-        if generate_lqso_plots:
-            lqso.plot_spectrum()
-            lqso.plot_spectrum(component='_sub')
+            if generate_lqso_plots:
+                lqso.plot_spectrum()
+                lqso.plot_spectrum(component='_sub')
 
-            model_subtraction(lqso)
+                model_subtraction(lqso)
 
-            residual_plot(lqso, errors=True)
+                residual_plot(lqso, errors=True)
 
-            # Fill DataFrame with every run's output
-            d = _init_lqsos_dict()
-            for i in range(n):
-                lqso.agn_fitter_output(run_time=i, sub_folder=sub_folder)
-                _update_lqsos_dict(d, lqso, name=g + str(i))
-            lqsos_all_runs_df[g] = _lqsos_dict_to_df(d)
+                # Fill DataFrame with every run's output
+                d = _init_lqsos_dict()
+                for i in range(n):
+                    lqso.agn_fitter_output(run_time=i, sub_folder=sub_folder)
+                    _update_lqsos_dict(d, lqso, name=g + str(i))
+                lqsos_all_runs_df[g] = _lqsos_dict_to_df(d)
 
-            # Plot AGNfitter output stuff
-            plot_n_runs_pars(lqso, sub_folder=sub_folder, n=n)  # when running this one, have to run lqso.find_best_run afterwards again, otherwise stuck on last run
+                # Plot AGNfitter output stuff
+                plot_n_runs_pars(lqso, sub_folder=sub_folder, n=n)  # when running this one, have to run lqso.find_best_run afterwards again, otherwise stuck on last run
 
-            # Reload best run
-            lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
+                # Reload best run
+                lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
 
-    lqsos_df = _lqsos_dict_to_df(lqsos_dict)
+        lqsos_df = _lqsos_dict_to_df(lqsos_dict)
+
+        lqsos_df.to_csv(os.path.join('data', 'final_output.csv'), index=False)
+
+    else:
+        lqsos_df = pd.read_csv(os.path.join('data', 'final_output.csv'))
+        lqsos_all_runs_df = {}
 
     return lqsos_df, lqsos_all_runs_df
 
 
 def generate_context_plots(lqsos_df, lqsos_all_runs_df):
 
-    print(lqsos_df[['name', 'Mgas', 'Mgas_err', 'f_gas', 'f_gas_pe', 'f_gas_me']])
+    pd.set_option('display.max_columns', None)
+    print(lqsos_df[['name', 'Mgas', 'Mgas_err', 'f_gas', 'f_gas_pe', 'f_gas_me', 't_dep']])
     print(lqsos_df.columns)
 
     # Make plots
@@ -291,7 +300,7 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    lqsos_df, lqsos_all_runs_df = load_all_galaxies()
+    lqsos_df, lqsos_all_runs_df = load_all_galaxies(from_file=True)
 
     generate_context_plots(lqsos_df, lqsos_all_runs_df)
     # plot_ell_models()
