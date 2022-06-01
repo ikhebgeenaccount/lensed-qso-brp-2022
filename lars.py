@@ -137,10 +137,11 @@ def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False, from_fil
             _update_lqsos_dict(lqsos_dict, lqso)
 
             if generate_lqso_plots:
-                lqso.plot_spectrum()
-                lqso.plot_spectrum(component='_sub')
+                lqso.plot_spectrum(disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
+                lqso.plot_spectrum(component='_sub', disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
 
-                model_subtraction(lqso)
+                # Model subtraction also creates lqso.plot_spectrum but without above filtered sources, so messes up the saved plots
+                # model_subtraction(lqso)
 
                 residual_plot(lqso, errors=True)
 
@@ -183,12 +184,13 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
     for gal, df in lqsos_all_runs_df.items():
         plot_lqsos_in_speagle(df, label=df['name'], group=False, save_name=f'{gal}_speagle', errorbar_kwargs={'alpha': .6})
 
-    fig, ax = plot_agnf_output(lqsos_df, 'EBVbbb', 'Nh', color_scale_field='SFR_IR', component='_sub', unique_markers=True)
+    fig, ax = plot_agnf_output(lqsos_df, 'EBVbbb', 'Nh', unique_markers=True)
 
     plot_agnf_output(lqsos_df, 'SFR_IR', 'SFR_opt', equals_line=True, logx=True, logy=True, unique_markers=True)
 
     plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='Lbb(0.1-1)', unique_markers=True)
     plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='f_gas', unique_markers=True)
+    plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='t_dep', unique_markers=True)
 
     plot_lqsos_vs_stacey(lqsos_df[lqsos_df['stacey_sfr'] > 0])
 
@@ -218,8 +220,8 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
         fh, ah = hist_stellarmass(df, fh, ah, label = label)
         f, a = plot_lqsos_in_speagle(df, label=label, fig=f, ax=a, group=True, errorbar_kwargs={'markersize': 5, 'alpha':.7, 'capsize': 0, 'linewidth': 0}, save_name='speagle_comp')
 
-        fr, ar = plot_speagle_residual(df, label=label, fig=fr, ax=ar, errorbar_kwargs={'markersize': 3, 'alpha':.5, 'capsize': 3}, save_name='speagle_res')
-        fr2, ar2 = plot_speagle_residual(df, label=label, fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'markersize': 3, 'alpha':.5, 'capsize': 3}, save_name='speagle_res_logMstar')
+        fr, ar = plot_speagle_residual(df, label=label, fig=fr, ax=ar, errorbar_kwargs={'markersize': 3, 'alpha':.7, 'capsize': 0, 'linewidth': 0}, save_name='speagle_res')
+        fr2, ar2 = plot_speagle_residual(df, label=label, fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'markersize': 3, 'alpha':.7, 'capsize': 0, 'linewidth': 0}, save_name='speagle_res_logMstar')
 
         fres, ares = plot_lqsos_in_speagle_z_scaled(df, label=label, fig=fres, ax=ares, group=True, errorbar_kwargs={'markersize': 5, 'alpha':.7, 'capsize': 0, 'linewidth': 0}, save_name='speagle_comp_z_scaled')
 
@@ -300,7 +302,7 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    lqsos_df, lqsos_all_runs_df = load_all_galaxies(from_file=True)
+    lqsos_df, lqsos_all_runs_df = load_all_galaxies(from_file=False, generate_lqso_plots=True)
 
     generate_context_plots(lqsos_df, lqsos_all_runs_df)
     # plot_ell_models()

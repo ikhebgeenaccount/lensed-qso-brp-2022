@@ -26,6 +26,37 @@ sc = 0.24
 d = -0.11
 sd = 0.03
 
+FIELD_LABEL = {
+    # 'tau',
+    # 'log age',
+    'Nh': '$\log(\mathit{N_H}/\mathrm{cm^{-2}})$',
+    # 'irlum',
+    # 'SB',
+    # 'BB',
+    # 'GA',
+    # 'TO',
+    'EBVbbb': 'E$(B - V)_\mathit{bbb}$',
+    'EBVgal': 'E$(B - V)_\mathit{gal}$',
+    'logMstar': '$\log(M_\star/\mathrm{M_\odot})$',
+    'Mstar': '$M_\star\ [\mathrm{M_\odot}]$',
+    'logSFR_opt': '$\log(\mathit{SFR_{opt}} / \mathrm{M_\odot yr^{-1}})$',
+    'SFR_opt': '$\mathit{SFR_{opt}}\ [\mathrm{M_\odot yr^{-1}}]$',
+    # 'LIR(8-1000)',
+    'Lbb(0.1-1)': '$\mathit{L_{bb}}(0.1 - 1)$',
+    # 'Lbbdered(0.1-1)',
+    # 'Lga(01-1)',
+    # 'Ltor(1-30)',
+    # 'Lsb(1-30)',
+    'logSFR_IR': '$\log(\mathit{SFR_{IR}} / \mathrm{M_\odot yr^{-1}})$',
+    'SFR_IR': '$\mathit{SFR_{IR}}\ [\mathrm{M_\odot yr^{-1}}]$',
+    # '-ln_like',
+    'logSFR': '$\log(\mathit{SFR} / \mathrm{M_\odot yr^{-1}})$',
+    't_dep': '$\mathit{t_{dep}}\ [\mathrm{yr}]$',
+    'f_gas': '$\mathit{f_{gas}}$',
+    'univ_age': '$\mathit{Age\ of\ universe}\ [\mathrm{Gyr}]$'
+
+}
+
 
 def speagle_gms(log_m_star, t, log_m_star_err=None, t_err=None):
     if log_m_star_err is None:
@@ -58,11 +89,13 @@ def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_
     if errorbar_kwargs is None:
         errorbar_kwargs = {}
 
+    new = False
     if fig == ax == None:
         fig, ax = plt.subplots()
+        new = True
 
-        ax.set_xlabel(x_label)
-        ax.set_ylabel('Residual with Speagle, logSFR')
+        ax.set_xlabel(FIELD_LABEL[x_field])
+        ax.set_ylabel('$\mathit{Offset\ with\ MS}, ' + FIELD_LABEL['logSFR'][1:])
 
     speagle_res = speagle_gms_residual(df)
 
@@ -73,9 +106,10 @@ def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_
     lgd = ax.legend(loc='center right', bbox_to_anchor=(1.75, 0.5),
               ncol=1, fancybox=True, shadow=True)
 
-    ax.axhline(0, xmin=0, xmax=1, color='grey', ls='--')
-    ax.axhline(0.65, xmin=0, xmax=1, color='grey', ls='--')
-    ax.axhline(-0.65, xmin=0, xmax=1, color='grey', ls='--')
+    if new:
+        ax.axhline(0, xmin=0, xmax=1, color='black', label='MS $\pm 1\sigma$')
+        ax.axhline(0.65, xmin=0, xmax=1, color='grey', ls='--')
+        ax.axhline(-0.65, xmin=0, xmax=1, color='grey', ls='--')
 
     fig.savefig(os.path.join('plots', f'{save_name}.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
 
@@ -111,10 +145,10 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
 
         # ax.fill_between(log_m_stars, sp_ms - sp_ms_err, sp_ms + sp_ms_err, alpha=.6, label=f'Speagle+2014, z={z_min}', color='fuchsia')
 
-        ax.fill_between(log_m_stars, sp_ms - sp_ms_err, sp_ms_max + sp_ms_err_max, alpha=.4, color='grey', label=f'Speagle+2014, z=[{z_min},{z_max}]')
+        ax.fill_between(log_m_stars, sp_ms - sp_ms_err, sp_ms_max + sp_ms_err_max, alpha=.4, color='grey', label=f'MS, z=[{z_min},{z_max}]')
 
-        ax.set_ylabel(f'{sfr_type}/($M_\odot$/yr)')
-        ax.set_xlabel('log$(M_*/M_\odot)$')
+        ax.set_ylabel(FIELD_LABEL[sfr_type])
+        ax.set_xlabel(FIELD_LABEL['logMstar'])
 
     # Plot galaxy
     if group:
@@ -131,7 +165,7 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
                         yerr=[[row[f'{sfr_type}_me']], [row[f'{sfr_type}_pe']]], label=lab, fmt='o', **errorbar_kwargs)
 
     ax.set_ylim(ymax=4.1)
-    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.65, 0.5),
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.5, 0.5),
               ncol=1, fancybox=True, shadow=True)
 
     fig.savefig(os.path.join('plots', f'{save_name}.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
@@ -158,12 +192,12 @@ def plot_lqsos_in_speagle_z_scaled(df, fig=None, ax=None, label=None, save_name=
         # These things are only done if no ax is given
         fig, ax = plt.subplots(figsize=(10,8))
 
-        ax.plot(log_m_stars, gms, color='black', label='Speagle MS $\pm 1\sigma$')
+        ax.plot(log_m_stars, gms, color='black', label='MS $\pm 1\sigma$')
         ax.plot(log_m_stars, gms + gms_err, color='black', linestyle='--')
         ax.plot(log_m_stars, gms - gms_err, color='black', linestyle='--')
 
-        ax.set_ylabel(f'logSFR/($M_\odot$/yr)')
-        ax.set_xlabel('log$(M_*/M_\odot)$')
+        ax.set_ylabel(FIELD_LABEL['logSFR'])
+        ax.set_xlabel(FIELD_LABEL['logMstar'])
 
     # Plot galaxy
     if group:
@@ -203,7 +237,8 @@ def hist_stellarmass(df, fig, ax,label, zorder=1, binwidth=0.20, alpha=0.5, dens
     return fig, ax
 
 
-def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component='_sub', equals_line=False, logx=False, logy=False, unique_markers=True):
+
+def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, equals_line=False, logx=False, logy=False, unique_markers=True):
     cm = plt.cm.get_cmap('RdYlBu')
     fig, ax = plt.subplots()
     markers=['o', 'v', '8', 's','h', 'p', 'D', 'X', '>', '<']
@@ -236,7 +271,7 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component=
 
         if color_scale_field is not None:
             cbar = fig.colorbar(ScalarMappable(Normalize(vmin=vmin, vmax=vmax), cmap=cm))
-            cbar.set_label(color_scale_field)
+            cbar.set_label(FIELD_LABEL[color_scale_field])
 
     if unique_markers:
         if color_scale_field:
@@ -250,8 +285,8 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, component=
         x = np.linspace(np.min(lqsos[field_1] - lqsos[f'{field_1}_me']), np.max(lqsos[field_1] + lqsos[f'{field_1}_pe']), 10000)
         ax.plot(x, x, linestyle='--', color='black')
 
-    ax.set_xlabel(field_1)
-    ax.set_ylabel(field_2)
+    ax.set_xlabel(FIELD_LABEL[field_1])
+    ax.set_ylabel(FIELD_LABEL[field_2])
 
     if field_1 == 'EBVbbb' and field_2 == 'Nh':
         # Add Type1/2 AGN separation line as found in AGNfitter paper
@@ -305,10 +340,10 @@ def residual_plot(lqso, errors=False):
     # ax2.set_yscale('log')
 
     # ax1.set_title(f'{lqso.name}', fontsize=15)
-    ax1.set_ylabel('$\\nu \\rm{L}(\\nu)[erg \ s^{-1}]$')
-    ax2.set_ylabel('$\sigma$')
+    ax1.set_ylabel('$\\nu \\rm{L}(\\nu)\ [erg \ s^{-1}]$')
+    ax2.set_ylabel('$\mathit{Residual}\ [\sigma]$')
     # ax2.ticklabel_format(style='scientific', axis='y')
-    ax2.set_xlabel('rest frame $\\nu$[Hz]')
+    ax2.set_xlabel('$\mathit{Rest frame}\ \\nu$[Hz]')
 
     #For getting the right colors
     terms=['SBnuLnu','BBnuLnu','GAnuLnu', 'TOnuLnu','TOTALnuLnu']
@@ -355,7 +390,7 @@ def plot_lqsos_vs_stacey(lqsos):
     ax.axhline(y=0, linestyle='dashed', color='grey')
 
     ax.set_xticks(range(len(lqsos['name'])), lqsos['name'], rotation=90)
-    ax.set_ylabel('$\Delta\log\mu\mathrm{SFR_{IR}}$')
+    ax.set_ylabel('$\Delta\log(\mu\mathit{SFR_{IR}} / \mathrm{M_\odot yr^{-1}})$')
     ax.legend()
 
     fig.tight_layout()
@@ -396,8 +431,8 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
     #setting up the plot
     if ax is None:
         fig,ax= plt.subplots(figsize=(10,10))
-    ax.set_xlabel('age of universe [yr]')
-    ax.set_ylabel('$M_\star /M_{\odot}$')
+    ax.set_xlabel(FIELD_LABEL['univ_age'])
+    ax.set_ylabel(FIELD_LABEL['Mstar'])
 
 
     #TODO: add error prop

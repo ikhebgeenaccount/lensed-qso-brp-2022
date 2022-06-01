@@ -31,7 +31,7 @@ FILTERED_SOURCES = {
 FILTERED_SOURCES_AGNFITTER = {
     'B1152+200': ['toft', 'Barvainis+2002_filter'],
     'B1600+434': ['munoz', 'SDSS+DR14_filter'],
-    'B1608+656': [ 'luichies', 'panstarrs'],#['Koopmans+2003' ],
+    'B1608+656': [ 'luichies'],#['Koopmans+2003' ],
     'J0806+2006': ['Fadely+2011'],
     'J0924+0219': ['2MASS_filter'],
     'J1330+1810': ['Galex_filter'],
@@ -265,11 +265,11 @@ class LensedQSO:
             ax.set_yscale('log')
 
         # ax.set_title(f'{self.name} SED' if component is None else f'{self.name}{component} SED')
-        ax.set_xlabel('$\mathit{Wavelength}\ (\mathrm{\AA})$')
+        ax.set_xlabel('$\mathit{Wavelength}\ [\mathrm{\AA}]$')
         if mags:
             ax.set_ylabel('$\mathit{mag}$')
         else:
-            ax.set_ylabel('$\mathit{Flux\ density}\ (\mathrm{mJy})$')
+            ax.set_ylabel('$\mathit{Flux\ density}\ [\mathrm{mJy}]$')
 
         fig.tight_layout()
         if self.save_all_plots:
