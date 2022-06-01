@@ -103,7 +103,7 @@ def all_galaxies():
             lqsos_dict[f'{f}_pe'].append(pe)
             lqsos_dict[f'{f}_me'].append(me)
 
-            
+    alpha=3.6        
     
     #make the dataframe        
     lqsos_df = pd.DataFrame(lqsos_dict)
@@ -126,8 +126,8 @@ def all_galaxies():
     lqsos_df['logSFR_pe'] = lqsos_df['SFR_pe'] / (lqsos_df['SFR'] * np.log(10.))
     lqsos_df['logSFR_me'] = lqsos_df['SFR_me'] / (lqsos_df['SFR'] * np.log(10.))
     
-    lqsos_df['Mgas'] = lqsos_df['mu_m_gas'] / lqsos_df['magnification']
-    lqsos_df['Mgas_err'] = lqsos_df['mu_m_gas'] / np.square(lqsos_df['magnification']) * lqsos_df['magn_err']
+    lqsos_df['Mgas'] = alpha * lqsos_df['mu_m_gas'] / lqsos_df['magnification']
+    lqsos_df['Mgas_err'] = alpha * lqsos_df['mu_m_gas'] / np.square(lqsos_df['magnification']) * lqsos_df['magn_err']
     lqsos_df['f_gas'] = lqsos_df['Mgas'] / (np.power(10., lqsos_df['logMstar']) + lqsos_df['Mgas'])
     lqsos_df['f_gas_pe'] = np.sqrt((np.square(np.power(10., lqsos_df['logMstar']) * lqsos_df['Mgas_err']) +\
                            np.square(lqsos_df['Mgas'] * np.log(10.) * np.power(10., lqsos_df['logMstar']) * lqsos_df['logMstar_pe'])) /\
@@ -187,19 +187,26 @@ def all_galaxies():
     fr, ar = plot_speagle_residual(lqsos_df, label='This work', fig=fr, ax=ar, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res')
     fr2, ar2 = plot_speagle_residual(lqsos_df, label='This work', fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res_logMstar')
 
-    LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)  # Cosmological constants as Speagle uses them
-    fig8, ax8 =plt.subplots()
-    M_range=np.linspace(9.7,11.2,100)
-    for z in [0,1,4]:
-        t=LCDM.age(z)
-        SFR, err_sfr=speagle_gms(M_range, t.value)
-        ax8.fill_between(M_range, y1=SFR - err_sfr, y2=SFR+err_sfr, alpha=0.5)
-        ax8.plot(M_range, SFR, label=f'z={z}')
-    ax8.legend()
-    ax8.set_ylabel(f'log(SFR /($M_\odot$/yr))')
-    ax8.set_xlabel('log$(M_*/M_\odot)$')
-    fig8.savefig(os.path.join('plots', 'speagle_plot.pdf'), bbox_inches='tight')
-    plt.show()
+    # LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)  # Cosmological constants as Speagle uses them
+    # fig8, ax8 =plt.subplots()
+    # M_range=np.linspace(9.7,11.2,100)
+    # for z in [0,1,4]:
+    #     t=LCDM.age(z)
+    #     SFR, err_sfr=speagle_gms(M_range, t.value)
+    #     ax8.fill_between(M_range, y1=SFR - err_sfr, y2=SFR+err_sfr, alpha=0.5)
+    #     ax8.plot(M_range, SFR, label=f'z={z}')
+    # ax8.legend()
+    # ax8.set_ylabel(f'log(SFR /($M_\odot$/yr))')
+    # ax8.set_xlabel('log$(M_*/M_\odot)$')
+    # fig8.savefig(os.path.join('plots', 'speagle_plot.pdf'), bbox_inches='tight')
+    # plt.show()
+    
+    
+    print('depletion times',lqsos_df['Mgas']/lqsos_df['SFR'])
+    print('new gas masses', lqsos_df['Mgas'])
+    print('new gas fractions', lqsos_df[['name', 'f_gas']])
+    
+    plot_agnf_output(lqsos_df, 'redshift', 'f_gas', unique_markers=True)
     
 if __name__ == '__main__':
     #single()
