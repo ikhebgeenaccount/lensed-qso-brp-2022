@@ -53,7 +53,8 @@ FIELD_LABEL = {
     'logSFR': '$\log(\mathit{SFR} / \mathrm{M_\odot yr^{-1}})$',
     't_dep': '$\mathit{t_{dep}}\ [\mathrm{yr}]$',
     'f_gas': '$\mathit{f_{gas}}$',
-    'univ_age': '$\mathit{Age\ of\ universe}\ [\mathrm{Gyr}]$'
+    'univ_age': '$\mathit{Age\ of\ universe}\ [\mathrm{Gyr}]$',
+    'redshift': '$z$',
 
 }
 
@@ -243,13 +244,25 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, equals_lin
     fig, ax = plt.subplots()
     markers=['o', 'v', '8', 's','h', 'p', 'D', 'X', '>', '<']
 
+    if f'{field_1}_pe' in lqsos:
+        xerr = None if np.sum([lqsos[f'{field_1}_me'], lqsos[f'{field_1}_pe']]) == 0 else np.reshape([lqsos[f'{field_1}_me'], lqsos[f'{field_1}_pe']], (2, len(lqsos[f'{field_1}_pe'])))
+    elif f'{field_1}_err' in lqsos:
+        xerr = lqsos[f'{field_1}_err'].values
+    else:
+        xerr = None
+
+    if f'{field_2}_pe' in lqsos:
+        yerr = None if np.sum([lqsos[f'{field_2}_me'], lqsos[f'{field_2}_pe']]) == 0 else np.reshape([lqsos[f'{field_2}_me'], lqsos[f'{field_2}_pe']], (2, len(lqsos[f'{field_2}_pe'])))
+    elif f'{field_2}_err' in lqsos:
+        yerr = lqsos[f'{field_2}_err'].values
+    else:
+        yerr = None
+
     if not unique_markers:
         ax_scatter = ax.scatter(lqsos[field_1], lqsos[field_2], c=lqsos[color_scale_field] if color_scale_field is not None else None, cmap=cm, zorder=100)#, vmin=0, vmax=10000)
         ax.errorbar(lqsos[field_1], lqsos[field_2],
-                    xerr=None if np.sum([lqsos[f'{field_1}_me'], lqsos[f'{field_1}_pe']]) == 0 else
-                    np.reshape([lqsos[f'{field_1}_me'], lqsos[f'{field_1}_pe']], (2, len(lqsos[f'{field_1}_pe']))),
-                    yerr=None if np.sum([lqsos[f'{field_2}_me'], lqsos[f'{field_2}_pe']]) == 0 else
-                    np.reshape([lqsos[f'{field_2}_me'], lqsos[f'{field_2}_pe']], (2, len(lqsos[f'{field_2}_pe']))),
+                    xerr=xerr,
+                    yerr=yerr,
                     zorder=0, fmt='o', marker=None)
 
         if color_scale_field is not None:
@@ -263,10 +276,8 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, equals_lin
         for i, row in lqsos.iterrows():
             ax_scatter = ax.scatter(row[field_1], row[field_2], c=row[color_scale_field] if color_scale_field is not None else None, cmap=cm, zorder=100, vmin=vmin, vmax=vmax, marker=markers[i] if color_scale_field else None, label=row['name'], edgecolors='black' if color_scale_field else None)
             ax.errorbar(row[field_1], row[field_2],
-                        xerr=None if np.sum([row[f'{field_1}_me'], row[f'{field_1}_pe']]) == 0 else
-                        np.reshape([row[f'{field_1}_me'], row[f'{field_1}_pe']], (2, 1)),
-                        yerr=None if np.sum([row[f'{field_2}_me'], row[f'{field_2}_pe']]) == 0 else
-                        np.reshape([row[f'{field_2}_me'], row[f'{field_2}_pe']], (2, 1)),
+                        xerr=np.reshape(xerr[:,i], (2, 1)) if xerr is not None else None,
+                        yerr=np.reshape(yerr[:,i], (2, 1)) if yerr is not None else None,
                         zorder=0, fmt='', marker=None, color=ax_scatter.get_fc())
 
         if color_scale_field is not None:
