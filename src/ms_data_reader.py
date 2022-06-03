@@ -119,7 +119,13 @@ FILES = {
     #                                           col_names=['objid', 'z', 'logSFR', 'logSFR_err', 'logSFR_err', 'logMstar', 'logMstar_err', 'logMstar_err'],
     #                                           read_csv_kwargs={'delim_whitespace': True, 'index_col': False},
     #                                           post_filter=lambda df: df[np.random.choice(a=[True, False], size=len(df), p=[1000/50000, 1-1000/50000]) &
-    #                                                                     (df['logMstar'] > -99)])
+    #                                                                     (df['logMstar'] > -99)]),
+    'AGNs, Kakkad+2017, z=1.5': _csv_reader([os.path.join('data', 'context_main_seq', 'agns_kakkad.csv')],
+                                            col_names=['ID', 'za', lambda df: np.log10(df['SFRe']), lambda df: np.zeros(len(df)),
+                                                       lambda df: np.zeros(len(df)), 'Log Mc', lambda df: np.zeros(len(df)), lambda df: np.zeros(len(df))],
+                                            read_csv_kwargs={'delimiter': '\t'})
 }
 
 # print(np.min(FILES['ULIRGS, Cunha+2010']['redshift']), np.max(FILES['ULIRGS, Cunha+2010']['redshift']))
+
+print(FILES['AGNs, Kakkad+2017, z=1.5'][['name', 'redshift', 'logSFR', 'logMstar']])

@@ -133,15 +133,15 @@ def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False, from_fil
         for g in GALAXIES:
             lqso = LensedQSO(g)
             print(g)
-            lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder, copy=False)
-            _update_lqsos_dict(lqsos_dict, lqso)
+            # lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder, copy=False)
+            # _update_lqsos_dict(lqsos_dict, lqso)
 
             if generate_lqso_plots:
                 lqso.plot_spectrum(disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
                 lqso.plot_spectrum(component='_sub', disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
 
                 # Model subtraction also creates lqso.plot_spectrum but without above filtered sources, so messes up the saved plots
-                model_subtraction(lqso)
+                # model_subtraction(lqso)
 
                 # residual_plot(lqso, errors=True)
 
@@ -159,9 +159,9 @@ def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False, from_fil
                 # # Reload best run
                 # lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
 
-        lqsos_df = _lqsos_dict_to_df(lqsos_dict)
-
-        lqsos_df.to_csv(os.path.join('data', 'final_output.csv'), index=False)
+        # lqsos_df = _lqsos_dict_to_df(lqsos_dict)
+        #
+        # lqsos_df.to_csv(os.path.join('data', 'final_output.csv'), index=False)
 
     else:
         lqsos_df = pd.read_csv(os.path.join('data', 'final_output.csv'))
@@ -312,15 +312,15 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    lqsos_df, lqsos_all_runs_df = load_all_galaxies(from_file=False, generate_lqso_plots=True)
+    lqsos_df, lqsos_all_runs_df = load_all_galaxies(from_file=True, generate_lqso_plots=False)
 
-    # generate_context_plots(lqsos_df, lqsos_all_runs_df)
+    generate_context_plots(lqsos_df, lqsos_all_runs_df)
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
     # single_galaxy()
     # known_mag_gals()
 
-    latex(lqsos_df)
+    # latex(lqsos_df)
 
     plt.show()
