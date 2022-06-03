@@ -214,7 +214,7 @@ class LensedQSO:
 
         else:
             data = self.sed.copy()
-            data['source'] = data['source'].str.replace('_filter', '')
+            data['source'] = data['source'].str.replace('_filter', '', regex=False)
             data_type = 'flux_total' if component is None else f'flux{component}'
             data_err = 'flux_err' if component is None else f'flux{component}_err'
             limit = 'upper_limit'
@@ -246,7 +246,6 @@ class LensedQSO:
                 SOURCES_COLORS[l] = color
 
             # Plot regular data points and upper limits separately, upper limits with special marker
-            # TODO: consistent colours between all plots for same sources (SDSS, PanSTARRS, etc)
             le_1, _, _ = ax.errorbar(sel_reg.wavelength, sel_reg[data_type], sel_reg[data_err], fmt='o', label=l, color=color, **kwargs)
 
             if len(sel_upper_limit) > 0:
