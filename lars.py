@@ -137,13 +137,13 @@ def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False, from_fil
             _update_lqsos_dict(lqsos_dict, lqso)
 
             if generate_lqso_plots:
-                lqso.plot_spectrum(disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
-                lqso.plot_spectrum(component='_sub', disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
+                # lqso.plot_spectrum(disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
+                # lqso.plot_spectrum(component='_sub', disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
 
                 # Model subtraction also creates lqso.plot_spectrum but without above filtered sources, so messes up the saved plots
-                # model_subtraction(lqso)
+                model_subtraction(lqso)
 
-                residual_plot(lqso, errors=True)
+                # residual_plot(lqso, errors=True)
 
                 # Fill DataFrame with every run's output
                 d = _init_lqsos_dict()
@@ -153,10 +153,10 @@ def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False, from_fil
                 lqsos_all_runs_df[g] = _lqsos_dict_to_df(d)
 
                 # Plot AGNfitter output stuff
-                plot_n_runs_pars(lqso, sub_folder=sub_folder, n=n)  # when running this one, have to run lqso.find_best_run afterwards again, otherwise stuck on last run
+                # plot_n_runs_pars(lqso, sub_folder=sub_folder, n=n)  # when running this one, have to run lqso.find_best_run afterwards again, otherwise stuck on last run
 
                 # Reload best run
-                lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
+                # lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
 
         lqsos_df = _lqsos_dict_to_df(lqsos_dict)
 
@@ -174,6 +174,8 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
     pd.set_option('display.max_columns', None)
     print(lqsos_df[['name', 'Mgas', 'Mgas_err', 'f_gas', 'f_gas_pe', 'f_gas_me', 't_dep']])
     print(lqsos_df.columns)
+    print(np.mean(lqsos_df['f_gas']))
+    print(np.mean(lqsos_df['redshift']))
 
     # Make plots
     plot_lqsos_in_speagle(lqsos_df, label=lqsos_df['name'] + ', z=' + lqsos_df['redshift'].astype(str), group=False)
@@ -182,7 +184,7 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
 
     # Make speagle plot for every galaxy of all runs
     for gal, df in lqsos_all_runs_df.items():
-        plot_lqsos_in_speagle(df, label=df['name'], group=False, save_name=f'{gal}_speagle', errorbar_kwargs={'alpha': .6})
+        plot_lqsos_in_speagle(df, label=df['name'] + ',$\ln L$=' + df['-ln_like'].map('{:.1f}'.format), group=False, save_name=f'{gal}_speagle', errorbar_kwargs={'alpha': .6})
 
     fig, ax = plot_agnf_output(lqsos_df, 'EBVbbb', 'Nh', unique_markers=True)
 
@@ -191,6 +193,7 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
     plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='Lbb(0.1-1)', unique_markers=True)
     plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='f_gas', unique_markers=True)
     plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='t_dep', unique_markers=True)
+    plot_agnf_output(lqsos_df, 'redshift', 'f_gas', unique_markers=True)
 
     plot_lqsos_vs_stacey(lqsos_df[lqsos_df['stacey_sfr'] > 0])
 
@@ -263,10 +266,10 @@ def latex(lqsos_df):
     #                                label='table:filter_conv', caption='All filters for which magnitudes were found, with their respective conversion methods and zeropoints.'))
 
     # Galaxy SEDs to latex
-    for g in GALAXIES:
-        lqso = LensedQSO(g)
+    # for g in GALAXIES:
+    #     lqso = LensedQSO(g)
 
-        sed_to_latex_table(lqso)
+    #     sed_to_latex_table(lqso)
 
     # SED plots to latex
     # plots_in_subfigures(GALAXIES, 'SED_total', label='sed')
@@ -276,6 +279,12 @@ def latex(lqsos_df):
 
     # AGNfitter residuals
     # plots_in_subfigures(GALAXIES, 'agnf_residuals', label='agnf_res')
+
+    # AGNfitter MS plots 10 runs
+    # plots_in_subfigures(GALAXIES, 'speagle', label='10runs')
+
+    # chi^2 plots
+    plots_in_subfigures(GALAXIES, 'models_chisq', label='chi_sq')
 
     # AGNfitter output table
     # print(lqsos_df.columns)
@@ -304,13 +313,13 @@ def plot_ell_models():
 if __name__ == '__main__':
     lqsos_df, lqsos_all_runs_df = load_all_galaxies(from_file=False, generate_lqso_plots=True)
 
-    generate_context_plots(lqsos_df, lqsos_all_runs_df)
+    # generate_context_plots(lqsos_df, lqsos_all_runs_df)
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
     # single_galaxy()
     # known_mag_gals()
 
-    # latex(lqsos_df)
+    latex(lqsos_df)
 
     plt.show()
