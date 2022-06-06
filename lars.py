@@ -215,19 +215,21 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
     fhs, ahs = None, None
 
     fh, ah = hist_stellarmass(lqsos_df, fh, ah, label = 'This work', zorder=10)
-    for label, df in src.ms_data_reader.FILES.items():
+
+    markers=['8', 's', 'h', 'p', 'D', 'X', '>', '<']
+    for (label, df), m in zip(src.ms_data_reader.FILES.items(), markers):
         if max(df['redshift']) > 0.5:
             fhz, ahz = hist_stellarmass(df, fhz, ahz, label)
         else:
             flz, alz = hist_stellarmass(df, flz, alz, label)
 
         fh, ah = hist_stellarmass(df, fh, ah, label = label)
-        f, a = plot_lqsos_in_speagle(df, label=label, fig=f, ax=a, group=True, errorbar_kwargs={'markersize': 5, 'alpha':.7, 'capsize': 0, 'linewidth': 0}, save_name='speagle_comp')
+        f, a = plot_lqsos_in_speagle(df, label=label, fig=f, ax=a, group=True, errorbar_kwargs={'markersize': 5, 'alpha':.7, 'capsize': 0, 'linewidth': 0, 'fmt': m}, save_name='speagle_comp')
 
-        fr, ar = plot_speagle_residual(df, label=label, fig=fr, ax=ar, errorbar_kwargs={'markersize': 3, 'alpha':.7, 'capsize': 0, 'linewidth': 0}, save_name='speagle_res')
-        fr2, ar2 = plot_speagle_residual(df, label=label, fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'markersize': 3, 'alpha':.7, 'capsize': 0, 'linewidth': 0}, save_name='speagle_res_logMstar')
+        fr, ar = plot_speagle_residual(df, label=label, fig=fr, ax=ar, errorbar_kwargs={'markersize': 3, 'alpha':.7, 'capsize': 0, 'linewidth': 0, 'fmt': m}, save_name='speagle_res')
+        fr2, ar2 = plot_speagle_residual(df, label=label, fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'markersize': 3, 'alpha':.7, 'capsize': 0, 'linewidth': 0, 'fmt': m}, save_name='speagle_res_logMstar')
 
-        fres, ares = plot_lqsos_in_speagle_z_scaled(df, label=label, fig=fres, ax=ares, group=True, errorbar_kwargs={'markersize': 5, 'alpha':.7, 'capsize': 0, 'linewidth': 0}, save_name='speagle_comp_z_scaled')
+        fres, ares = plot_lqsos_in_speagle_z_scaled(df, label=label, fig=fres, ax=ares, group=True, errorbar_kwargs={'markersize': 5, 'alpha':.7, 'capsize': 0, 'linewidth': 0, 'fmt': m}, save_name='speagle_comp_z_scaled')
 
         if 'SMG' in label:
             fhs, ahs = hist_stellarmass(df, fhs, ahs, label=label, field='logSFR')

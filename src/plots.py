@@ -89,6 +89,8 @@ def speagle_gms_residual(df):
 def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_res', x_field='univ_age', x_label='Age of universe [Gyr]', errorbar_kwargs=None):
     if errorbar_kwargs is None:
         errorbar_kwargs = {}
+    if 'fmt' not in errorbar_kwargs:
+        errorbar_kwargs['fmt'] = 'o'
 
     new = False
     if fig == ax == None:
@@ -102,7 +104,7 @@ def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_
 
     ax.errorbar(df[x_field], speagle_res[0], yerr=None if np.sum([df['logSFR_me'],\
                    df[f'logSFR_pe']]) == 0 else np.reshape([df['logSFR_me'], \
-                    df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o', **errorbar_kwargs)
+                    df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, **errorbar_kwargs)
 
     lgd = ax.legend(loc='center right', bbox_to_anchor=(1.75, 0.5),
               ncol=1, fancybox=True, shadow=True)
@@ -123,6 +125,8 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
     """
     if errorbar_kwargs is None:
         errorbar_kwargs = {}
+    if 'fmt' not in errorbar_kwargs:
+        errorbar_kwargs['fmt'] = 'o'
     # Get age
     #t = np.power(10., lqso.agn_fitter_output()['age'].iloc[2])
     #t_pe = (lqso.agn_fitter_output()['age'].iloc[3] - t) * np.log(10.) * t
@@ -157,13 +161,13 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
                  xerr=None if np.sum([df['logMstar_me'], df['logMstar_pe']]) == 0 else
                  np.reshape([df['logMstar_me'], df['logMstar_pe']], (2, len(df['logMstar_pe']))),
                  yerr=None if np.sum([df[f'{sfr_type}_me'], df[f'{sfr_type}_pe']]) == 0 else
-                 np.reshape([df[f'{sfr_type}_me'], df[f'{sfr_type}_pe']], (2, len(df[f'{sfr_type}_pe']))), label=label, fmt='o',
+                 np.reshape([df[f'{sfr_type}_me'], df[f'{sfr_type}_pe']], (2, len(df[f'{sfr_type}_pe']))), label=label,
                  **errorbar_kwargs)
     else:
         for lab, r in zip(label, df.iterrows()):
             _, row = r
             ax.errorbar(row['logMstar'], row[sfr_type], xerr=[[row['logMstar_me']], [row['logMstar_pe']]],
-                        yerr=[[row[f'{sfr_type}_me']], [row[f'{sfr_type}_pe']]], label=lab, fmt='o', **errorbar_kwargs)
+                        yerr=[[row[f'{sfr_type}_me']], [row[f'{sfr_type}_pe']]], label=lab, **errorbar_kwargs)
 
     ax.set_ylim(ymax=4.1)
     lgd = ax.legend(loc='center right', bbox_to_anchor=(1.5, 0.5),
@@ -174,6 +178,7 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
 
     return fig, ax
 
+
 def plot_lqsos_in_speagle_z_scaled(df, fig=None, ax=None, label=None, save_name='speagle', group=True, errorbar_kwargs=None):
     """
     Plots all entries in df on Speagle ms, as if they are at redshift 1.5 using their residual to the Speagle main sequence.
@@ -181,6 +186,8 @@ def plot_lqsos_in_speagle_z_scaled(df, fig=None, ax=None, label=None, save_name=
     """
     if errorbar_kwargs is None:
         errorbar_kwargs = {}
+    if 'fmt' not in errorbar_kwargs:
+        errorbar_kwargs['fmt'] = 'o'
 
     z = 1.5
 
@@ -206,13 +213,13 @@ def plot_lqsos_in_speagle_z_scaled(df, fig=None, ax=None, label=None, save_name=
                  xerr=None if np.sum([df['logMstar_me'], df['logMstar_pe']]) == 0 else
                  np.reshape([df['logMstar_me'], df['logMstar_pe']], (2, len(df['logMstar_pe']))),
                  yerr=None if np.sum([df[f'logSFR_me'], df[f'logSFR_pe']]) == 0 else
-                 np.reshape([df[f'logSFR_me'], df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o',
+                 np.reshape([df[f'logSFR_me'], df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label,
                  **errorbar_kwargs)
     else:
         for lab, r in zip(label, df.iterrows()):
             _, row = r
             ax.errorbar(row['logMstar'], row['logSFR'], xerr=[[row['logMstar_me']], [row['logMstar_pe']]],
-                        yerr=[[row[f'logSFR_me']], [row[f'logSFR_pe']]], label=lab, fmt='o', **errorbar_kwargs)
+                        yerr=[[row[f'logSFR_me']], [row[f'logSFR_pe']]], label=lab, **errorbar_kwargs)
 
     ax.set_ylim(ymax=4.1)
     lgd = ax.legend(loc='center right', bbox_to_anchor=(1.75, 0.5),
