@@ -108,9 +108,13 @@ def _lqsos_dict_to_df(lqsos_dict):
     lqsos_df['logSFR_pe'] = lqsos_df['SFR_pe'] / (lqsos_df['SFR'] * np.log(10.))
     lqsos_df['logSFR_me'] = lqsos_df['SFR_me'] / (lqsos_df['SFR'] * np.log(10.))
 
+    # Specific SFR
+    lqsos_df['sSFR'] = lqsos_df['SFR'] / np.power(10., lqsos_df['logMstar'])
+
     # Calculate gas fraction
     alpha_CO = 3.6
     lqsos_df['Mgas'] = alpha_CO * lqsos_df['mu_m_gas'] / lqsos_df['magnification']
+    lqsos_df['logMgas'] = np.log10(lqsos_df['Mgas'])
     lqsos_df['Mgas_err'] = alpha_CO * lqsos_df['mu_m_gas'] / np.square(lqsos_df['magnification']) * lqsos_df['magn_err']
     lqsos_df['f_gas'] = lqsos_df['Mgas'] / (np.power(10., lqsos_df['logMstar']) + lqsos_df['Mgas'])
     lqsos_df['f_gas_pe'] = np.sqrt((np.square(np.power(10., lqsos_df['logMstar']) * lqsos_df['Mgas_err']) +\
@@ -133,8 +137,8 @@ def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False, from_fil
         for g in GALAXIES:
             lqso = LensedQSO(g)
             print(g)
-            # lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder, copy=False)
-            # _update_lqsos_dict(lqsos_dict, lqso)
+            lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder, copy=False)
+            _update_lqsos_dict(lqsos_dict, lqso)
 
             if generate_lqso_plots:
                 lqso.plot_spectrum(disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
@@ -159,9 +163,9 @@ def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False, from_fil
                 # # Reload best run
                 # lqso.find_best_run(run_times=n, verbose=False, sub_folder=sub_folder)
 
-        # lqsos_df = _lqsos_dict_to_df(lqsos_dict)
-        #
-        # lqsos_df.to_csv(os.path.join('data', 'final_output.csv'), index=False)
+        lqsos_df = _lqsos_dict_to_df(lqsos_dict)
+
+        lqsos_df.to_csv(os.path.join('data', 'final_output.csv'), index=False)
 
     else:
         lqsos_df = pd.read_csv(os.path.join('data', 'final_output.csv'))
@@ -173,8 +177,8 @@ def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False, from_fil
 def generate_context_plots(lqsos_df, lqsos_all_runs_df):
 
     pd.set_option('display.max_columns', None)
-    print(lqsos_df[['name', 'Mgas', 'Mgas_err', 'f_gas', 'f_gas_pe', 'f_gas_me', 't_dep']])
     print(lqsos_df.columns)
+    print(lqsos_df[['name', 'Mgas', 'Mgas_err', 'f_gas', 'f_gas_pe', 'f_gas_me', 't_dep', 'sSFR']])
     print(np.mean(lqsos_df['f_gas']))
     print(np.mean(lqsos_df['redshift']))
 
@@ -194,6 +198,9 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
     plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='Lbb(0.1-1)', unique_markers=True)
     plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='f_gas', unique_markers=True)
     plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='t_dep', unique_markers=True)
+    plot_agnf_output(lqsos_df, 'sSFR', 'f_gas', logx=True, unique_markers=True)
+    plot_agnf_output(lqsos_df, 'SFR', 't_dep', logx=True, unique_markers=True)
+    plot_agnf_output(lqsos_df, 'SFR', 'logMgas', logx=True, unique_markers=True)
     plot_agnf_output(lqsos_df, 'redshift', 'f_gas', unique_markers=True)
 
     plot_lqsos_vs_stacey(lqsos_df[lqsos_df['stacey_sfr'] > 0])
@@ -233,6 +240,13 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
 
         if 'SMG' in label:
             fhs, ahs = hist_stellarmass(df, fhs, ahs, label=label, field='logSFR')
+
+        # Print errors
+        print(label)
+        print(f'\tlogMstar_pe: avg, {np.nanmean(df.logMstar_pe)}; median, {np.nanmedian(df.logMstar_pe)}')
+        print(f'\tlogMstar_me: avg, {np.nanmean(df.logMstar_me)}; median, {np.nanmedian(df.logMstar_me)}')
+        print(f'\tlogSFR_pe: avg, {np.nanmean(df.logSFR_pe)}; median, {np.nanmedian(df.logSFR_pe)}')
+        print(f'\tlogSFR_me: avg, {np.nanmean(df.logSFR_me)}; median, {np.nanmedian(df.logSFR_me)}')
 
     f, a = plot_lqsos_in_speagle(lqsos_df, label='This work', fig=f, ax=a, group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_comp')
     fres, ares = plot_lqsos_in_speagle_z_scaled(lqsos_df, label='This work', fig=fres, ax=ares, group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_comp_z_scaled')
@@ -314,7 +328,7 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    lqsos_df, lqsos_all_runs_df = load_all_galaxies(from_file=True, generate_lqso_plots=False)
+    lqsos_df, lqsos_all_runs_df = load_all_galaxies(from_file=False, generate_lqso_plots=False)
 
     generate_context_plots(lqsos_df, lqsos_all_runs_df)
     # plot_ell_models()
