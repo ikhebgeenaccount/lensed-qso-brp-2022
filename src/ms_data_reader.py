@@ -124,7 +124,7 @@ FILES = {
     #                                           open_kwargs={'delim_whitespace': True, 'index_col': False},
     #                                           post_filter=lambda df: df[np.random.choice(a=[True, False], size=len(df), p=[1000/50000, 1-1000/50000]) &
     #                                                                     (df['logMstar'] > -99)]),
-    'AGNs, Kakkad+2017, z=1.5': _file_reader([os.path.join('data', 'context_main_seq', 'agns_kakkad.csv')],
+    'AGN, Kakkad+2017, z=1.5': _file_reader([os.path.join('data', 'context_main_seq', 'agns_kakkad.csv')],
                                             cols_orig=['ID', 'za', lambda df: np.log10(df['SFRe']), lambda df: np.zeros(len(df)),
                                                        lambda df: np.zeros(len(df)), 'Log Mc', lambda df: np.zeros(len(df)), lambda df: np.zeros(len(df))],
                                             open_kwargs={'delimiter': '\t'})
