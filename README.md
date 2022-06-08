@@ -12,3 +12,4 @@ Yo lieve mensen:
 -dingen die je moet weten over onze resultaten:  
   - 1152 upper limit verwijderd
   - alle andere datapunten die we hebben verwijderd
+  - We hebben voor magnification pm 5 gedaan, ipv -5+10
