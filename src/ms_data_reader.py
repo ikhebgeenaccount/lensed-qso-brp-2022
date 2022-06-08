@@ -87,11 +87,11 @@ FILES = {
                                                                lambda df: df['Mstar_u'] - df['Mstar'], lambda df: df['Mstar'] - df['Mstar_l']]),
     'SMGs, Da Cunha+2015, z=[1.3-6.1]': _file_reader([os.path.join('data', 'context_main_seq', 'Cunha.csv')], cols_orig=['ID', 'z_phot'] + COLUMNS[2:],
                                                     open_kwargs={'delimiter': '\t'}),
-    'ULIRGs, Da Cunha+2010, z=[0.03-0.5]': _file_reader([os.path.join('data', 'context_main_seq', 'ulirgs_cunha1.csv'),
-                                        os.path.join('data', 'context_main_seq', 'ulirgs_cunha2.csv')], join_col='Galaxy',
-                                                       cols_orig=['Galaxy', 'z', lambda df: df['logsSFR'] + df['logMstar'],
-                                                                  lambda df: np.zeros(len(df['Galaxy'])), lambda df: np.zeros(len(df['Galaxy']))] +
-                                      COLUMNS[-3:], open_kwargs={'delimiter': '\t'}),
+    # 'ULIRGs, Da Cunha+2010, z=[0.03-0.5]': _file_reader([os.path.join('data', 'context_main_seq', 'ulirgs_cunha1.csv'),
+    #                                     os.path.join('data', 'context_main_seq', 'ulirgs_cunha2.csv')], join_col='Galaxy',
+    #                                                    cols_orig=['Galaxy', 'z', lambda df: df['logsSFR'] + df['logMstar'],
+    #                                                               lambda df: np.zeros(len(df['Galaxy'])), lambda df: np.zeros(len(df['Galaxy']))] +
+    #                                   COLUMNS[-3:], open_kwargs={'delimiter': '\t'}),
     'Local SFGs, Sun+2020, z=0': _file_reader([os.path.join('data', 'context_main_seq', 'sun.csv')],
                                              cols_orig=['galaxy', lambda df: df['d'] * 70 / 3e5, lambda df: np.log10(df['SFR']),
                                                         lambda df: np.zeros(len(df['galaxy'])), lambda df: np.zeros(len(df['galaxy'])),
@@ -129,7 +129,3 @@ FILES = {
                                                        lambda df: np.zeros(len(df)), 'Log Mc', lambda df: np.zeros(len(df)), lambda df: np.zeros(len(df))],
                                             open_kwargs={'delimiter': '\t'})
 }
-
-# print(np.min(FILES['ULIRGS, Cunha+2010']['redshift']), np.max(FILES['ULIRGS, Cunha+2010']['redshift']))
-
-# print(FILES['AGNs, Kakkad+2017, z=1.5'][['name', 'redshift', 'logSFR', 'logMstar']])

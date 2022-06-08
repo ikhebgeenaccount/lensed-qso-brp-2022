@@ -140,8 +140,10 @@ def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False, from_fil
             lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder, copy=False)
             _update_lqsos_dict(lqsos_dict, lqso)
 
+            lqso.plot_spectrum(disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
+
             if generate_lqso_plots:
-                lqso.plot_spectrum(disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
+
                 lqso.plot_spectrum(component='_sub', disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
 
                 # Model subtraction also creates lqso.plot_spectrum but without above filtered sources, so messes up the saved plots
@@ -205,41 +207,42 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
 
     plot_lqsos_vs_stacey(lqsos_df[lqsos_df['stacey_sfr'] > 0])
 
-    f, a = None, None
+    # f, a = None, None
     fr, ar = None, None
     fr2, ar2 = None, None
-    fh, ah = None, None
+    # fh, ah = None, None
 
     fres, ares = None, None
 
     # Stellar mass hist figs and axs
-    flz, alz = None, None
-    flz, alz = hist_stellarmass(lqsos_df, flz, alz, label='This work')
-    fhz, ahz = None, None
-    fhz, ahz = hist_stellarmass(lqsos_df, fhz, ahz, label='This work')
+    # flz, alz = None, None
+    # flz, alz = hist_stellarmass(lqsos_df, flz, alz, label='This work')
+    # fhz, ahz = None, None
+    # fhz, ahz = hist_stellarmass(lqsos_df, fhz, ahz, label='This work')
 
     # SFR hist
-    fhs, ahs = None, None
+    # fhs, ahs = None, None
 
-    fh, ah = hist_stellarmass(lqsos_df, fh, ah, label = 'This work', zorder=10)
+    # fh, ah = hist_stellarmass(lqsos_df, fh, ah, label = 'This work', zorder=10)
 
     markers=['8', 's', 'h', 'p', 'D', 'X', '>', '<']
+    markersize = 6
     for (label, df), m in zip(src.ms_data_reader.FILES.items(), markers):
-        if max(df['redshift']) > 0.5:
-            fhz, ahz = hist_stellarmass(df, fhz, ahz, label)
-        else:
-            flz, alz = hist_stellarmass(df, flz, alz, label)
+        # if max(df['redshift']) > 0.5:
+        #     fhz, ahz = hist_stellarmass(df, fhz, ahz, label)
+        # else:
+        #     flz, alz = hist_stellarmass(df, flz, alz, label)
 
-        fh, ah = hist_stellarmass(df, fh, ah, label = label)
-        f, a = plot_lqsos_in_speagle(df, label=label, fig=f, ax=a, group=True, errorbar_kwargs={'markersize': 5, 'alpha':.7, 'capsize': 0, 'linewidth': 0, 'fmt': m}, save_name='speagle_comp')
+        # fh, ah = hist_stellarmass(df, fh, ah, label = label)
+        # f, a = plot_lqsos_in_speagle(df, label=label, fig=f, ax=a, group=True, errorbar_kwargs={'markersize': markersize, 'alpha':.7, 'capsize': 0, 'linewidth': 0, 'fmt': m}, save_name='speagle_comp')
 
-        fr, ar = plot_speagle_residual(df, label=label, fig=fr, ax=ar, errorbar_kwargs={'markersize': 3, 'alpha':.7, 'capsize': 0, 'linewidth': 0, 'fmt': m}, save_name='speagle_res')
-        fr2, ar2 = plot_speagle_residual(df, label=label, fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'markersize': 3, 'alpha':.7, 'capsize': 0, 'linewidth': 0, 'fmt': m}, save_name='speagle_res_logMstar')
+        fr, ar = plot_speagle_residual(df, label=label, fig=fr, ax=ar, errorbar_kwargs={'markersize': markersize, 'alpha':.7, 'capsize': 0, 'linewidth': 0, 'fmt': m}, save_name='speagle_res')
+        fr2, ar2 = plot_speagle_residual(df, label=label, fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'markersize': markersize, 'alpha':.7, 'capsize': 0, 'linewidth': 0, 'fmt': m}, save_name='speagle_res_logMstar')
 
-        fres, ares = plot_lqsos_in_speagle_z_scaled(df, label=label, fig=fres, ax=ares, group=True, errorbar_kwargs={'markersize': 5, 'alpha':.7, 'capsize': 0, 'linewidth': 0, 'fmt': m}, save_name='speagle_comp_z_scaled')
+        fres, ares = plot_lqsos_in_speagle_z_scaled(df, label=label, fig=fres, ax=ares, group=True, errorbar_kwargs={'markersize': markersize, 'alpha':.7, 'capsize': 0, 'linewidth': 0, 'fmt': m}, save_name='speagle_comp_z_scaled')
 
-        if 'SMG' in label:
-            fhs, ahs = hist_stellarmass(df, fhs, ahs, label=label, field='logSFR')
+        # if 'SMG' in label:
+        #     fhs, ahs = hist_stellarmass(df, fhs, ahs, label=label, field='logSFR')
 
         # Print errors
         print(label)
@@ -248,7 +251,7 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
         print(f'\tlogSFR_pe: avg, {np.nanmean(df.logSFR_pe)}; median, {np.nanmedian(df.logSFR_pe)}')
         print(f'\tlogSFR_me: avg, {np.nanmean(df.logSFR_me)}; median, {np.nanmedian(df.logSFR_me)}')
 
-    f, a = plot_lqsos_in_speagle(lqsos_df, label='This work', fig=f, ax=a, group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_comp')
+    # f, a = plot_lqsos_in_speagle(lqsos_df, label='This work', fig=f, ax=a, group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_comp')
     fres, ares = plot_lqsos_in_speagle_z_scaled(lqsos_df, label='This work', fig=fres, ax=ares, group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_comp_z_scaled')
     fr, ar = plot_speagle_residual(lqsos_df, label='This work', fig=fr, ax=ar, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res')
     fr2, ar2 = plot_speagle_residual(lqsos_df, label='This work', fig=fr2, ax=ar2, x_field='logMstar', x_label='log$M_*$', errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name='speagle_res_logMstar')
