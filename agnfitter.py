@@ -1,5 +1,5 @@
 from src.lensed_qso import LensedQSO
-from src.model_subtraction import model_subtraction
+from src.lens_subtraction.model_subtraction import model_subtraction
 from src.agn_fitter_automated import run_agn_fitter
 
 import argparse

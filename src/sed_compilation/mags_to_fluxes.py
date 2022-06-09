@@ -1,11 +1,6 @@
-import os.path
-
 import numpy as np
-import pandas as pd
 
-from src.lensed_qso import LensedQSO
-
-from src.filters import FILTER_PROPERTIES, get_wavelength
+from src.agnfitter.filters import FILTER_PROPERTIES, get_wavelength
 
 import warnings
 

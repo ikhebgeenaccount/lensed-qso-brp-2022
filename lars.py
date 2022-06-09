@@ -4,17 +4,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from src.agn_fitter_automated import run_agn_fitter
 from src.lensed_qso import LensedQSO
-from src.latex_output import dataframe_to_latex_table, sed_to_latex_table, plots_in_subfigures,agnf_output_table
-from src.mags_to_fluxes import mags_to_fluxes, mag_ratio_split_total_flux
-from src.ned_to_sed import ned_table_to_sed
-from src.filters import populate_filter_profile_path_column
-from src.model_subtraction import model_subtraction
-from src.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_n_runs_pars, plot_lqsos_vs_stacey, residual_plot, plot_speagle_residual, hist_stellarmass, plot_lqsos_in_speagle_z_scaled, plot_evolution_df
-import src.ms_data_reader
+from src.plotting.latex_output import plots_in_subfigures
+from src.plotting.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_lqsos_vs_stacey, plot_speagle_residual, \
+    plot_lqsos_in_speagle_z_scaled, plot_evolution_df
+import src.plotting.ms_data_reader
 
-import src.model_sed
+import src.lens_subtraction.model_sed
 
 import os
 
@@ -225,7 +221,7 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
 
     markers=['8', 's', 'h', 'p', 'D', 'X', '>', '<']
     markersize = 6
-    for (label, df), m in zip(src.ms_data_reader.FILES.items(), markers):
+    for (label, df), m in zip(src.plotting.ms_data_reader.FILES.items(), markers):
         # if max(df['redshift']) > 0.5:
         #     fhz, ahz = hist_stellarmass(df, fhz, ahz, label)
         # else:
@@ -317,7 +313,7 @@ def plot_ell_models():
 
     for mn in models:
         model = f'NGC_{mn}'
-        m = src.model_sed.MODELS[model]
+        m = src.lens_subtraction.model_sed.MODELS[model]
 
         #ax.plot(m.wavelength, m.flux, label='Brown')
         ax.plot(m.wavelength, np.abs(m.flux), label=model)

@@ -2,14 +2,13 @@ from astropy.cosmology import LambdaCDM
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 
-from src.lensed_qso import RADIO_CUTOFF, XRAY_CUTOFF, PROPERTIES as LQSO_PROPERTIES, AGNFITTER_FIELDS
+from src.lensed_qso import AGNFITTER_FIELDS
 
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
 import os.path
 from src.lensed_qso import XRAY_CUTOFF, RADIO_CUTOFF
-import src.ms_data_reader
+import src.plotting.ms_data_reader
 
 
 LCDM = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7)  # Cosmological constants as Speagle uses them
@@ -501,7 +500,7 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
         ax.set_xlim(8e8,6e9)
         ax.set_ylim(ymax=8e11)
 
-        for label, df in src.ms_data_reader.FILES.items():
+        for label, df in src.plotting.ms_data_reader.FILES.items():
             if max(df['redshift']) < 0.5:
                 continue
 

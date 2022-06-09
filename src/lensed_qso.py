@@ -9,7 +9,7 @@ import pandas as pd
 from matplotlib.legend_handler import HandlerTuple
 
 from src.AGN_input import format_filter_name, format_telescope_name, get_agnf_filter_path
-from src.filters import get_wavelength, FILTER_PROPERTIES
+from src.agnfitter.filters import get_wavelength, FILTER_PROPERTIES
 
 import warnings
 

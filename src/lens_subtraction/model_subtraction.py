@@ -5,12 +5,10 @@ model subtraction shizzle
 @author: Femke
 """
 
-import src.model_sed as mod
-from src.model_sed import fit
-from src.model_sed import interp_fluxes
+from src.lens_subtraction.model_sed import fit
 import matplotlib.pyplot as plt
 import numpy as np
-from src.filters import get_filename
+from src.agnfitter.filters import get_filename
 import pandas as pd
 import os
 

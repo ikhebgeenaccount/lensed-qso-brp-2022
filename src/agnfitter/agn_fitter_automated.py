@@ -5,8 +5,8 @@ import os
 RUN_TEN_MODE = 'python ../AGNfitter/RUN_AGNfitter_multi.py ../AGNfitter/example/SETTINGS_AGNfitter_{name}.py --overwrite'
 RUN_SINGLE_MODE = RUN_TEN_MODE + ' -n 0'
 
-AGN_FITTER_PATH = os.path.join(os.pardir, 'AGNfitter')
-AGN_FITTER_RX_PATH = os.path.join(os.pardir, 'AGNfitter-rX_v0.1', 'AGNfitter')
+AGN_FITTER_PATH = os.path.join(os.pardir, '')
+AGN_FITTER_RX_PATH = os.path.join(os.pardir, 'AGNfitter-rX_v0.1', '')
 
 
 def run_agn_fitter(galaxies, rX=False, run_times=1, settings=None, component='_sub_demag'):
