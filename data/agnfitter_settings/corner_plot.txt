@@ -1,4 +1,5 @@
 {
     "plot_posteriortriangle": true,
-    "realizations2int": 100
+    "nburn": 200,
+    "nmcmc": 500
 }
