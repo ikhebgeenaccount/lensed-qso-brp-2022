@@ -1,5 +1,5 @@
 Oguri et al. 2014
-Estimates of stellar masses using Salpeter function.
+Estimates of stellar masses of the lenses using Salpeter function.
 https://ui.adsabs.harvard.edu/abs/2014MNRAS.439.2494O/abstract
 
 panstarrs catalogue: https://catalogs.mast.stsci.edu/panstarrs/ with paper https://outerspace.stsci.edu/display/PANSTARRS
