@@ -3,6 +3,7 @@ Hi guys,
 we have spent our bachelors project (feb to june 2022) working on using AGNfitter on lensed quasars. In this time we have written quite a lot of code, so this can easily be re-used.
 
 -layout of the github
+  properties of sample
 
 
 -How to compile an SED\
