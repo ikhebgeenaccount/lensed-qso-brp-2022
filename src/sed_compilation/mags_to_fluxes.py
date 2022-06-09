@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.agnfitter.filters import FILTER_PROPERTIES, get_wavelength
+from src.sed_compilation.filters import FILTER_PROPERTIES, get_wavelength
 
 import warnings
 

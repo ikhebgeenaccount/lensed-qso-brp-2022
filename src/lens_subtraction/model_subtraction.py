@@ -8,7 +8,7 @@ model subtraction shizzle
 from src.lens_subtraction.model_sed import fit
 import matplotlib.pyplot as plt
 import numpy as np
-from src.agnfitter.filters import get_filename
+from src.sed_compilation.filters import get_filename
 import pandas as pd
 import os
 
