@@ -15,16 +15,16 @@ import warnings
 
 
 FILTERED_SOURCES = {
-    'B1152+200': ['panstarrs', 'filter'],
-    'B1600+434': ['panstarrs', 'filter'],
-    'B1608+656': [ 'luichies', 'filter'],#['Koopmans+2003' ],
-    'J0806+2006': ['panstarrs', 'filter'],
-    'J0924+0219': ['panstarrs', 'filter', 'faure'],
-    'J1330+1810': ['panstarrs', 'filter'],
-    'J1455+1447': ['panstarrs', 'filter'],
-    'J1524+4409': ['panstarrs', 'filter'],
-    'J1633+3134': ['panstarrs', 'filter'],
-    'J1650+4251': ['panstarrs', 'filter']
+    'B1152+200': ['panstarrs'],
+    'B1600+434': ['panstarrs'],
+    'B1608+656': [ 'luichies'],#['Koopmans+2003' ],
+    'J0806+2006': ['panstarrs'],
+    'J0924+0219': ['panstarrs', 'faure'],
+    'J1330+1810': ['panstarrs'],
+    'J1455+1447': ['panstarrs'],
+    'J1524+4409': ['panstarrs'],
+    'J1633+3134': ['panstarrs'],
+    'J1650+4251': ['panstarrs']
 }
 
 
@@ -213,7 +213,8 @@ class LensedQSO:
             data['wavelength'] = data.apply(lambda row: wl(row), axis=1)
 
         else:
-            data = self.sed
+            data = self.sed.copy()
+            data['source'] = data['source'].str.replace('_filter', '', regex=False)
             data_type = 'flux_total' if component is None else f'flux{component}'
             data_err = 'flux_err' if component is None else f'flux{component}_err'
             limit = 'upper_limit'
@@ -245,12 +246,13 @@ class LensedQSO:
                 SOURCES_COLORS[l] = color
 
             # Plot regular data points and upper limits separately, upper limits with special marker
-            # TODO: consistent colours between all plots for same sources (SDSS, PanSTARRS, etc)
             le_1, _, _ = ax.errorbar(sel_reg.wavelength, sel_reg[data_type], sel_reg[data_err], fmt='o', label=l, color=color, **kwargs)
 
             if len(sel_upper_limit) > 0:
-                le_2, _, _ = ax.errorbar(sel_upper_limit.wavelength, sel_upper_limit[data_type], sel_upper_limit[data_err],
-                                         fmt='v', label=l, color=le_1.get_color())#, uplims=True, capsize=0, **kwargs) TODO: uplims
+                # le_2, _, _ = ax.errorbar(sel_upper_limit.wavelength, sel_upper_limit[data_type], sel_upper_limit[data_err],
+                #                          fmt='v', label=l, color=le_1.get_color())
+                le_2 = ax.scatter(sel_upper_limit.wavelength, sel_upper_limit[data_type],# sel_upper_limit[data_err],
+                                         marker='v', label=l, color=le_1.get_color())
                 legend_list.append((le_1, le_2))
             else:
                 legend_list.append(le_1)

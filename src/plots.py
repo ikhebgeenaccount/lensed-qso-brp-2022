@@ -55,8 +55,15 @@ FIELD_LABEL = {
     'f_gas': '$\mathit{f_{gas}}$',
     'univ_age': '$\mathit{Age\ of\ universe}\ [\mathrm{Gyr}]$',
     'redshift': '$z$',
+    'sSFR': 'sSFR',
 
 }
+
+def _get_label(field):
+    if field in FIELD_LABEL:
+        return FIELD_LABEL[field]
+    else:
+        return field
 
 
 def speagle_gms(log_m_star, t, log_m_star_err=None, t_err=None):
@@ -89,20 +96,22 @@ def speagle_gms_residual(df):
 def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_res', x_field='univ_age', x_label='Age of universe [Gyr]', errorbar_kwargs=None):
     if errorbar_kwargs is None:
         errorbar_kwargs = {}
+    if 'fmt' not in errorbar_kwargs:
+        errorbar_kwargs['fmt'] = 'o'
 
     new = False
     if fig == ax == None:
         fig, ax = plt.subplots()
         new = True
 
-        ax.set_xlabel(FIELD_LABEL[x_field])
-        ax.set_ylabel('$\mathit{Offset\ with\ MS}, ' + FIELD_LABEL['logSFR'][1:])
+        ax.set_xlabel(_get_label(x_field))
+        ax.set_ylabel('$\mathit{Offset\ with\ MS}, ' + _get_label('logSFR')[1:])
 
     speagle_res = speagle_gms_residual(df)
 
     ax.errorbar(df[x_field], speagle_res[0], yerr=None if np.sum([df['logSFR_me'],\
                    df[f'logSFR_pe']]) == 0 else np.reshape([df['logSFR_me'], \
-                    df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o', **errorbar_kwargs)
+                    df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, **errorbar_kwargs)
 
     lgd = ax.legend(loc='center right', bbox_to_anchor=(1.75, 0.5),
               ncol=1, fancybox=True, shadow=True)
@@ -123,6 +132,8 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
     """
     if errorbar_kwargs is None:
         errorbar_kwargs = {}
+    if 'fmt' not in errorbar_kwargs:
+        errorbar_kwargs['fmt'] = 'o'
     # Get age
     #t = np.power(10., lqso.agn_fitter_output()['age'].iloc[2])
     #t_pe = (lqso.agn_fitter_output()['age'].iloc[3] - t) * np.log(10.) * t
@@ -148,8 +159,8 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
 
         ax.fill_between(log_m_stars, sp_ms - sp_ms_err, sp_ms_max + sp_ms_err_max, alpha=.4, color='grey', label=f'MS, z=[{z_min},{z_max}]')
 
-        ax.set_ylabel(FIELD_LABEL[sfr_type])
-        ax.set_xlabel(FIELD_LABEL['logMstar'])
+        ax.set_ylabel(_get_label(sfr_type))
+        ax.set_xlabel(_get_label('logMstar'))
 
     # Plot galaxy
     if group:
@@ -157,13 +168,13 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
                  xerr=None if np.sum([df['logMstar_me'], df['logMstar_pe']]) == 0 else
                  np.reshape([df['logMstar_me'], df['logMstar_pe']], (2, len(df['logMstar_pe']))),
                  yerr=None if np.sum([df[f'{sfr_type}_me'], df[f'{sfr_type}_pe']]) == 0 else
-                 np.reshape([df[f'{sfr_type}_me'], df[f'{sfr_type}_pe']], (2, len(df[f'{sfr_type}_pe']))), label=label, fmt='o',
+                 np.reshape([df[f'{sfr_type}_me'], df[f'{sfr_type}_pe']], (2, len(df[f'{sfr_type}_pe']))), label=label,
                  **errorbar_kwargs)
     else:
         for lab, r in zip(label, df.iterrows()):
             _, row = r
             ax.errorbar(row['logMstar'], row[sfr_type], xerr=[[row['logMstar_me']], [row['logMstar_pe']]],
-                        yerr=[[row[f'{sfr_type}_me']], [row[f'{sfr_type}_pe']]], label=lab, fmt='o', **errorbar_kwargs)
+                        yerr=[[row[f'{sfr_type}_me']], [row[f'{sfr_type}_pe']]], label=lab, **errorbar_kwargs)
 
     ax.set_ylim(ymax=4.1)
     lgd = ax.legend(loc='center right', bbox_to_anchor=(1.5, 0.5),
@@ -174,6 +185,7 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
 
     return fig, ax
 
+
 def plot_lqsos_in_speagle_z_scaled(df, fig=None, ax=None, label=None, save_name='speagle', group=True, errorbar_kwargs=None):
     """
     Plots all entries in df on Speagle ms, as if they are at redshift 1.5 using their residual to the Speagle main sequence.
@@ -181,6 +193,8 @@ def plot_lqsos_in_speagle_z_scaled(df, fig=None, ax=None, label=None, save_name=
     """
     if errorbar_kwargs is None:
         errorbar_kwargs = {}
+    if 'fmt' not in errorbar_kwargs:
+        errorbar_kwargs['fmt'] = 'o'
 
     z = 1.5
 
@@ -197,8 +211,8 @@ def plot_lqsos_in_speagle_z_scaled(df, fig=None, ax=None, label=None, save_name=
         ax.plot(log_m_stars, gms + gms_err, color='black', linestyle='--')
         ax.plot(log_m_stars, gms - gms_err, color='black', linestyle='--')
 
-        ax.set_ylabel(FIELD_LABEL['logSFR'])
-        ax.set_xlabel(FIELD_LABEL['logMstar'])
+        ax.set_ylabel(_get_label('logSFR'))
+        ax.set_xlabel(_get_label('logMstar'))
 
     # Plot galaxy
     if group:
@@ -206,13 +220,13 @@ def plot_lqsos_in_speagle_z_scaled(df, fig=None, ax=None, label=None, save_name=
                  xerr=None if np.sum([df['logMstar_me'], df['logMstar_pe']]) == 0 else
                  np.reshape([df['logMstar_me'], df['logMstar_pe']], (2, len(df['logMstar_pe']))),
                  yerr=None if np.sum([df[f'logSFR_me'], df[f'logSFR_pe']]) == 0 else
-                 np.reshape([df[f'logSFR_me'], df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, fmt='o',
+                 np.reshape([df[f'logSFR_me'], df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label,
                  **errorbar_kwargs)
     else:
         for lab, r in zip(label, df.iterrows()):
             _, row = r
             ax.errorbar(row['logMstar'], row['logSFR'], xerr=[[row['logMstar_me']], [row['logMstar_pe']]],
-                        yerr=[[row[f'logSFR_me']], [row[f'logSFR_pe']]], label=lab, fmt='o', **errorbar_kwargs)
+                        yerr=[[row[f'logSFR_me']], [row[f'logSFR_pe']]], label=lab, **errorbar_kwargs)
 
     ax.set_ylim(ymax=4.1)
     lgd = ax.legend(loc='center right', bbox_to_anchor=(1.75, 0.5),
@@ -282,7 +296,7 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, equals_lin
 
         if color_scale_field is not None:
             cbar = fig.colorbar(ScalarMappable(Normalize(vmin=vmin, vmax=vmax), cmap=cm))
-            cbar.set_label(FIELD_LABEL[color_scale_field])
+            cbar.set_label(_get_label(color_scale_field))
 
     if unique_markers:
         if color_scale_field:
@@ -296,8 +310,8 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, equals_lin
         x = np.linspace(np.min(lqsos[field_1] - lqsos[f'{field_1}_me']), np.max(lqsos[field_1] + lqsos[f'{field_1}_pe']), 10000)
         ax.plot(x, x, linestyle='--', color='black')
 
-    ax.set_xlabel(FIELD_LABEL[field_1])
-    ax.set_ylabel(FIELD_LABEL[field_2])
+    ax.set_xlabel(_get_label(field_1))
+    ax.set_ylabel(_get_label(field_2))
 
     if field_1 == 'EBVbbb' and field_2 == 'Nh':
         # Add Type1/2 AGN separation line as found in AGNfitter paper
@@ -309,7 +323,12 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, equals_lin
     if logy:
         ax.set_yscale('log')
 
-    fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
+    if color_scale_field:
+        name = f'{field_1}_{field_2}_{color_scale_field}.pdf'
+    else:
+        name = f'{field_1}_{field_2}.pdf'
+
+    fig.savefig(os.path.join('plots', name), bbox_extra_artists=(lgd,), bbox_inches='tight')
     # fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.svg'))
 
     return fig, ax
@@ -442,8 +461,8 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
     #setting up the plot
     if ax is None:
         fig,ax= plt.subplots(figsize=(10,10))
-    ax.set_xlabel(FIELD_LABEL['univ_age'])
-    ax.set_ylabel(FIELD_LABEL['Mstar'])
+    ax.set_xlabel(_get_label('univ_age'))
+    ax.set_ylabel(_get_label('Mstar'))
 
 
     #TODO: add error prop

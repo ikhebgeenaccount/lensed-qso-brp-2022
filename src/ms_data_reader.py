@@ -20,33 +20,21 @@ order of names in col_names must obey the order of names in the list above. col_
 columns that only need a namechange, or callables (functions/lamba expressions) for columns that require some
 arithmetic or other change.
 """
-def _fits_reader(files, col_names, join_col=None, hdu_index=1, fits_open_kwargs=None, post_filter=None):
-    if fits_open_kwargs is None:
-        fits_open_kwargs = {}
+def _file_reader(files, cols_orig, cols_res=None, join_col=None, open_kwargs=None, post_filter=None, **kwargs):
+    if open_kwargs is None:
+        open_kwargs = {}
+    if cols_res is None:
+        cols_res = COLUMNS
 
     df = None
     for file in files:
-        with fits.open(file, **fits_open_kwargs) as hdul:
-
-            if df is None:
-                df = Table(hdul[hdu_index].data).to_pandas()
-            else:
-                odf = Table(hdul[hdu_index].data).to_pandas()
-                df = df.merge(odf, on=join_col, how='left')
-
-    if callable(post_filter):
-        df= post_filter(df)
-
-    return _extract_cols(df, col_names)
-
-
-def _csv_reader(files, col_names, join_col=None, read_csv_kwargs=None, post_filter=None):
-    if read_csv_kwargs is None:
-        read_csv_kwargs = {}
-
-    df = None
-    for file in files:
-        tdf= pd.read_csv(file, **read_csv_kwargs)
+        ext = file.split('.')[-1]
+        if ext == 'fits':
+            tdf = _fits_reader(file, fits_open_kwargs=open_kwargs, **kwargs)
+        elif ext == 'csv':
+            tdf = _csv_reader(file, read_csv_kwargs=open_kwargs)
+        else:
+            raise ValueError('Extension ' + ext + ' does not have an associated file reader.')
 
         if df is None:
             df = tdf
@@ -54,17 +42,33 @@ def _csv_reader(files, col_names, join_col=None, read_csv_kwargs=None, post_filt
             df = df.merge(tdf, on=join_col, how='left')
 
     if callable(post_filter):
-        df= post_filter(df)
+        df = post_filter(df)
 
-    return _extract_cols(df, col_names)
+    return _extract_cols(df, cols_orig, cols_res)
 
 
-def _extract_cols(df, col_names):
+def _fits_reader(file, fits_open_kwargs=None, **kwargs):
+    if 'hdu_index' in kwargs:
+        hdu_index = kwargs['hdu_index']
+    else:
+        hdu_index = 1
+
+    with fits.open(file, **fits_open_kwargs) as hdul:
+        df = Table(hdul[hdu_index].data).to_pandas()
+
+    return df
+
+
+def _csv_reader(file, read_csv_kwargs=None):
+    return pd.read_csv(file, **read_csv_kwargs)
+
+
+def _extract_cols(df, col_names, cols_res):
     """
     Extract the columns that are defined in COLUMNS, using the col_names translation from the given df.
     """
     rdf = pd.DataFrame()
-    for i, c in enumerate(COLUMNS):
+    for i, c in enumerate(cols_res):
         if callable(col_names[i]):
             rdf[c] = col_names[i](df)
         else:
@@ -76,50 +80,52 @@ def _extract_cols(df, col_names):
 COLUMNS = ['name', 'redshift', 'logSFR', 'logSFR_pe', 'logSFR_me', 'logMstar', 'logMstar_pe', 'logMstar_me']
 
 FILES = {
-    'SMGs, Birkin+2020, z=[1.2-6.1]'  : _fits_reader([os.path.join('data', 'context_main_seq', 'table_a2.fits'),
+    'SMGs, Birkin+2020, z=[1.2-6.1]' : _file_reader([os.path.join('data', 'context_main_seq', 'table_a2.fits'),
                                       os.path.join('data', 'context_main_seq', 'table_a1.fits')],
-                                     join_col='ID', col_names=['ID', 'z_phot', 'SFR', lambda df: df['SFR_u'] - df['SFR'],
+                                     join_col='ID', cols_orig=['ID', 'z_phot', 'SFR', lambda df: df['SFR_u'] - df['SFR'],
                                                                lambda df: df['SFR'] - df['SFR_l'], 'Mstar',
                                                                lambda df: df['Mstar_u'] - df['Mstar'], lambda df: df['Mstar'] - df['Mstar_l']]),
-    'SMGs, Da Cunha+2015, z=[1.3-6.1]': _csv_reader([os.path.join('data', 'context_main_seq', 'Cunha.csv')], col_names=['ID', 'z_phot'] + COLUMNS[2:],
-                                    read_csv_kwargs={'delimiter': '\t'}),
-    'ULIRGs, Da Cunha+2010, z=[0.03-0.5]': _csv_reader([os.path.join('data', 'context_main_seq', 'ulirgs_cunha1.csv'),
-                                        os.path.join('data', 'context_main_seq', 'ulirgs_cunha2.csv')], join_col='Galaxy',
-                                      col_names=['Galaxy', 'z', lambda df: df['logsSFR'] + df['logMstar'],
-                                                  lambda df: np.zeros(len(df['Galaxy'])), lambda df: np.zeros(len(df['Galaxy']))] +
-                                      COLUMNS[-3:], read_csv_kwargs={'delimiter': '\t'}),
-    'Local SFGs, Sun+2020, z=0': _csv_reader([os.path.join('data', 'context_main_seq', 'sun.csv')],
-                                        col_names=['galaxy', lambda df: df['d'] * 70 / 3e5, lambda df: np.log10(df['SFR']),
-                                                   lambda df: np.zeros(len(df['galaxy'])), lambda df: np.zeros(len(df['galaxy'])),
-                                                   lambda df: np.log10(df['Mstar'] * 1e9),
-                                                   lambda df: np.zeros(len(df['galaxy'])), lambda df: np.zeros(len(df['galaxy']))],
-                                        read_csv_kwargs={'delim_whitespace': True}),
-    'SFGs, Tacconi+2013, z=[1-2.4]': _csv_reader([os.path.join('data', 'context_main_seq', 'PHIBBS_table1.csv'),
+    'SMGs, Da Cunha+2015, z=[1.3-6.1]': _file_reader([os.path.join('data', 'context_main_seq', 'Cunha.csv')], cols_orig=['ID', 'z_phot'] + COLUMNS[2:],
+                                                    open_kwargs={'delimiter': '\t'}),
+    # 'ULIRGs, Da Cunha+2010, z=[0.03-0.5]': _file_reader([os.path.join('data', 'context_main_seq', 'ulirgs_cunha1.csv'),
+    #                                     os.path.join('data', 'context_main_seq', 'ulirgs_cunha2.csv')], join_col='Galaxy',
+    #                                                    cols_orig=['Galaxy', 'z', lambda df: df['logsSFR'] + df['logMstar'],
+    #                                                               lambda df: np.zeros(len(df['Galaxy'])), lambda df: np.zeros(len(df['Galaxy']))] +
+    #                                   COLUMNS[-3:], open_kwargs={'delimiter': '\t'}),
+    'Local SFGs, Sun+2020, z=0': _file_reader([os.path.join('data', 'context_main_seq', 'sun.csv')],
+                                             cols_orig=['galaxy', lambda df: df['d'] * 70 / 3e5, lambda df: np.log10(df['SFR']),
+                                                        lambda df: np.zeros(len(df['galaxy'])), lambda df: np.zeros(len(df['galaxy'])),
+                                                        lambda df: np.log10(df['Mstar'] * 1e9),
+                                                        lambda df: np.zeros(len(df['galaxy'])), lambda df: np.zeros(len(df['galaxy']))],
+                                             open_kwargs={'delim_whitespace': True}),
+    'SFGs, Tacconi+2013, z=[1-2.4]': _file_reader([os.path.join('data', 'context_main_seq', 'PHIBBS_table1.csv'),
                                        os.path.join('data', 'context_main_seq', 'PHIBBS_table2.csv')], join_col='Source',
-                                      col_names=['Source', 'z_CO', lambda df: np.log10(df['SFR^d']), lambda df: .35 * df['SFR^d'] / (df['SFR^d'] * np.log(10.)),
-                                                 lambda df: .35 * df['SFR^d'] / (df['SFR^d'] * np.log(10.)), lambda df: np.log10(df['M_*^g']),
-                                                 lambda df: .3 * df['M_*^g'] / (df['M_*^g'] * np.log(10.)), lambda df: .3 * df['M_*^g'] / (df['M_*^g'] * np.log(10.))],
-                                      read_csv_kwargs={'delimiter': '\t', 'skipinitialspace': True, 'na_values': ['...', '... ']}),
+                                                 cols_orig=['Source', 'z_CO', lambda df: np.log10(df['SFR^d']), lambda df: .35 * df['SFR^d'] / (df['SFR^d'] * np.log(10.)),
+                                                            lambda df: .35 * df['SFR^d'] / (df['SFR^d'] * np.log(10.)), lambda df: np.log10(df['M_*^g']),
+                                                            lambda df: .3 * df['M_*^g'] / (df['M_*^g'] * np.log(10.)), lambda df: .3 * df['M_*^g'] / (df['M_*^g'] * np.log(10.))],
+                                                 open_kwargs={'delimiter': '\t', 'skipinitialspace': True, 'na_values': ['...', '... ']}),
 
 
     # ULIRGs from Cunha+2010 don't work: they list specific star formation rate instead of star formation rate.
 
     # COSMOS is a lot
-    # 'COSMOS, Laigle+2016': _fits_reader([os.path.join('data', 'context_main_seq', 'COSMOS2015_Laigle+_v1.1.fits')],
+    # 'COSMOS, Laigle+2016': _file_reader([os.path.join('data', 'context_main_seq', 'COSMOS2015_Laigle+_v1.1.fits')],
     #                                     col_names=['NUMBER', 'ZPDF', 'SFR_MED', 'SFR_MED_MAX68', 'SFR_MED_MIN68',
     #                                                'MASS_MED', 'MASS_MED_MAX68', 'MASS_MED_MIN68'],
     #                                     fits_open_kwargs={'mmap': False},
     #                                     post_filter=lambda df: df[(df['TYPE'] == 0) & (df['ZPDF'] > .9) & (df['ZPDF'] < 1.6)
     #                                                               & (df['SFR_MED'] > 0.) & (df['MASS_MED'] > 6.)]),
-    'QSOs, Jarvis+2020, z=[0.1-0.2]': _csv_reader([os.path.join('data', 'context_main_seq', 'qsos_jarvis.csv')],
-                                     col_names=['Name', 'z', lambda df: np.log10(df['SFR']), lambda df: df['SFR_pe'] / (df['SFR'] * np.log(10.)),
-                                                lambda df: df['SFR_me'] / (df['SFR'] * np.log(10.))] + COLUMNS[-3:],
-                                     read_csv_kwargs={'delimiter': '\t'}),
-    # 'Local catalog, Salim+2018' : _csv_reader([os.path.join('data', 'context_main_seq', 'GSWLC-D2.dat')],
+    'QSOs, Jarvis+2020, z=[0.1-0.2]': _file_reader([os.path.join('data', 'context_main_seq', 'qsos_jarvis.csv')],
+                                                  cols_orig=['Name', 'z', lambda df: np.log10(df['SFR']), lambda df: df['SFR_pe'] / (df['SFR'] * np.log(10.)),
+                                                             lambda df: df['SFR_me'] / (df['SFR'] * np.log(10.))] + COLUMNS[-3:],
+                                                  open_kwargs={'delimiter': '\t'}),
+    # 'Local catalog, Salim+2018' : _file_reader([os.path.join('data', 'context_main_seq', 'GSWLC-D2.dat')],
     #                                           col_names=['objid', 'z', 'logSFR', 'logSFR_err', 'logSFR_err', 'logMstar', 'logMstar_err', 'logMstar_err'],
-    #                                           read_csv_kwargs={'delim_whitespace': True, 'index_col': False},
+    #                                           open_kwargs={'delim_whitespace': True, 'index_col': False},
     #                                           post_filter=lambda df: df[np.random.choice(a=[True, False], size=len(df), p=[1000/50000, 1-1000/50000]) &
-    #                                                                     (df['logMstar'] > -99)])
+    #                                                                     (df['logMstar'] > -99)]),
+    'AGN, Kakkad+2017, z=1.5': _file_reader([os.path.join('data', 'context_main_seq', 'agns_kakkad.csv')],
+                                            cols_orig=['ID', 'za', lambda df: np.log10(df['SFRe']), lambda df: np.zeros(len(df)),
+                                                       lambda df: np.zeros(len(df)), 'Log Mc', lambda df: np.zeros(len(df)), lambda df: np.zeros(len(df))],
+                                            open_kwargs={'delimiter': '\t'})
 }
-
-# print(np.min(FILES['ULIRGS, Cunha+2010']['redshift']), np.max(FILES['ULIRGS, Cunha+2010']['redshift']))
