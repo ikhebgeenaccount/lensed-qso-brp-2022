@@ -6,3 +6,4 @@ Cunha.csv,https://iopscience.iop.org/article/10.1088/0004-637X/806/1/110#apj5137
 sun.csv,https://iopscience.iop.org/article/10.3847/2041-8213/abb3be/meta,Sun+2020,Local SFGs
 ulirgs_cunha.csv,https://arxiv.org/abs/1008.2000,Cunha+2010,High z ULIRGS
 qsos_jarvis.csv,https://academic.oup.com/mnras/article/498/2/1560/5903287,Jarvis+2020,Local QSOs
+GSWLC-D2.dat,https://iopscience.iop.org/article/10.3847/1538-4357/aabf3c,Salim+2018,Local catalog
