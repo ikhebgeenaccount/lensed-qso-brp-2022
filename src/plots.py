@@ -53,7 +53,7 @@ FIELD_LABEL = {
     'logSFR': '$\log(\mathit{SFR} / \mathrm{M_\odot yr^{-1}})$',
     't_dep': '$\mathit{t_{dep}}\ [\mathrm{yr}]$',
     'f_gas': '$\mathit{f_{gas}}$',
-    'univ_age': '$\mathit{Age\ of\ universe}\ [\mathrm{Gyr}]$',
+    'univ_age': '$\mathit{Age\ of\ universe}\ [\mathrm{yr}]$',
     'redshift': '$z$',
     'sSFR': 'sSFR',
 
@@ -113,7 +113,7 @@ def plot_speagle_residual(df, fig=None, ax=None, label=None, save_name='speagle_
                    df[f'logSFR_pe']]) == 0 else np.reshape([df['logSFR_me'], \
                     df[f'logSFR_pe']], (2, len(df[f'logSFR_pe']))), label=label, **errorbar_kwargs)
 
-    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.75, 0.5),
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.7, 0.5),
               ncol=1, fancybox=True, shadow=True)
 
     if new:
@@ -229,7 +229,7 @@ def plot_lqsos_in_speagle_z_scaled(df, fig=None, ax=None, label=None, save_name=
                         yerr=[[row[f'logSFR_me']], [row[f'logSFR_pe']]], label=lab, **errorbar_kwargs)
 
     ax.set_ylim(ymax=4.1)
-    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.75, 0.5),
+    lgd = ax.legend(loc='center right', bbox_to_anchor=(1.4, 0.28),
               ncol=1, fancybox=True, shadow=True)
 
     fig.savefig(os.path.join('plots', f'{save_name}.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
@@ -427,11 +427,6 @@ def plot_lqsos_vs_stacey(lqsos):
     fig.savefig(os.path.join('plots', 'SFR_IR_stacey_res.pdf'))
 
 
-
-
-
-
-
 def plot_evolution_df(df, fig=None, ax=None, context=True):
     """
     This function plots the stellar mass evolution assuming constant sfr
@@ -478,8 +473,6 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
         #the constant in the formula
         b = M[i] - (sfr_tot[i] * age[i])
         name = df['name'].values[i]
-        ax.scatter(age[i], M[i], label = f'{name}', zorder=100, s=49) #placing the galaxy
-
 
         age_range = np.linspace((-(b)/sfr_tot[i]), age[i], 100)
         age_range2 = np.linspace( age[i],(M_gas[i] + M[i] - b)/sfr_tot[i], 100)
@@ -501,6 +494,8 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
             axins.plot(age_range2, M_range2, color='blue')
             axins.scatter(age[i], M[i], label = f'{name}', zorder=100, s=49) #placing the galaxy
 
+        ax.scatter(age[i], M[i], label = f'{name}', zorder=100, s=49) #placing the galaxy
+
     if context == True:
 
         ax.set_xlim(8e8,6e9)
@@ -511,11 +506,11 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
                 continue
 
             ax.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label,
-                zorder=50, s=50, alpha=.7)
+                zorder=50, s=50, alpha=.7, marker='D')
 
-            axins.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label, zorder=50, s=50, alpha=.7)
+            axins.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label, zorder=50, s=50, alpha=.7, marker='D')
 
-        x1, x2, y1, y2 = 3.3e9, 5.3e9, 0, 1.3e11
+        x1, x2, y1, y2 = 3.3e9, 5.7e9, 0, 1.3e11
         axins.set_xlim(x1, x2)
         axins.set_ylim(y1, y2)
         ax.indicate_inset_zoom(axins, edgecolor="black")

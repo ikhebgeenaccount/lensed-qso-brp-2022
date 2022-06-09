@@ -140,10 +140,8 @@ def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False, from_fil
             lqso.find_best_run(run_times=n, verbose=True, sub_folder=sub_folder, copy=False)
             _update_lqsos_dict(lqsos_dict, lqso)
 
-            lqso.plot_spectrum(disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
-
             if generate_lqso_plots:
-
+                lqso.plot_spectrum(disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
                 lqso.plot_spectrum(component='_sub', disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
 
                 # Model subtraction also creates lqso.plot_spectrum but without above filtered sources, so messes up the saved plots
@@ -331,7 +329,7 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    lqsos_df, lqsos_all_runs_df = load_all_galaxies(from_file=False, generate_lqso_plots=False)
+    lqsos_df, lqsos_all_runs_df = load_all_galaxies(from_file=True, generate_lqso_plots=False)
 
     generate_context_plots(lqsos_df, lqsos_all_runs_df)
     # plot_ell_models()

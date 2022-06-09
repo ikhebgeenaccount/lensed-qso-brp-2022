@@ -72,7 +72,7 @@ def sed_to_latex_table(lqso):
     print('\\end{landscape}')
 
 
-def plots_in_subfigures(gals, plot, caption=True, main_caption_text='', label=None):
+def plots_in_subfigures(gals, plot, caption=True, main_caption_text='', label=None, nrow=2):
     """
     Plots are found in plots/[galaxy]_[plot].pdf
     """
@@ -86,7 +86,7 @@ def plots_in_subfigures(gals, plot, caption=True, main_caption_text='', label=No
 
         if label:
             print(f'\label{{fig:{label}_' + g + '}')
-        print('\end{subfigure}%' + ('\n' if i % 2 == 1 else ''))
+        print('\end{subfigure}%' + ('\n' if i % nrow == 1 else ''))
     if caption:
         print(f'\caption{{{main_caption_text}}}')
     if label:

@@ -196,11 +196,12 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     fig, ax = plt.subplots()
     x = range(model_set.shape[0])
     ax.scatter(x, model_set['red_chi_sq'])
-    #ax.set_xticks(x, model_set['name'].values, rotation=90)
-    ax.set_title(f'Reduced $\chi^2$ values of models for {lqso.name}_G')
+    ax.set_xticks(x, model_set['name'].values, rotation=90)
+    ax.set_ylabel('$\chi^2_\mathrm{red}$')
+    # ax.set_title(f'Reduced $\chi^2$ values of models for {lqso.name}_G')
 
     if save_plots:
-        fig.savefig(os.path.join(save_location, f'{lqso.name}_models_chisq.pdf'))
+        fig.savefig(os.path.join(save_location, f'{lqso.name}_models_chisq.pdf'), bbox_inches='tight')
         # fig.savefig(os.path.join(save_location, f'{lqso.name}_models_chisq.jpg'))
 
     print(model_set[['name', 'red_chi_sq', 'mult', 'std']].head(15))
