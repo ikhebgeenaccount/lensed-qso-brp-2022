@@ -54,6 +54,7 @@ for sed_file in glob.glob(os.path.join(App.config().get(section='GENERAL', optio
     MODELS[name]['flux'] = MODELS[name]['flux_cgs'] * np.power(MODELS[name]['wavelength'], 2.) / 2.998e18 * 1e26
 
     # For the one spiral we have, add Herschel data (flux in millijansky)
+    #TODO: this is for only the best fitting models, either add all others or fix the boundary that it cuts off
     if name == 'UGC_12150':
         new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 5.086e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
         newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.031e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
@@ -119,7 +120,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     stds = []
     mults = []
 
-    single_g = False        # TODO: some column names contain spaces? Like log Mstar
+    single_g = False        
     if lqso.name in ['J1650+4251', 'J1455+1447']:
         # Fit only selection of models
         models = ['NGC_3265', 'NGC_0855', 'NGC_4621', 'NGC_4660', 'NGC_4458']
@@ -127,6 +128,8 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         model_set_is = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['name'].isin(models)].index
 
         single_g = True
+        
+        #TODO: fix this by detecting when there is a single datapoint
 
     elif lqso.name == 'B1608+656':
         # Fit only selection of models
@@ -135,12 +138,14 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         model_set_is = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['name'].isin(models)].index
 
         single_g = True
+        #TODO: fix when only a selection of models, negative fluxes
 
     elif lqso.name == 'B1600+434':
         # Only fit good fitting spiral models with Herschel data
         models = ['UGC_12150', 'NGC_5104', 'NGC_5033', 'NGC_4594']
 
         model_set_is = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['name'].isin(models)].index
+        #TODO: fix when only spirals
 
     for i, label_index in enumerate(model_set_is):
         m = MODEL_PROPERTIES.loc[label_index]
@@ -148,8 +153,6 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
         if method == 'curve_fit':
             ff = FitFunction(sed, model)
-
-            # TODO: 1650 enter no errors since only one datapoint since error of single datapoint is zero
             popt, pcov = curve_fit(ff.f, sed.wavelength.values, sed.flux_G.values, sigma=None if lqso.name == 'J1650+4251' else sed.flux_G_err.values, p0=[1e-2])
 
             # Keep track of scores and multiplication factors
@@ -161,9 +164,6 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
             res = minimize(ff.chi_squared, [1e-3], method='Powell')
 
-            #model_set['score'].iloc[i] = res.fun
-            #model_set['mult'].iloc[i] = res.x  # FIXME: x is value on laptop, array on strw pc, numpy version dependent i guess
-            #model_set['std'].iloc[i] = 1  # TODO: determine error, perhaps bootstrap but only very few data points
 
     # Turn the resulting lists into a DataFrame for easy sorting
     result = {
