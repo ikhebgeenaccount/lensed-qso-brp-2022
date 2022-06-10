@@ -41,7 +41,7 @@ if __name__ == '__main__':
     parser.add_argument('--component', help='Flux component to use, default _sub', type=str, default='_sub')
     #   --single
     parser.add_argument('--selection', type=str, help='Run a selection of galaxies, separated by commas')
-    parser.add_argument('--settings', type=str, help='Settings file to use, if not given uses default settings')
+    # parser.add_argument('--settings', type=str, help='Settings file to use, if not given uses default settings')
 
     args = parser.parse_args()
 
@@ -56,5 +56,6 @@ if __name__ == '__main__':
 
     agnfitter(gals, run_times=args.times, git_push=args.push,
               rX=args.rX, copy=args.copy, model_sub=args.modelsub,
-              settings=settings, component=args.component
+              # settings=settings,
+              component=args.component
     )

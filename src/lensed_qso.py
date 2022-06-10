@@ -15,32 +15,32 @@ from src.app import App
 import warnings
 
 
-FILTERED_SOURCES = {
-    'B1152+200': ['panstarrs'],
-    'B1600+434': ['panstarrs'],
-    'B1608+656': [ 'luichies'],#['Koopmans+2003' ],
-    'J0806+2006': ['panstarrs'],
-    'J0924+0219': ['panstarrs', 'faure'],
-    'J1330+1810': ['panstarrs'],
-    'J1455+1447': ['panstarrs'],
-    'J1524+4409': ['panstarrs'],
-    'J1633+3134': ['panstarrs'],
-    'J1650+4251': ['panstarrs']
-}
-
-
-FILTERED_SOURCES_AGNFITTER = {
-    'B1152+200': ['toft', 'Barvainis+2002_filter'],
-    'B1600+434': ['munoz', 'SDSS+DR14_filter'],
-    'B1608+656': [ 'luichies'],#['Koopmans+2003' ],
-    'J0806+2006': ['Fadely+2011'],
-    'J0924+0219': ['2MASS_filter'],
-    'J1330+1810': ['Galex_filter'],
-    'J1455+1447': ['Rusu+2016'],
-    'J1524+4409': ['Oguri'],
-    'J1633+3134': ['Morgan'],
-    'J1650+4251': ['Morgan']
-}
+# FILTERED_SOURCES = {
+#     'B1152+200': ['panstarrs'],
+#     'B1600+434': ['panstarrs'],
+#     'B1608+656': [ 'luichies'],#['Koopmans+2003' ],
+#     'J0806+2006': ['panstarrs'],
+#     'J0924+0219': ['panstarrs', 'faure'],
+#     'J1330+1810': ['panstarrs'],
+#     'J1455+1447': ['panstarrs'],
+#     'J1524+4409': ['panstarrs'],
+#     'J1633+3134': ['panstarrs'],
+#     'J1650+4251': ['panstarrs']
+# }
+#
+#
+# FILTERED_SOURCES_AGNFITTER = {
+#     'B1152+200': ['toft', 'Barvainis+2002_filter'],
+#     'B1600+434': ['munoz', 'SDSS+DR14_filter'],
+#     'B1608+656': [ 'luichies'],#['Koopmans+2003' ],
+#     'J0806+2006': ['Fadely+2011'],
+#     'J0924+0219': ['2MASS_filter'],
+#     'J1330+1810': ['Galex_filter'],
+#     'J1455+1447': ['Rusu+2016'],
+#     'J1524+4409': ['Oguri'],
+#     'J1633+3134': ['Morgan'],
+#     'J1650+4251': ['Morgan']
+# }
 
 
 RADIO_CUTOFF = App.config().get(section='GENERAL', option='radio_cutoff')  # wavelengths >2.5e7 Angstrom are classified as radio
@@ -134,9 +134,9 @@ class LensedQSO:
         if disallowed_sources is None:
             disallowed_sources = []
 
-        if self.name in FILTERED_SOURCES:
+        if App.config().has_option(section='FILTERED_SOURCES', option=self.name):
             # Add standard filtered sources to disallowed sources
-            disallowed_sources += FILTERED_SOURCES[self.name]
+            disallowed_sources += App.config().getlist(section='FILTERED_SOURCES', option=self.name)
 
             # No need to warn about PanSTARRS, otherwise do warn
             if len(disallowed_sources) > 0:
@@ -280,7 +280,9 @@ class LensedQSO:
         catalog = header
         for j in range(max(2, run_times)):
             catalog_line = f'{str(id) + ("" if j == 0 else str(j))} {self.props.z_qso.values[0]} '
-            for i, row in self.filter_sed(component=component, rX=rX, disallowed_sources=FILTERED_SOURCES_AGNFITTER[self.name]).iterrows():
+            for i, row in self.filter_sed(component=component, rX=rX,
+                                          disallowed_sources=App.config().getlist(section='FILTERED_SOURCES_AGNFITTER', option=self.name)
+                                          if App.config().has_option(section='FILTERED_SOURCES_AGNFITTER', option=self.name) else None).iterrows():
 
                 if not row.upper_limit:
                     catalog_line += f'{row.wavelength} {row[f"flux{component}"]} {row[f"flux{component}_err"]} '
@@ -356,8 +358,11 @@ class LensedQSO:
             tel = FILTER_PROPERTIES.telescope.values[i]
             fil = FILTER_PROPERTIES.filtername.values[i]
 
-            exists_in_sed =self.filter_sed(component='_sub', rX=rX, disallowed_sources=FILTERED_SOURCES_AGNFITTER[self.name]).loc[(self.filter_sed(component='_sub', rX=rX, disallowed_sources=FILTERED_SOURCES_AGNFITTER[self.name])['telescope'] == tel) & (
-                    self.filter_sed(component='_sub', rX=rX, disallowed_sources=FILTERED_SOURCES_AGNFITTER[self.name])['filter'] == fil)].shape[0] > 0
+            fsed = self.filter_sed(component='_sub', rX=rX,
+                                   disallowed_sources=App.config().getlist(section='FILTERED_SOURCES_AGNFITTER', option=self.name)
+                                   if App.config().has_option(section='FILTERED_SOURCES_AGNFITTER', option=self.name) else None)
+
+            exists_in_sed = fsed.loc[(fsed['telescope'] == tel) & (fsed['filter'] == fil)].shape[0] > 0
 
             if rX:
                 filterfilenames += [get_agnf_filter_path(tel, fil)]

@@ -5,6 +5,8 @@ To write the AGN input as a print
 import pandas as pd
 import os
 
+from src.app import App
+
 FILTER_PROPS_PATH = os.path.join(App.config().get(section='GENERAL', option='data_dir'), 'filter.csv')
 FILTER_PROPERTIES = pd.read_csv(FILTER_PROPS_PATH)
 
