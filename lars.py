@@ -32,6 +32,7 @@ def _init_lqsos_dict():
         'stacey_sfr_me': [],
         'stacey_sfr_pe': [],
         'mu_m_gas': [],
+        'no_models':[],
     }
     # Add lists for all AGNfitter output fields
     for f in src.lensed_qso.AGNFITTER_FIELDS:
@@ -61,6 +62,7 @@ def _update_lqsos_dict(lqsos_dict, lqso, name=None):
     lqsos_dict['stacey_sfr_me'].append(lqso.props['stacey_sfr_me'].values[0])
     lqsos_dict['stacey_sfr_pe'].append(lqso.props['stacey_sfr_pe'].values[0])
     lqsos_dict['mu_m_gas'].append(lqso.props['mu_m_gas'].values[0])
+    lqsos_dict['no_models'].append(lqso.props['no_models'].values[0])
 
     for f in src.lensed_qso.AGNFITTER_FIELDS:
         # We set demag=True for every field, since demag only happens for logMstar, SFR_IR, SFR_opt

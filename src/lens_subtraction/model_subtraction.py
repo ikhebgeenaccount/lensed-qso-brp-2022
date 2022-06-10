@@ -12,16 +12,16 @@ from src.sed_compilation.filters import get_filename
 import pandas as pd
 import os
 
-def model_subtraction(lqso):
+def model_subtraction(lqso, wavelength, flux, flux_error):
     """
     lqso is the class of the galaxy on which we are working
     model is the name of the model that we wish to subtract
     scalar is by which number this model needs to be multiplied
     """
-    morph = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
+    #morph = model
 
     #Fitting gives the model> see model_sed for details
-    wavelength, flux, flux_error = fit(lqso, morph = morph)
+    #wavelength, flux, flux_error = fit(lqso, morph = morph)
 
     #The wavelengths of the model are returned already in restframe by model_sed
 

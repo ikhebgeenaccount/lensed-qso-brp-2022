@@ -1,4 +1,5 @@
 from src.lensed_qso import LensedQSO
+import pandas as pd
 
 
 gal = 'J0806+2006'
@@ -55,10 +56,24 @@ Lensing galaxy subtraction
 After having constructed the SED of the lensed system, the lensing galaxy
 can be subtracted. Model spectra from the Brown atlas (Brown et al. 2014?) are
 fitted to the lensing galaxy SED (component G). An average of the best fitting
-model spectra is then subtracted from the total
+model spectra is then subtracted from the total.
+
 """
 from src.lens_subtraction.model_subtraction import model_subtraction
-model_subtraction(lqso)
+from src.lens_subtraction.model_sed import fit
+
+# These are the number of models used for the subtraction, they can be specified in properties.csv. Default=5
+N = 5 if pd.isnull(lqso.props['no_models'].values[0]) else lqso.props['no_models'].values[0]
+
+# This is the morphology of the foreground galaxy, as specified in properties.csv
+morph = 'all' if pd.isnull(lqso.props.lens_type.values[0]) else lqso.props.lens_type.values[0]
+
+# This function returns the averaged out fit as performed in model_sed
+w, f, fe = fit(lqso, morph=morph, N=N)
+
+# After the fit has been made, this function subtracts it from the SED in a new column
+model_subtraction(lqso, w, f, fe)
+
 
 
 # AGNfitter
