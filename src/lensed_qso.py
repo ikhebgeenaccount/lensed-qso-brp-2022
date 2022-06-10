@@ -59,7 +59,7 @@ COLORS = plt.get_cmap('tab10').colors + plt.get_cmap('Dark2').colors + plt.get_c
 # TODO: what is AGNfitter rX-version output?
 AGNFITTER_FIELDS = ['tau', 'log age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
 
-PROPERTIES = pd.read_csv(os.path.join('data', 'properties.csv'), skiprows=0)
+PROPERTIES = pd.read_csv(os.path.join(App.config().get(section='GENERAL', option='data_dir'), 'properties.csv'), skiprows=0)
 
 
 class LensedQSO:
@@ -86,12 +86,12 @@ class LensedQSO:
 
         # Read SED
         self.sed_file = sed_source
-        self.sed = pd.read_csv(os.path.join('data', name, sed_source))
+        self.sed = pd.read_csv(os.path.join(App.config().get(section='GENERAL', option='data_dir'), name, sed_source))
         self.sed.fillna(0., inplace=True)
 
         try:
             # Read mags
-            self.mags = pd.read_csv(os.path.join('data', name, mags_source))
+            self.mags = pd.read_csv(os.path.join(App.config().get(section='GENERAL', option='data_dir'), name, mags_source))
             self.mags.fillna(0., inplace=True)
         except FileNotFoundError:
             print('No mags file found for galaxy ' + self.name)
@@ -247,7 +247,7 @@ class LensedQSO:
 
         fig.tight_layout()
         if self.save_all_plots:
-            fig.savefig(os.path.join(self.save_location, f'{self.name}_SED{component if component is not None else "_total"}.pdf'))
+            fig.savefig(os.path.join(App.config().get(section='GENERAL', option='plots_dir'), f'{self.name}_SED{component if component is not None else "_total"}.pdf'))
             # fig.savefig(os.path.join(self.save_location, f'{self.name}_SED{component if component is not None else "_total"}.png'))
 
         return fig, ax, plotted_sources, legend_list
@@ -265,7 +265,7 @@ class LensedQSO:
         return fig,ax
 
     def save_sed(self):
-        self.sed.to_csv(os.path.join('data', self.name, self.sed_file), index=False)
+        self.sed.to_csv(os.path.join(App.config().get(section='GENERAL', option='data_dir'), self.name, self.sed_file), index=False)
 
     def sed_to_agn_fitter(self, rX=False, component='_sub', run_times=1):
         """
@@ -418,7 +418,7 @@ class LensedQSO:
                 path = os.path.join(os.pardir, 'AGNfitter', 'OUTPUT', str(agnf_id))
             else:
                 path = os.path.join(os.pardir, 'AGNfitter', 'OUTPUT', sub_folder, str(agnf_id))
-        repo_path = os.path.join('data', f'{self.name}', 'agnfitter')
+        repo_path = os.path.join(App.config().get(section='GENERAL', option='data_dir'), f'{self.name}', 'agnfitter')
 
         # Three cases:
         # path exists: points to AGNfitter output
@@ -427,7 +427,7 @@ class LensedQSO:
         if os.path.isdir(path):
             par_values_file = f'parameter_outvalues_{agnf_id}.txt'
             if copy:
-                distutils.dir_util.copy_tree(path, os.path.join('data', self.name, 'agnfitter'))
+                distutils.dir_util.copy_tree(path, os.path.join(App.config().get(section='GENERAL', option='data_dir'), self.name, 'agnfitter'))
         elif os.path.isdir(repo_path) and check_git:
             # TODO: fix
             # print(re.escape(os.path.join(repo_path, f'parameter_outvalues_{self.agn_fitter_id(component=component)}')).replace('/', '\\/') + '[0-9]?\.txt')

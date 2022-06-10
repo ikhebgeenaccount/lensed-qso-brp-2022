@@ -2,6 +2,7 @@ from astropy.cosmology import LambdaCDM
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 
+from src.app import App
 from src.lensed_qso import AGNFITTER_FIELDS
 
 import numpy as np
@@ -327,7 +328,7 @@ def plot_agnf_output(lqsos, field_1, field_2, color_scale_field=None, equals_lin
     else:
         name = f'{field_1}_{field_2}.pdf'
 
-    fig.savefig(os.path.join('plots', name), bbox_extra_artists=(lgd,), bbox_inches='tight')
+    fig.savefig(os.path.join(App.config().get(section='GENERAL', option='plots_dir'), name), bbox_extra_artists=(lgd,), bbox_inches='tight')
     # fig.savefig(os.path.join('plots', f'{field_1}_{field_2}.svg'))
 
     return fig, ax
@@ -351,7 +352,7 @@ def plot_n_runs_pars(lqso, n=10, nrows=4, sub_folder=None):
             axs[r,c].tick_params(axis='y', left=False, labelleft=False)
 
     fig.tight_layout()
-    fig.savefig(os.path.join('plots', f'{lqso.name}_pars.pdf'))
+    fig.savefig(os.path.join(App.config().get(section='GENERAL', option='plots_dir'), f'{lqso.name}_pars.pdf'))
 
 
 def residual_plot(lqso, errors=False):
@@ -404,7 +405,7 @@ def residual_plot(lqso, errors=False):
     ax2.axhline(0, xmin=0, xmax=1, color='black')
 
     fig.tight_layout()
-    fig.savefig(os.path.join('plots', f'{lqso.name}_agnf_residuals.pdf'))
+    fig.savefig(os.path.join(App.config().get(section='GENERAL', option='plots_dir'), f'{lqso.name}_agnf_residuals.pdf'))
 
 
 def plot_lqsos_vs_stacey(lqsos):
@@ -423,7 +424,7 @@ def plot_lqsos_vs_stacey(lqsos):
     ax.legend()
 
     fig.tight_layout()
-    fig.savefig(os.path.join('plots', 'SFR_IR_stacey_res.pdf'))
+    fig.savefig(os.path.join(App.config().get(section='GENERAL', option='plots_dir'), 'SFR_IR_stacey_res.pdf'))
 
 
 def plot_evolution_df(df, fig=None, ax=None, context=True):
@@ -519,11 +520,11 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
     if context==True:
         lgd = ax.legend(loc='center right', bbox_to_anchor=(2.25, 0.19),
                   ncol=2, fancybox=True, shadow=True)
-        fig.savefig(os.path.join('plots', 'total_evolution_withdata.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
+        fig.savefig(os.path.join(App.config().get(section='GENERAL', option='plots_dir'), 'total_evolution_withdata.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
     if context==False:
         lgd = ax.legend(loc='center right', bbox_to_anchor=(1.3, 0.5),
                   ncol=1, fancybox=True, shadow=True)
-        fig.savefig(os.path.join('plots', 'evolution.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
+        fig.savefig(os.path.join(App.config().get(section='GENERAL', option='plots_dir'), 'evolution.pdf'), bbox_extra_artists=(lgd,), bbox_inches='tight')
 
     return fig, ax
 

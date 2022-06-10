@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from src.app import App
 from src.lensed_qso import LensedQSO
 from src.plotting.latex_output import plots_in_subfigures
 from src.plotting.plots import plot_lqsos_in_speagle, plot_agnf_output, plot_lqsos_vs_stacey, plot_speagle_residual, \
@@ -14,7 +15,7 @@ import src.lens_subtraction.model_sed
 
 import os
 
-plt.style.use('brp.mplstyle')
+plt.style.use(App.config().get(section='PLOTTING', option='style_file'))
 
 GALAXIES = ['J0806+2006', 'J0924+0219', 'B1152+200', 'J1330+1810', 'J1455+1447', 'J1524+4409', 'B1600+434', 'B1608+656', 'J1633+3134', 'J1650+4251']
 
@@ -161,10 +162,10 @@ def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False, from_fil
 
         lqsos_df = _lqsos_dict_to_df(lqsos_dict)
 
-        lqsos_df.to_csv(os.path.join('data', 'final_output.csv'), index=False)
+        lqsos_df.to_csv(os.path.join(App.config().get(section='GENERAL', option='final_output_file')), index=False)
 
     else:
-        lqsos_df = pd.read_csv(os.path.join('data', 'final_output.csv'))
+        lqsos_df = pd.read_csv(os.path.join(App.config().get(section='GENERAL', option='data_dir'), 'final_output.csv'))
         lqsos_all_runs_df = {}
 
     return lqsos_df, lqsos_all_runs_df
@@ -268,8 +269,8 @@ def big_plot():
     ax.set_yscale('log')
     ax.set_xscale('log')
 
-    fig.savefig(os.path.join(PLOTS_SAVE, 'SED_all.pdf'))
-    fig.savefig(os.path.join(PLOTS_SAVE, 'SED_all.png'))
+    fig.savefig(os.path.join(App.config().get(section='GENERAL', option='plots_dir'), 'SED_all.pdf'))
+    fig.savefig(os.path.join(App.config().get(section='GENERAL', option='plots_dir'), 'SED_all.png'))
 
 
 def latex(lqsos_df):

@@ -15,7 +15,7 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
     :param allowed_sources: List of sources to use, e.g. ['Chandra']
     :return:
     """
-    ned_df = pd.read_csv(os.path.join('data', lqso.name, ned_file), delimiter='|')
+    ned_df = pd.read_csv(os.path.join(App.config().get(section='GENERAL', option='data_dir'), lqso.name, ned_file), delimiter='|')
 
     if allowed_sources is None:
         raise ValueError('No allowed sources, enter a list of allowed sources using ned_table_to_sed(..., allowed_sources=[...])')
@@ -31,25 +31,23 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
     ned_df['flux_total'] = ned_df['Flux Density'] * flux_conversion
     ned_df['flux_err'] = ned_df['Upper limit of uncertainty'] * flux_conversion
 
-    ned_df['observed_passband'] = ned_df['Observed Passband'].apply(lambda v: v.strip())
+    ned_df['filter'] = ned_df['Observed Passband'].apply(lambda v: v.strip())
     ned_df['Qualifiers'] = ned_df['Qualifiers'].apply(lambda v: v.strip())
 
     qualis = ned_df['Qualifiers'].unique()
 
     # Check if qualifier exists and exists in qualis
+    qi = None
     if qualifier is None:
         qi = input(f'Found qualifiers: {qualis}, input index of which one to use (zero-indexed):')
     elif qualifier not in qualis:
         qi = input(f'Given qualifier {qualifier} not found in qualifiers {qualis}, input index of which one to use (zero-indexed):')
 
-    qualifier = qualis[int(qi)]
+    if qi is not None:
+        qualifier = qualis[int(qi)]
 
     if qualifier not in qualis:
         raise ValueError('Qualifier ' + qualifier + ' not found in qualifiers of given table.')
-
-    # Check if observed_passband column exists, if not add
-    if not 'observed_passband' in lqso.sed.columns:
-        lqso.sed['observed_passband'] = ''
 
     # Filter on qualifier
     q_sel = ned_df.loc[(ned_df['Qualifiers'] == qualifier)]
@@ -71,17 +69,17 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
         # Get the required data
         flux_total = sel['flux_total'].values[0]
         flux_err = sel['flux_err'].values[0]
-        observed_passband = sel['observed_passband'].values[0]
+        filter = sel['filter'].values[0]
 
         source = ''
 
         # Check if source is in sources to skip
         # Default: skip
         skip = True
-        # Check for every skip_sources if it occurs in the observed_passband, if so, set skip to True
+        # Check for every skip_sources if it occurs in the filter, if so, set skip to True
         if allowed_sources is not None:
             for als in allowed_sources:
-                if als.lower() in observed_passband.lower():
+                if als.lower() in filter.lower():
                     source = als  # Set source of this entry to the allowed source name
                     skip = False
                     break
@@ -97,20 +95,20 @@ def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_c
             raise NotImplementedError('Table has upper or lower limit for flux density, this cannot be handled.')
 
         # Check if entry is not in lqso.sed yet
-        if lqso.sed[(lqso.sed['wavelength'] == wl) & (lqso.sed['observed_passband'] == observed_passband)].empty:
+        if lqso.sed[(lqso.sed['wavelength'] == wl) & (lqso.sed['filter'] == filter)].empty:
             # Add it
             lqso.sed = lqso.sed.append({
                 'wavelength': wl,
                 'flux_total': flux_total,
                 'flux_err': flux_err,
-                'observed_passband': observed_passband,
+                'filter': filter,
                 'source': source
             }, ignore_index=True)
         else:
             # Overwrite it
-            index = lqso.sed.index[(lqso.sed['wavelength'] == wl) & (lqso.sed['observed_passband'] == observed_passband)]
-            lqso.sed.loc[index, ['wavelength', 'flux_total', 'flux_err', 'observed_passband', 'source']] = \
-                [wl, flux_total, flux_err, observed_passband, source]
+            index = lqso.sed.index[(lqso.sed['wavelength'] == wl) & (lqso.sed['filter'] == filter)]
+            lqso.sed.loc[index, ['wavelength', 'flux_total', 'flux_err', 'filter', 'source']] = \
+                [wl, flux_total, flux_err, filter, source]
 
     # Save to SED
     lqso.save_sed()

@@ -14,7 +14,7 @@ def xml_to_txt(xmlname,txtname):
     FIlterprofiles folder. 
     """
     #Reading in the xml file
-    tree = ET.parse(os.path.join('data','Filterprofiles','XML',xmlname))
+    tree = ET.parse(os.path.join(App.config().get(section='GENERAL', option='data_dir'),'Filterprofiles','XML',xmlname))
     root = tree.getroot()
     
     #For plotting the filterprofile
@@ -36,7 +36,7 @@ def xml_to_txt(xmlname,txtname):
     plt.plot(wavelength, transmission)
     
     #writing to the new file
-    file = open(os.path.join('data','Filterprofiles','TXT',txtname), "w")
+    file = open(os.path.join(App.config().get(section='GENERAL', option='data_dir'),'Filterprofiles','TXT',txtname), "w")
     file.write(save_string)
     file.close()
     

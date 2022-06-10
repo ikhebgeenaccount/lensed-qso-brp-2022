@@ -4,12 +4,14 @@ import re
 
 import pandas as pd
 
-FILTER_PROPS_PATH = os.path.join('data', 'filter.csv')
-FILTER_PROPERTIES = pd.read_csv(FILTER_PROPS_PATH)
+from src.app import App
+
+FILTER_PROPERTIES = pd.read_csv(App.config().get(section='GENERAL', option='filters_properties_file'))
 
 
 def get_wavelength(telescope, tfilter):
     return FILTER_PROPERTIES[(FILTER_PROPERTIES.telescope == telescope) * (FILTER_PROPERTIES.filtername == tfilter)].central_wavelength.values[0]
+
 
 def get_filename(telescope, tfilter):
     try:
@@ -17,9 +19,10 @@ def get_filename(telescope, tfilter):
     except IndexError:
         print(telescope, tfilter)
 
+
 def populate_filter_profile_path_column(profiles_dir=None):
     if profiles_dir is None:
-        profiles_dir = os.path.join('data', 'Filterprofiles', 'TXT')
+        profiles_dir = os.path.join(App.config().get(section='GENERAL', option='data_dir'), 'Filterprofiles', 'TXT')
 
     filters = found = 0
 
@@ -33,8 +36,4 @@ def populate_filter_profile_path_column(profiles_dir=None):
             found += 1
             FILTER_PROPERTIES.loc[i, 'file'] = matches[0]
 
-    print(found, filters)
-
-    print(FILTER_PROPERTIES)
-
-    FILTER_PROPERTIES.to_csv(FILTER_PROPS_PATH, index=False)
+    FILTER_PROPERTIES.to_csv(App.config().get(section='GENERAL', option='filters_properties_file'), index=False)

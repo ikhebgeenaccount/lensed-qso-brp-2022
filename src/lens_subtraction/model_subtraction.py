@@ -77,7 +77,7 @@ def model_subtraction(lqso):
                 continue
 
             #read in the filterprofile
-            filterprofile = pd.read_csv (os.path.join('data','Filterprofiles','TXT',filename), \
+            filterprofile = pd.read_csv (os.path.join(App.config().get(section='GENERAL', option='data_dir'),'Filterprofiles','TXT',filename), \
                 delim_whitespace=True, header=None,usecols=[ 0,1], names=['wavelength', 'transmission'])
 
             #middel over het filterprofiel: selecteer eerst het stukje model op je filterprofiel
