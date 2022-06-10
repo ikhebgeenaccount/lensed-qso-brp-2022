@@ -6,6 +6,7 @@ Wavelength (angstrom) is optional as in the code this is always taken from filte
 Then there are multiple columns of fluxes (in mJy). For unresolved data only the total flux and its uncertainty are added, when resolved data is available these can be entered into the corresponding columns as well. If the galaxy observed has less components than 4, the remaining columns can be left blank. 
 The source column is the name displayed in the plots and can be used for filtering out data. 
 Then there is a column indicating with a 1 whether a source is an upper limit. In this case the uncertainty on the total flux can be left blank. 
+there is also a telescope column, for this use the same name as in filter.csv
 The last 2 columns are produced when performing the model subtraction, and show the isolated background flux, uncorrected for magnification.
 
 mags.csv
@@ -23,7 +24,7 @@ The 'file' column is very important, it couples the filter indicated in the SED 
 
 
 
-Properties.txt
+Properties.csv
 Some general properties of the quasars in your sample. Name, the redshift of the quasar and the lens, the magnification and the uncertainty in this (assume 10 +- 5 when unknown, set uncertainty to 0 when known). 
 Then there is 3 columns indicating the IR SFR as given by Stacet et al. 2018, which we compare our sample with, these columns can be left empty. 
 Last column is the gas masses in solar mass, uncorrected for magnification. If these are not available they can be left blank. 

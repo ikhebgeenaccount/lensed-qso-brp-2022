@@ -1,12 +1,11 @@
-galaxy,lensed by spiral?,single galaxy?,z_qso,z_lens,lens_type,magnification,magn_err,stacey_sfr,stacey_sfr_pe,stacey_sfr_me,mu_m_gas
-J1524+4409,no, yes(feb 2008),1.21,0.320,elliptical,7.4,0,2.7,0.3,0.2,1.74e10
-B1608+656,possibly 2 merging galaxies>need to check, yes(december 1999),1.39,0.630,elliptical,10.8,0,2.4,0.2,0.1,
-J1330+1810,maybe disk galaxy, yes but galaxies 120 arcsec SW (december 2008),1.393,0.373,elliptical,10,5,3.3,0.1,0.1,2.84e10
-J1455+1447,no, yes(april 2010),1.424,0.42,elliptical,12.7,0,3.1,0.3,0.2,8.1e9
-J1633+3134,followup from Morgan 2001, yes(february 2001),1.518,0.684,elliptical,10,5,3.0,0.1,0.1,1.16e10
-J0924+0219,no, no 4th component might be reddened =weird (august 2003),1.523,0.393,elliptical,10,5,3.0,0.2,0.1,2.92e10
-J1650+4251,no, yes (november 2003),1.543,0.577,elliptical,10,5,3.0,0.1,0.1,1.72e10
-B1152+200,no, yes (june 1999),1.019,0.438,elliptical,10,5,,,,
-B1600+434,YES, yes but weird reddening component B (january 1997),1.589,0.414,spiral,10,5,2.9,0.2,0.2,
-J0806+2006,no, yes but some nearby galaxies that may pertube the system > modeling (april 2006),1.540,0.573,elliptical,10,5,,,,2.78e9
-
+galaxy,z_qso,z_lens,lens_type,magnification,magn_err,stacey_sfr,stacey_sfr_pe,stacey_sfr_me,mu_m_gas
+J1524+4409,1.21,0.32,elliptical,7.4,0,2.7,0.3,0.2,17400000000
+B1608+656,1.39,0.63,elliptical,10.8,0,2.4,0.2,0.1,
+J1330+1810,1.393,0.373,elliptical,10,5,3.3,0.1,0.1,28400000000
+J1455+1447,1.424,0.42,elliptical,12.7,0,3.1,0.3,0.2,8100000000
+J1633+3134,1.518,0.684,elliptical,10,5,3,0.1,0.1,11600000000
+J0924+0219,1.523,0.393,elliptical,10,5,3,0.2,0.1,29200000000
+J1650+4251,1.543,0.577,elliptical,10,5,3,0.1,0.1,17200000000
+B1152+200,1.019,0.438,elliptical,10,5,,,,
+B1600+434,1.589,0.414,spiral,10,5,2.9,0.2,0.2,
+J0806+2006,1.54,0.573,elliptical,10,5,,,,2780000000
