@@ -141,9 +141,9 @@ def plot_lqsos_in_speagle(df, fig=None, ax=None, label=None, save_name='speagle'
     #t_pe = t_pe * np.power(10., -9)
     #t_me = t_me * np.power(10., -9)
 
-    z_min = 1.019
-    z_max = 1.589
-
+    z_min = np.min(df['redshift'])
+    z_max = np.max(df['redshift'])
+    
     if ax is None:
         # These things are only done if no ax is given
         fig, ax = plt.subplots(figsize=(10,8))
