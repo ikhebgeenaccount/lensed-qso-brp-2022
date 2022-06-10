@@ -8,8 +8,9 @@ import pandas as pd
 
 from matplotlib.legend_handler import HandlerTuple
 
-from src.AGN_input import format_filter_name, format_telescope_name, get_agnf_filter_path
+from src.agnfitter.AGN_input import format_filter_name, format_telescope_name, get_agnf_filter_path
 from src.sed_compilation.filters import get_wavelength, FILTER_PROPERTIES
+from src.app import App
 
 import warnings
 
@@ -42,52 +43,23 @@ FILTERED_SOURCES_AGNFITTER = {
 }
 
 
-RADIO_CUTOFF = 	25000000  # wavelengths >2.5e7 Angstrom are classified as radio
-XRAY_CUTOFF = 300  # wavelengths < 300 Angstrom are classified as Xray
-
-DEFAULT_AGNFITTER_SETTINGS = {
-    'nwalkers': 100,
-    'nburnsets': 2,
-    'nburn': 5000,
-    'nmcmc': 15000,
-    'iprint': 1000,
-    'plot_tracesburn-in': True,
-    'plot_tracesmcmc': True,
-    'plot_posteriortriangle': True,
-    'plot_posteriortrianglewithluminosities': True,
-    'realizations2int': 1000,
-    'realizations2plot': 10,
-    'plotSEDrealizations': True
-}
-
-DEFAULT_AGNFITTER_SETTINSG_RX = {
-    'plot_residuals': True,
-    'modelset': 'modelsv1',
-    'GALAXY': 'BC03_metal',
-    'STARBURST': 'S17_radio',
-    'BBB': 'SN12',
-    'TORUS': 'SKIRTORM',
-    'PRIOR_energy_balance': 'Flexible',
-    'PRIOR_AGNfraction': True,
-    'PRIOR_midIR_UV': False,
-    'PRIOR_galaxy_only': False
-}
-
+RADIO_CUTOFF = App.config().get(section='GENERAL', option='radio_cutoff')  # wavelengths >2.5e7 Angstrom are classified as radio
+XRAY_CUTOFF = App.config().get(section='GENERAL', option='xray_cutoff')  # wavelengths < 300 Angstrom are classified as Xray
 
 COMPONENT_ID = {
     '_sub': 0,
-    '_sub_demag': 1,
-    '_sub_demag_test': 2
 }
 
-
+# Dictionary that tracks colors of sources used in .plot_spectrum,
+# to make sure colours are consistent between plots of different LensedQSOs
 SOURCES_COLORS = {}
 
 COLORS = plt.get_cmap('tab10').colors + plt.get_cmap('Dark2').colors + plt.get_cmap('Accent').colors
 
+# TODO: what is AGNfitter rX-version output?
 AGNFITTER_FIELDS = ['tau', 'log age', 'Nh', 'irlum', 'SB', 'BB', 'GA', 'TO', 'EBVbbb', 'EBVgal', 'logMstar', 'SFR_opt', 'LIR(8-1000)', 'Lbb(0.1-1)', 'Lbbdered(0.1-1)', 'Lga(01-1)', 'Ltor(1-30)', 'Lsb(1-30)', 'SFR_IR', '-ln_like']
 
-PROPERTIES = pd.read_csv(os.path.join('data', 'properties.txt'), skiprows=1)
+PROPERTIES = pd.read_csv(os.path.join('data', 'properties.csv'), skiprows=0)
 
 
 class LensedQSO:
@@ -326,20 +298,16 @@ class LensedQSO:
         t = self.name.replace('B', '').replace('J', '').replace('+', '') + str(COMPONENT_ID[component])
         return t if t[0] != '0' else t[1:]
 
-    def agn_settings(self, rX=False, settings=None):
+    def agn_fitter_settings(self, rX=False):
         # First load default settings to make sure every setting is set
-        settings_use = DEFAULT_AGNFITTER_SETTINGS.copy()
-        template = None
+        settings_use = dict()
 
         if rX:
-            settings_use.update(DEFAULT_AGNFITTER_SETTINSG_RX)
-
             template = settings_template_rX
             filters, filternames, filterfilenames = self.agn_fitter_input_filters(rX)
 
             hasxray = sum(self.filter_sed(component='_sub', rX=True)['wavelength'] <= XRAY_CUTOFF) > 0
             hasradio = sum(self.filter_sed(component='_sub', rX=True)['wavelength'] >= RADIO_CUTOFF) > 0
-            print(hasxray, hasradio)
             settings_use.update({
                 'length': self.sed_to_agn_fitter()[1],
                 'length + 1': self.sed_to_agn_fitter()[1] + 1,
@@ -363,9 +331,10 @@ class LensedQSO:
                 'filters': self.agn_fitter_input_filters()
             })
 
-        # Update default settings with settings that have been passed by user
-        if settings is not None:
-            settings_use.update(settings)
+        # Update default settings with settings that have been set by user
+        settings_use.update(dict(App.config()['AGNFITTER']))
+        if rX:
+            settings_use.update(dict(App.config()['AGNFITTER-RX']))
 
         return template.format(**settings_use)
 
@@ -557,7 +526,7 @@ settings_template_rX = "'''\n" +\
 "\n" +\
 "\n" +\
 "    ##GENERAL\n" +\
-"    cat['path'] = os.getcwd().replace('lensed-qso-brp-2022', 'AGNfitter_rXv0.1/AGNfitter/') #'/Users/gcalistr/Documents/AGNfitter/'  #path to the AGNfitter code\n" +\
+"    cat['path'] = {agnfitter_path}  #path to the AGNfitter code\n" +\
 "    cat['filename'] = cat['path']+'data/{name}.txt'\n" +\
 "    cat['filetype'] = 'ASCII' ## catalog file type: 'ASCII' or 'FITS'. \n" +\
 "    cat['name'] = 0                 ## If ASCII: Column index (int) of source IDs\n" +\
@@ -758,7 +727,7 @@ settings_template_rX = "'''\n" +\
 "                                #Around 100-1000 is recomendend for computational reasons.\n" +\
 "                                #If you want to plot posterior triangles of \n" +\
 "                                #the integrated luminosities, should be > 1000.\n" +\
-"    out['plot_posteriortrianglewithluminosities'] = False  # requires out['calc_intlum']=True \n" +\
+"    out['plot_posteriortrianglewithluminosities'] = {plot_posteriortrianglewithluminosities}  # requires out['calc_intlum']=True \n" +\
 "\n" +\
 "    #INTEGRATION RANGES\n" +\
 "    out['intlum_models'] = ['sb','bbb', 'bbbdered', 'gal', 'tor','agn_rad', 'tor+bbb','AGNfrac_IR', 'gal+bbb', 'AGNfrac_opt', 'bbb', 'tor','sb']  #leave 'sb' always as first element\n" +\
@@ -804,7 +773,7 @@ settings_template = "'''\n" +\
 "\n" +\
 "\n" +\
 "    ##GENERAL\n" +\
-"    cat['path'] = os.getcwd().replace('lensed-qso-brp-2022', 'AGNfitter/')  #path to the AGNfitter code\n" +\
+"    cat['path'] = {agnfitter_path}  #path to the AGNfitter code\n" +\
 "\n" +\
 "\n" +\
 "    cat['filename'] = cat['path']+'data/{name}.txt'\n" +\
