@@ -8,6 +8,9 @@ The source column is the name displayed in the plots and can be used for filteri
 Then there is a column indicating with a 1 whether a source is an upper limit. In this case the uncertainty on the total flux can be left blank. 
 The last 2 columns are produced when performing the model subtraction, and show the isolated background flux, uncorrected for magnification.
 
+mags.csv
+This file is used when converting from magnitudes to fluxes. Add the magnitudes to this file in the proper columns, just ass you would have added fluxes to sed.csv. Make sure all the filters have the same names as in filter.csv, as this will be used to convert it. Using the code this file will then automatically write the fluxes to sed.csv.
+
 
 filter.csv:
 This is a file used in many processes, including magnitude conversions and AGNfitter settings. Most telescopes will already be present, but if you wish to add other 
@@ -24,3 +27,6 @@ Properties.txt
 Some general properties of the quasars in your sample. Name, the redshift of the quasar and the lens, the magnification and the uncertainty in this (assume 10 +- 5 when unknown, set uncertainty to 0 when known). 
 Then there is 3 columns indicating the IR SFR as given by Stacet et al. 2018, which we compare our sample with, these columns can be left empty. 
 Last column is the gas masses in solar mass, uncorrected for magnification. If these are not available they can be left blank. 
+
+final_output.csv
+This file displays all that is known about the galaxy after the AGnfitter process is complete, including all parameters that it outputs, the redshifts, the IR SFR as found from Stacey et al. 2018, and the magnification.
