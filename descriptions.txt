@@ -1,0 +1,9 @@
+Yoeh hier maak ik mooi beschrijving van bestandjes
+
+filter.csv
+This is a file used in many processes, including magnitude conversions and AGNfitter settings. Most telescopes will already be present, but if you wish to add other 
+telescopes or filters, this is possible. First 2 columns are telescope name and filtername, these are mandatory as they are used for producing the AGNfitter settings. 
+the columns 'Band' and 'instrument' are not used in the code, they are just to keep track of which filter is which. If you wish to translate magnitudes into fluxes, you need to enter 
+the central wavelength, the conversion type and the zeropoint. For AB this zeropoint is always the same, for vega it can differ. Units are millijanskys and angstroms. The source 
+column is optional and just for reference, but the 'file' column is very important. This couples the filter indicated in the SED to the filterprofile used in AGNfitter. 
+these filterprofiles can be found under data/Filterprofiles/TXT. 
