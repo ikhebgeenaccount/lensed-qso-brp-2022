@@ -10,20 +10,23 @@ from mpl_toolkits.mplot3d import Axes3D
 
 from scipy.optimize import curve_fit, minimize
 
+
+# LQSO_NO_MODELS = {
+#     'J0806+2006': 2, #very clear
+#     'J0924+0219': 2, #very clear
+#     'B1152+200': 4, #semi clear
+#     'J1330+1810': 5, #not clear, made guess
+#     'J1455+1447': 5, #1 datapoint
+#     'J1524+4409': 5, #not clear, made guess
+#     'B1600+434': 4, #spiral>take best 5, changed to 4 since 4/5 best models have Herschel data
+#     'B1608+656': 3, #semi clear  
+#     'J1650+4251': 5 #1 datapoint
+# }
+
+
 from src.app import App
 
-LQSO_NO_MODELS = {
-    'J0806+2006': 2, #very clear
-    'J0924+0219': 2, #very clear
-    'B1152+200': 4, #semi clear
-    'J1330+1810': 5, #not clear, made guess
-    'J1455+1447': 5, #1 datapoint
-    'J1524+4409': 5, #not clear, made guess
-    'B1600+434': 4, #spiral>take best 5, changed to 4 since 4/5 best models have Herschel data
-    'B1608+656': 3, #semi clear
-    'J1633+3134': 1, #very clear
-    'J1650+4251': 5 #1 datapoint
-}
+
 
 # Load model properties
 MODEL_PROPERTIES = pandas.read_csv(os.path.join(App.config().get(section='GENERAL', option='data_dir'), 'brown_seds', 'sed_properties.dat'), delimiter='|',
@@ -76,7 +79,17 @@ for sed_file in glob.glob(os.path.join(App.config().get(section='GENERAL', optio
         MODELS[name]=newerest_model
 
 
-def fit(lqso, morph='all', method='curve_fit', save_plots=True, verbose_plots=False):
+
+# Fitting
+#
+# Duncan+2017 (https://academic.oup.com/mnras/article/473/2/2655/4315948?login=true) uses EAZY
+# (https://github.com/gbrammer/eazy-photoz/tree/master) on single template mode, EAZY is for photometric redshift though
+#
+# Leja+2017 (https://iopscience.iop.org/article/10.3847/1538-4357/aa5ffe/meta) uses scipy minimize combined with MCMC
+
+
+def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='plots', verbose_plots=False, N=5):
+
     """
     Fits a Brown SED to the foreground galaxy data points of given LensedQSO using scipy.optimize.curve_fit.
     :param verbose_plots:
@@ -195,7 +208,8 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, verbose_plots=Fa
         print('Best model is twice as good as next best')
 
     # Combine N models
-    N = LQSO_NO_MODELS[lqso.name]
+    #N = LQSO_NO_MODELS[lqso.name]
+
 
 
     if N != 0:
