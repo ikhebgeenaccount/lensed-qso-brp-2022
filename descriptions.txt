@@ -1,0 +1,32 @@
+Yoeh hier maak ik mooi beschrijving van bestandjes
+
+sed.csv
+This is where all the photometry of your sample is stored. Frst column is filter, for this use the same name as in filter.csv. 
+Wavelength (angstrom) is optional as in the code this is always taken from filter.csv, however it is useful when comparing data by eye to have this column. 
+Then there are multiple columns of fluxes (in mJy). For unresolved data only the total flux and its uncertainty are added, when resolved data is available these can be entered into the corresponding columns as well. If the galaxy observed has less components than 4, the remaining columns can be left blank. 
+The source column is the name displayed in the plots and can be used for filtering out data. 
+Then there is a column indicating with a 1 whether a source is an upper limit. In this case the uncertainty on the total flux can be left blank. 
+The last 2 columns are produced when performing the model subtraction, and show the isolated background flux, uncorrected for magnification.
+
+mags.csv
+This file is used when converting from magnitudes to fluxes. Add the magnitudes to this file in the proper columns, just ass you would have added fluxes to sed.csv. Make sure all the filters have the same names as in filter.csv, as this will be used to convert it. Using the code this file will then automatically write the fluxes to sed.csv.
+
+
+filter.csv:
+This is a file used in many processes, including magnitude conversions and AGNfitter settings. Most telescopes will already be present, but if you wish to add other 
+telescopes or filters, this is possible. 
+The first 2 columns are telescope name and filtername, these are mandatory as they are used for producing the AGNfitter settings from the SED. 
+the columns 'Band' and 'instrument' are not used in the code, they are just to keep track of which filter is which. 
+If you wish to translate magnitudes into fluxes, you need to enter the central wavelength, the conversion type and the zeropoint. For AB this zeropoint is always the same, for vega it can differ. Units are millijanskys and angstroms. 
+The source column is optional and just for reference. 
+The 'file' column is very important, it couples the filter indicated in the SED to the filterprofile used in AGNfitter. These filterprofiles can be found under data/Filterprofiles/TXT. 
+
+
+
+Properties.txt
+Some general properties of the quasars in your sample. Name, the redshift of the quasar and the lens, the magnification and the uncertainty in this (assume 10 +- 5 when unknown, set uncertainty to 0 when known). 
+Then there is 3 columns indicating the IR SFR as given by Stacet et al. 2018, which we compare our sample with, these columns can be left empty. 
+Last column is the gas masses in solar mass, uncorrected for magnification. If these are not available they can be left blank. 
+
+final_output.csv
+This file displays all that is known about the galaxy after the AGnfitter process is complete, including all parameters that it outputs, the redshifts, the IR SFR as found from Stacey et al. 2018, and the magnification.

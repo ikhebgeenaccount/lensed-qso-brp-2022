@@ -1,4 +1,3 @@
-#For locations, redshifts, luminosity distances, luminosities in fir and other info, see evernote notebook. This file is to keep a record of what data is available, and what has been added to the file already.
 galaxy,lensed by spiral?,single galaxy?,z_qso,z_lens,lens_type,magnification,magn_err,stacey_sfr,stacey_sfr_pe,stacey_sfr_me,mu_m_gas
 J1524+4409,no, yes(feb 2008),1.21,0.320,elliptical,7.4,0,2.7,0.3,0.2,1.74e10
 B1608+656,possibly 2 merging galaxies>need to check, yes(december 1999),1.39,0.630,elliptical,10.8,0,2.4,0.2,0.1,
