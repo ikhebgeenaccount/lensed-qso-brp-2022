@@ -54,3 +54,7 @@ Gaia
 
 have also added chandra, tiny discrepancy in coordinates but think it is okey
 galex: medium sky survey, 7.5 arcsec, for NUV and FUV
+
+COSMOGRAIL
+https://ui.adsabs.harvard.edu/abs/2018ApJ...859...50F/abstract
+magnitude differences between emission lines, delta m ~= -.7
