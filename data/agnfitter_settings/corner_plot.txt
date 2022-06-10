@@ -1,5 +1,0 @@
-{
-    "plot_posteriortriangle": true,
-    "nburn": 200,
-    "nmcmc": 500
-}
