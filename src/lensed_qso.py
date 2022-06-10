@@ -12,36 +12,6 @@ from src.agnfitter.AGN_input import format_filter_name, format_telescope_name, g
 from src.sed_compilation.filters import get_wavelength, FILTER_PROPERTIES
 from src.app import App
 
-import warnings
-
-
-# FILTERED_SOURCES = {
-#     'B1152+200': ['panstarrs'],
-#     'B1600+434': ['panstarrs'],
-#     'B1608+656': [ 'luichies'],#['Koopmans+2003' ],
-#     'J0806+2006': ['panstarrs'],
-#     'J0924+0219': ['panstarrs', 'faure'],
-#     'J1330+1810': ['panstarrs'],
-#     'J1455+1447': ['panstarrs'],
-#     'J1524+4409': ['panstarrs'],
-#     'J1633+3134': ['panstarrs'],
-#     'J1650+4251': ['panstarrs']
-# }
-#
-#
-# FILTERED_SOURCES_AGNFITTER = {
-#     'B1152+200': ['toft', 'Barvainis+2002_filter'],
-#     'B1600+434': ['munoz', 'SDSS+DR14_filter'],
-#     'B1608+656': [ 'luichies'],#['Koopmans+2003' ],
-#     'J0806+2006': ['Fadely+2011'],
-#     'J0924+0219': ['2MASS_filter'],
-#     'J1330+1810': ['Galex_filter'],
-#     'J1455+1447': ['Rusu+2016'],
-#     'J1524+4409': ['Oguri'],
-#     'J1633+3134': ['Morgan'],
-#     'J1650+4251': ['Morgan']
-# }
-
 
 RADIO_CUTOFF = App.config().get(section='GENERAL', option='radio_cutoff')  # wavelengths >2.5e7 Angstrom are classified as radio
 XRAY_CUTOFF = App.config().get(section='GENERAL', option='xray_cutoff')  # wavelengths < 300 Angstrom are classified as Xray
@@ -308,8 +278,8 @@ class LensedQSO:
             template = settings_template_rX
             filters, filternames, filterfilenames = self.agn_fitter_input_filters(rX)
 
-            hasxray = sum(self.filter_sed(component='_sub', rX=True)['wavelength'] <= XRAY_CUTOFF) > 0
-            hasradio = sum(self.filter_sed(component='_sub', rX=True)['wavelength'] >= RADIO_CUTOFF) > 0
+            hasxray = np.sum(self.filter_sed(component='_sub', rX=True)['wavelength'] <= XRAY_CUTOFF) > 0
+            hasradio = np.sum(self.filter_sed(component='_sub', rX=True)['wavelength'] >= RADIO_CUTOFF) > 0
             settings_use.update({
                 'length': self.sed_to_agn_fitter()[1],
                 'length + 1': self.sed_to_agn_fitter()[1] + 1,
@@ -414,6 +384,7 @@ class LensedQSO:
         return self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(index[np.argmax(lls)] if index[np.argmax(lls)] != 0 else ''), copy=copy, sub_folder=sub_folder)
 
     def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=False, component='_sub', run_time=0, sub_folder=''):
+        # TODO: agnfitter output reading
         if agnf_id is None:
             agnf_id = self.agn_fitter_id(component=component) + (str(run_time) if run_time != 0 else '')
         if rX:
@@ -504,7 +475,7 @@ class LensedQSO:
 
 
 
-
+# TODO: move these to separate file
 settings_template_rX = "'''\n" +\
 "AGNfitter setting file:\n" +\
 "required:\n" +\
