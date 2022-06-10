@@ -5,7 +5,7 @@ from src.sed_compilation.filters import FILTER_PROPERTIES, get_wavelength
 import warnings
 
 
-def mags_to_fluxes(lqso, components=None, yesiamsure=False):
+def mags_to_fluxes(lqso, components=None):
     """
     Reads the mags.csv file of galaxy and converts the magnitudes to fluxes, using the appropriate conversion formulas.
     Saves these fluxes to sed.csv.
@@ -14,8 +14,6 @@ def mags_to_fluxes(lqso, components=None, yesiamsure=False):
     :param mags_file:
     :return: DataFrame with fluxes
     """
-    if not yesiamsure:
-        raise ValueError('NO! (if you are sure you want to set yesiamsure=True.')
     if not hasattr(lqso, 'mags'):
         warnings.warn(lqso.name + ' has no mags file')
         return

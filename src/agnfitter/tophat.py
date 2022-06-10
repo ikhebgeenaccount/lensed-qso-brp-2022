@@ -44,6 +44,6 @@ def tophat(central,bandwidth,filtername,freq_Ghz=False,energy_Kev=False,length=3
         save_string += f'{x_array[i]} '
         save_string += f'{transmission_array[i]}\n'
         
-    file = open(os.path.join('data','Filterprofiles','TXT',filtername), "w")
+    file = open(os.path.join(App.config().get(section='GENERAL', option='data_dir'),'Filterprofiles','TXT',filtername), "w")
     file.write(save_string)
     file.close()

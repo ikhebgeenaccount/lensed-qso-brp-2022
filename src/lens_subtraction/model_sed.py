@@ -10,6 +10,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 from scipy.optimize import curve_fit, minimize
 
+
 # LQSO_NO_MODELS = {
 #     'J0806+2006': 2, #very clear
 #     'J0924+0219': 2, #very clear
@@ -23,9 +24,12 @@ from scipy.optimize import curve_fit, minimize
 # }
 
 
+from src.app import App
+
+
 
 # Load model properties
-MODEL_PROPERTIES = pandas.read_csv(os.path.join('data', 'brown_seds', 'sed_properties.dat'), delimiter='|',
+MODEL_PROPERTIES = pandas.read_csv(os.path.join(App.config().get(section='GENERAL', option='data_dir'), 'brown_seds', 'sed_properties.dat'), delimiter='|',
                                names=['name', 'ra_dec', 'morph', 'type', 'bpt_class'], usecols=[0, 1, 2, 3, 4])
 
 # Remove all leading and trainling spaces
@@ -40,7 +44,7 @@ MODELS = {}
 NAME_MATCH = '([A-Za-z0-9_\-+]*)_spec.dat'
 NAME_MATCH_RE = re.compile(NAME_MATCH)
 
-for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
+for sed_file in glob.glob(os.path.join(App.config().get(section='GENERAL', option='data_dir'), 'brown_seds', '*.dat')):
     try:
         name = re.findall(NAME_MATCH_RE, sed_file)[0]
     except IndexError:
@@ -49,7 +53,7 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
     # Convert units to milliJansky
     MODELS[name]['flux'] = MODELS[name]['flux_cgs'] * np.power(MODELS[name]['wavelength'], 2.) / 2.998e18 * 1e26
 
-    #For the one spiral we have, add Herschel data (flux in millijansky)
+    # For the one spiral we have, add Herschel data (flux in millijansky)
     if name == 'UGC_12150':
         new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 5.086e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
         newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.031e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
@@ -74,18 +78,7 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
         newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 5.56e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
         MODELS[name]=newerest_model
 
-    #we do the same in order to check if we can make this assumption for ellipticals>we can
-#    if name == 'NGC_4473':
-#        new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 0.2, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
-#        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.5, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
-#        newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
-#        MODELS[name]=newerest_model
-#
-#    if name == 'NGC_3265':
-#        new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 1.24e-3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
-#        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 0.55e-3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
-#        newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0.238e-3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
-#        MODELS[name]=newerest_model
+
 
 # Fitting
 #
@@ -96,8 +89,12 @@ for sed_file in glob.glob(os.path.join('data', 'brown_seds', '*.dat')):
 
 
 def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='plots', verbose_plots=False, N=5):
+
     """
     Fits a Brown SED to the foreground galaxy data points of given LensedQSO using scipy.optimize.curve_fit.
+    :param verbose_plots:
+    :param save_plots:
+    :param method:
     :param lqso:
     :param morph: type of allowed morphologies, valid values are 'all', 'spiral', 'elliptical'
     :return: three 1D arrays, wavelengths, fluxes, errors for each flux at each wavelength
@@ -202,7 +199,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     # ax.set_title(f'Reduced $\chi^2$ values of models for {lqso.name}_G')
 
     if save_plots:
-        fig.savefig(os.path.join(save_location, f'{lqso.name}_models_chisq.pdf'), bbox_inches='tight')
+        fig.savefig(os.path.join(App.config().get(section='GENERAL', option='plots_dir'), f'{lqso.name}_models_chisq.pdf'), bbox_inches='tight')
         # fig.savefig(os.path.join(save_location, f'{lqso.name}_models_chisq.jpg'))
 
     print(model_set[['name', 'red_chi_sq', 'mult', 'std']].head(15))
@@ -289,7 +286,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
 
     wls = wls * (1. + lqso.props.z_lens.values[0])
 
-    plot_fit(lqso, model_set, avg_model=(wls, avg_model, avg_model_errs), save_plots=save_plots, save_location=save_location, count=N)
+    plot_fit(lqso, model_set, avg_model=(wls, avg_model, avg_model_errs), save_plots=save_plots, count=N)
 
     return wls, avg_model, avg_model_errs
 
@@ -359,8 +356,7 @@ def plot_fit(lqso, models, avg_model, save_plots=True, save_location='plots', co
     ax.legend(legend_list, labels, handler_map={avg: HandlerTuple(), tuple: HandlerTuple(ndivide=None)})
 
     if save_plots:
-        fig.savefig(os.path.join(save_location, f'{lqso.name}_G_model_fit.pdf'))
-        # fig.savefig(os.path.join(save_location, f'{lqso.name}_G_model_fit.jpg'))
+        fig.savefig(os.path.join(App.config().get(section='GENERAL', option='plots_dir'), f'{lqso.name}_G_model_fit.pdf'))
 
     rfig, rax = fig, ax
 
@@ -381,8 +377,7 @@ def plot_fit(lqso, models, avg_model, save_plots=True, save_location='plots', co
     ax.legend(legend_list, labels, handler_map={avg: HandlerTuple(), tuple: HandlerTuple(ndivide=None)})
 
     if save_plots:
-        fig.savefig(os.path.join(save_location, f'{lqso.name}_G_model_fit_full_sed.pdf'))
-        # fig.savefig(os.path.join(save_location, f'{lqso.name}_G_model_fit_full_sed.jpg'))
+        fig.savefig(os.path.join(App.config().get(section='GENERAL', option='plots_dir'), f'{lqso.name}_G_model_fit_full_sed.pdf'))
 
 
 def closest_wavelength(wl, model):
