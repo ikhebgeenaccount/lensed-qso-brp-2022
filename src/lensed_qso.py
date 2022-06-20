@@ -1,24 +1,18 @@
-import re
 import os
 import distutils.dir_util
-import glob
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
 from matplotlib.legend_handler import HandlerTuple
 
 from src.agnfitter.AGN_input import format_filter_name, format_telescope_name, get_agnf_filter_path
-from src.sed_compilation.filters import get_wavelength, FILTER_PROPERTIES
 from src.app import App
-
+from src.sed_compilation.filters import get_wavelength, FILTER_PROPERTIES
 
 RADIO_CUTOFF = App.config().getfloat(section='GENERAL', option='radio_cutoff')  # wavelengths >2.5e7 Angstrom are classified as radio
 XRAY_CUTOFF = App.config().getfloat(section='GENERAL', option='xray_cutoff')  # wavelengths < 300 Angstrom are classified as Xray
-
-COMPONENT_ID = {
-    '_sub': 0,
-}
 
 # Dictionary that tracks colors of sources used in .plot_spectrum,
 # to make sure colours are consistent between plots of different LensedQSOs
@@ -266,8 +260,8 @@ class LensedQSO:
 
         return catalog, l
 
-    def agn_fitter_id(self, component='_sub'):
-        t = self.name.replace('B', '').replace('J', '').replace('+', '') + str(COMPONENT_ID[component])
+    def agn_fitter_id(self):
+        t = self.name.replace('B', '').replace('J', '').replace('+', '')
         return t if t[0] != '0' else t[1:]
 
     def agn_fitter_settings(self, rX=False):
@@ -349,9 +343,7 @@ class LensedQSO:
             return outstr
 
     def load_agnf_output(self, rX=False, copy=False):
-        self.agnf_output = [0] * len(COMPONENT_ID)
-        for c in COMPONENT_ID.keys():
-            self.agn_fitter_output(rX=rX, copy=copy, component=c, check_git=False)
+        self.agn_fitter_output(rX=rX, copy=copy, check_git=False)
 
     def find_best_run(self, run_times=1, rX=False, component='_sub', verbose=True, copy=False, sub_folder=None):
         """
@@ -364,13 +356,13 @@ class LensedQSO:
         """
         lls = []
         index = []
-        self.agnf_output = [0] * len(COMPONENT_ID)
+        self.agnf_output = [0]
 
         if verbose:
             print('Run\t-ll')
 
         for i in range(run_times):
-            output = self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(i if i != 0 else ''), sub_folder=sub_folder)
+            output = self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id() + str(i if i != 0 else ''), sub_folder=sub_folder)
 
             if output is None:
                 continue
@@ -384,12 +376,12 @@ class LensedQSO:
         if verbose:
             print(f'Best run: {np.argmax(lls)}')
 
-        return self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id(component=component) + str(index[np.argmax(lls)] if index[np.argmax(lls)] != 0 else ''), copy=copy, sub_folder=sub_folder)
+        return self.agn_fitter_output(rX=rX, agnf_id=self.agn_fitter_id() + str(index[np.argmax(lls)] if index[np.argmax(lls)] != 0 else ''), copy=copy, sub_folder=sub_folder)
 
-    def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=False, component='_sub', run_time=0, sub_folder=''):
+    def agn_fitter_output(self, rX=False, agnf_id=None, copy=False, check_git=False, run_time=0, sub_folder=''):
         # TODO: agnfitter output reading
         if agnf_id is None:
-            agnf_id = self.agn_fitter_id(component=component) + (str(run_time) if run_time != 0 else '')
+            agnf_id = self.agn_fitter_id() + (str(run_time) if run_time != 0 else '')
         if rX:
             raise NotImplementedError('rX path not yet')
         else:
@@ -429,18 +421,16 @@ class LensedQSO:
         output = pd.read_csv(os.path.join(path, par_values_file),
                              delim_whitespace=True, skiprows=4, header=None, names=AGNFITTER_FIELDS)
 
-        cid = COMPONENT_ID[component]
-
         if not hasattr(self, 'agnf_output'):
-            self.agnf_output = [0] * len(COMPONENT_ID)
+            self.agnf_output = [0]
 
         self.agnf_output[cid] = {}
         for c in AGNFITTER_FIELDS:
-            self.agnf_output[cid][c] = []
+            self.agnf_output[c] = []
 
-            self.agnf_output[cid][c].append(output[c].iloc[2])
-            self.agnf_output[cid][c].append(output[c].iloc[3] - self.agnf_output[cid][c][0])
-            self.agnf_output[cid][c].append(self.agnf_output[cid][c][0] - output[c].iloc[1])
+            self.agnf_output[c].append(output[c].iloc[2])
+            self.agnf_output[c].append(output[c].iloc[3] - self.agnf_output[c][0])
+            self.agnf_output[c].append(self.agnf_output[c][0] - output[c].iloc[1])
 
         return output
 
@@ -449,7 +439,7 @@ class LensedQSO:
 
             if demag and component == '_sub':
                 # Save values in easy vars
-                value, value_pe, value_me = self.agnf_output[COMPONENT_ID[component]][field]
+                value, value_pe, value_me = self.agnf_output[field]
                 mu = self.props['magnification'].values[0]
                 mu_err = self.props['magn_err'].values[0]
 
@@ -473,5 +463,5 @@ class LensedQSO:
 
             elif demag:
                 raise ValueError('Don\'t demag a different component than _sub')
-            return self.agnf_output[COMPONENT_ID[component]][field]
+            return self.agnf_output[field]
         raise AttributeError('Call load_agnf_output() first to load AGNfitter output.')
