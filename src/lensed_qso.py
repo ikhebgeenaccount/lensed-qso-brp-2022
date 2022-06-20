@@ -28,7 +28,7 @@ PROPERTIES = pd.read_csv(os.path.join(App.config().get(section='GENERAL', option
 
 class LensedQSO:
 
-    def __init__(self, name, sed_source='sed.csv',  mags_source='mags.csv', save_all_plots=True, save_location='plots'):
+    def __init__(self, name, sed_source='sed.csv',  mags_source='mags.csv', save_all_plots=True):
         """
         :param name: Name of the lensed qso.
         :param sed_source: source of the spectral energy density (SED). Must be located in 'data/[name]'. Default is
@@ -38,13 +38,10 @@ class LensedQSO:
 
         # Save location for plots
         self.save_all_plots = save_all_plots
-        self.save_location = os.path.join(save_location)
+        self.save_location = App.config().get(section='GENERAL', option='plots_dir')
 
         # Check if location exists
         # Base plots folder
-        if not os.path.isdir(save_location):
-            os.mkdir(save_location)
-        # This specific galaxy
         if not os.path.isdir(self.save_location):
             os.mkdir(self.save_location)
 
@@ -236,7 +233,7 @@ class LensedQSO:
         Translates the SED to a catalog that is compatible with AGNfitter.
         :return: str
         """
-        id = self.agn_fitter_id(component=component)
+        id = self.agn_fitter_id()
 
         header = '# ID redshift [wavelength_angstrom flux_mJy flux_error_mJy]\n'
 
@@ -421,10 +418,7 @@ class LensedQSO:
         output = pd.read_csv(os.path.join(path, par_values_file),
                              delim_whitespace=True, skiprows=4, header=None, names=AGNFITTER_FIELDS)
 
-        if not hasattr(self, 'agnf_output'):
-            self.agnf_output = [0]
-
-        self.agnf_output[cid] = {}
+        self.agnf_output = {}
         for c in AGNFITTER_FIELDS:
             self.agnf_output[c] = []
 
