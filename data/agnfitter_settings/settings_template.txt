@@ -18,7 +18,7 @@ def CATALOG_settings():
     =================================='''
     cat = dict()
     ##GENERAL
-    cat['path'] = {agnfitter_path}  #path to the AGNfitter code
+    cat['path'] = "{agnfitter_path}"  #path to the AGNfitter code
     cat['filename'] = cat['path']+'data/{name}.txt'
     cat['filetype'] = 'ASCII' ## catalog file type: 'ASCII' or 'FITS'.
                               ## FITS option not available yet.
