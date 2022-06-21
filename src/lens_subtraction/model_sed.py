@@ -80,6 +80,10 @@ for sed_file in glob.glob(os.path.join(App.config().get(section='GENERAL', optio
         MODELS[name]=newerest_model
 
 
+def add_model_data(model_name, wavelength, flux):
+    MODELS[model_name].append(pandas.DataFrame({'wavelength': wavelength, 'flux': flux}))
+
+
 
 # Fitting
 #
