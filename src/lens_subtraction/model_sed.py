@@ -55,35 +55,18 @@ for sed_file in glob.glob(os.path.join(App.config().get(section='GENERAL', optio
 
     # For the one spiral we have, add Herschel data (flux in millijansky)
     #TODO: this is for only the best fitting models, either add all others or fix the boundary that it cuts off
-    if name == 'UGC_12150':
-        new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 5.086e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
-        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.031e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
-        newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0.611e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
-        MODELS[name]=newerest_model
-
-    if name == 'NGC_5104':
-        new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 5.266e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
-        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 2.0051e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
-        newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 0.658e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
-        MODELS[name]=newerest_model
-
-    if name == 'NGC_5033':
-        new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 40.78e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
-        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 18.221e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
-        newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 6.474e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
-        MODELS[name]=newerest_model
-
-    if name == 'NGC_4594':
-        new_model=MODELS[name].append({'wavelength': 2.4476e6, 'flux' : 25.6e3, 'observed_wavelength':2.5e6,'source':4}, ignore_index = True)
-        newest_model=new_model.append({'wavelength': 3.4257e6, 'flux' : 12.1e3, 'observed_wavelength':3.5e6,'source':4}, ignore_index = True)
-        newerest_model=newest_model.append({'wavelength': 4.8953e6, 'flux' : 5.56e3, 'observed_wavelength':5e6,'source':4}, ignore_index = True)
-        MODELS[name]=newerest_model
 
 
-def add_model_data(model_name, wavelength, flux):
-    MODELS[model_name].append(pandas.DataFrame({'wavelength': wavelength, 'flux': flux}))
+def add_model_data(model_name, wavelength, flux, obs_wavelength):
+    """
+    This function allows one to add data to the brown templates, we use it to add SPIRE wavelengths to the spiral galaxies
+    """
+    MODELS[model_name].append(pandas.DataFrame({'wavelength': wavelength, 'flux': flux , 'observed_wavelength':obs_wavelength, 'source':4}))
 
-
+add_model_data('UGC_12150',[2.4476e6, 3.4257e6, 4.8953e6],[5.086e3, 2.031e3, 0.611e3],[2.5e6, 3.5e6, 5e6])
+add_model_data('NGC_5104',[2.4544e6, 3.436e6, 4.9089e6],[5.266e3, 2.0051e3, 0.658e3],[2.5e6, 3.5e6, 5e6])
+add_model_data('NGC_5033',[2.4927e6, 3.4898e6, 4.9855e6],[40.78e3, 18.221e3, 6.474e3],[2.5e6, 3.5e6, 5e6])
+add_model_data('NGC_4594',[2.4915e6, 3.4881e6, 4.9829e6],[25.6e3, 12.1e3, 5.56e3],[2.5e6, 3.5e6, 5e6])
 
 # Fitting
 #
