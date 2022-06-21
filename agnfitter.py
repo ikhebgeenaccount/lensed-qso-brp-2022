@@ -49,10 +49,10 @@ if __name__ == '__main__':
     if args.selection:
         gals = args.selection.split(',')
 
-    settings = None
-    if args.settings:
-        with open(args.settings, 'r') as f:
-            settings = json.load(f)
+    # settings = None
+    # if args.settings:
+    #     with open(args.settings, 'r') as f:
+    #         settings = json.load(f)
 
     agnfitter(gals, run_times=args.times, git_push=args.push,
               rX=args.rX, copy=args.copy, model_sub=args.modelsub,
