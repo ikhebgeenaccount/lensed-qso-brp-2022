@@ -93,7 +93,7 @@ def add_model_data(model_name, wavelength, flux):
 # Leja+2017 (https://iopscience.iop.org/article/10.3847/1538-4357/aa5ffe/meta) uses scipy minimize combined with MCMC
 
 
-def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='plots', verbose_plots=False, N=5):
+def fit(lqso, morph='all',save_plots=True, save_location='plots', verbose_plots=False, N=5):
 
     """
     Fits a Brown SED to the foreground galaxy data points of given LensedQSO using scipy.optimize.curve_fit.
@@ -104,70 +104,54 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     :param morph: type of allowed morphologies, valid values are 'all', 'spiral', 'elliptical'
     :return: three 1D arrays, wavelengths, fluxes, errors for each flux at each wavelength
     """
-    sed = lqso.filter_sed(component='_G', allow_zero_error=lqso.name == 'J1650+4251').copy()  # Copy such that changing the wavelength doesn't affect the original
+    # TODO: , allow_zero_error=lqso.name == 'J1650+4251' removed, allowed?
+    sed = lqso.filter_sed(component='_G').copy()  # Copy such that changing the wavelength doesn't affect the original
     sed['wavelength'] = sed['wavelength'] / (1 + lqso.props['z_lens'].values[0])
-    sed.sort_values(by='wavelength')  # Doesn't matter
 
     if sed.flux_G.values.shape[0] == 0:
         print(f'Not enough foreground data points to fit {lqso.name}.')
         return -1, -1, -1
 
-    model_set_is = MODEL_PROPERTIES.index
+    model_set = MODEL_PROPERTIES
+    model_set_is = model_set.index
 
+    # Select models based on morphology
     if morph == 'spiral':
-        model_set_is = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].str.contains('S')].index
+        model_set = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].str.contains('S')]
+        model_set_is = model_set.index
     elif morph == 'elliptical':
-        model_set_is = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].str.contains('E')].index
+        model_set = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['morph'].str.contains('E')]
+        model_set_is = model_set.index
 
     # Arrays to keep track of chi squared values, stds and mults
     chisqs = []
     stds = []
     mults = []
 
-    single_g = False        
-    if lqso.name in ['J1650+4251', 'J1455+1447']:
-        # Fit only selection of models
-        models = ['NGC_3265', 'NGC_0855', 'NGC_4621', 'NGC_4660', 'NGC_4458']
+    # Check if lensing galaxy has only one datapoint
+    single_g = sed.flux_G.values.shape[0] == 1
 
-        model_set_is = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['name'].isin(models)].index
+    # Select models based on specific galaxy settings or single_g if applicable
+    # Specific galaxy settings override single_g
+    if App.config().has_option(section='LENS-SUBTRACTION', option=lqso.name):
+        models = App.config().getlist(section='LENS-SUBTRACTION', option=lqso.name)
+        model_set_is = model_set.loc[model_set['name'].isin(models)].index
+    elif single_g:
+        models = App.config().getlist(section='LENS-SUBTRACTION', option='single_fg_datapoint_models')
+        model_set_is = model_set.loc[model_set['name'].isin(models)].index
 
-        single_g = True
-        
-        #TODO: fix this by detecting when there is a single datapoint
-
-    elif lqso.name == 'B1608+656':
-        # Fit only selection of models
-        models = ['NGC_3265', 'NGC_4660', 'NGC_4458']
-
-        model_set_is = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['name'].isin(models)].index
-
-        single_g = True
-        #TODO: fix when only a selection of models, negative fluxes
-
-    elif lqso.name == 'B1600+434':
-        # Only fit good fitting spiral models with Herschel data
-        models = ['UGC_12150', 'NGC_5104', 'NGC_5033', 'NGC_4594']
-
-        model_set_is = MODEL_PROPERTIES.loc[MODEL_PROPERTIES['name'].isin(models)].index
-        #TODO: fix when only spirals
-
+    # Fit applicable models, save chi squared values
     for i, label_index in enumerate(model_set_is):
         m = MODEL_PROPERTIES.loc[label_index]
         model = m['name']
 
-        if method == 'curve_fit':
-            ff = FitFunction(sed, model)
-            popt, pcov = curve_fit(ff.f, sed.wavelength.values, sed.flux_G.values, sigma=None if lqso.name == 'J1650+4251' else sed.flux_G_err.values, p0=[1e-2])
+        ff = FitFunction(sed, model)
+        popt, pcov = curve_fit(ff.f, sed.wavelength.values, sed.flux_G.values, sigma=None if lqso.name == 'J1650+4251' else sed.flux_G_err.values, p0=[1e-2])
 
-            # Keep track of scores and multiplication factors
-            chisqs.append(ff.chi_squared(popt))
-            stds.append(np.sqrt(np.diag(pcov))[0])
-            mults.append(popt[0])
-        elif method == 'minimize':
-            ff = FitFunction(sed, model)
-
-            res = minimize(ff.chi_squared, [1e-3], method='Powell')
-
+        # Keep track of scores and multiplication factors
+        chisqs.append(ff.chi_squared(popt))
+        stds.append(np.sqrt(np.diag(pcov))[0])
+        mults.append(popt[0])
 
     # Turn the resulting lists into a DataFrame for easy sorting
     result = {
@@ -214,9 +198,7 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
     # Combine N models
     #N = LQSO_NO_MODELS[lqso.name]
 
-
-
-    if N != 0:
+    if N > 0:
 
         models_wl = [list(MODELS[row['name']]['wavelength'].values) for i, row in model_set.head(N).iterrows()]
         models_flux = [MODELS[row['name']]['flux'].values * row['mult'] for i, row in model_set.head(N).iterrows()]
@@ -256,6 +238,8 @@ def fit(lqso, morph='all', method='curve_fit', save_plots=True, save_location='p
         print(np.sum(np.abs(models_std - avg_model_errs)))
 
         print('Avg model red chi sq:', FitFunction(sed, wls=wls, fluxs=avg_model).chi_squared([1]) / (sed.flux_G.shape[0] - 1))
+    else:
+        raise ValueError("Must have N > 0 for foreground model fitting.")
 
     if verbose_plots:
         fig = plt.figure()
