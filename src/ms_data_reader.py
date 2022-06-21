@@ -115,7 +115,7 @@ FILES = {
     #                                     fits_open_kwargs={'mmap': False},
     #                                     post_filter=lambda df: df[(df['TYPE'] == 0) & (df['ZPDF'] > .9) & (df['ZPDF'] < 1.6)
     #                                                               & (df['SFR_MED'] > 0.) & (df['MASS_MED'] > 6.)]),
-    'QSOs, Jarvis+2020, z=[0.1-0.2]': _file_reader([os.path.join('data', 'context_main_seq', 'qsos_jarvis.csv')],
+    'Quasars, Jarvis+2020, z=[0.1-0.2]': _file_reader([os.path.join('data', 'context_main_seq', 'qsos_jarvis.csv')],
                                                   cols_orig=['Name', 'z', lambda df: np.log10(df['SFR']), lambda df: df['SFR_pe'] / (df['SFR'] * np.log(10.)),
                                                              lambda df: df['SFR_me'] / (df['SFR'] * np.log(10.))] + COLUMNS[-3:],
                                                   open_kwargs={'delimiter': '\t'}),

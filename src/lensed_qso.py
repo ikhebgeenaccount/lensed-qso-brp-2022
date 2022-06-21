@@ -17,7 +17,7 @@ import warnings
 FILTERED_SOURCES = {
     'B1152+200': ['panstarrs'],
     'B1600+434': ['panstarrs'],
-    'B1608+656': [ 'luichies'],#['Koopmans+2003' ],
+    'B1608+656': [ 'snellen'],#['Koopmans+2003' ],
     'J0806+2006': ['panstarrs'],
     'J0924+0219': ['panstarrs', 'faure'],
     'J1330+1810': ['panstarrs'],
@@ -185,7 +185,7 @@ class LensedQSO:
 
         return u_sources
 
-    def plot_spectrum(self, loglog=True, mags=False, disallowed_sources=None, component=None, **kwargs):
+    def plot_spectrum(self, loglog=True, mags=False, disallowed_sources=None, component=None, save=True, **kwargs):
         if mags:
             raise NotImplementedError('I broke mags plot so if you want it let me know.')
 
@@ -267,14 +267,14 @@ class LensedQSO:
             ax.set_yscale('log')
 
         # ax.set_title(f'{self.name} SED' if component is None else f'{self.name}{component} SED')
-        ax.set_xlabel('$\mathit{Wavelength}\ [\mathrm{\AA}]$')
+        ax.set_xlabel('$\mathit{Observed\ wavelength}\ [\mathrm{\AA}]$')
         if mags:
             ax.set_ylabel('$\mathit{mag}$')
         else:
             ax.set_ylabel('$\mathit{Flux\ density}\ [\mathrm{mJy}]$')
 
         fig.tight_layout()
-        if self.save_all_plots:
+        if self.save_all_plots and save:
             fig.savefig(os.path.join(self.save_location, f'{self.name}_SED{component if component is not None else "_total"}.pdf'))
             # fig.savefig(os.path.join(self.save_location, f'{self.name}_SED{component if component is not None else "_total"}.png'))
 

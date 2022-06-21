@@ -53,7 +53,7 @@ FIELD_LABEL = {
     'logSFR': '$\log(\mathit{SFR} / \mathrm{M_\odot yr^{-1}})$',
     't_dep': '$\mathit{t_{dep}}\ [\mathrm{yr}]$',
     'f_gas': '$\mathit{f_{gas}}$',
-    'univ_age': '$\mathit{Age\ of\ universe}\ [\mathrm{yr}]$',
+    'univ_age': '$\mathit{Age\ of\ universe}\ [\mathrm{Gyr}]$',
     'redshift': '$z$',
     'sSFR': 'sSFR',
 
@@ -483,18 +483,19 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
         M_range2 = sfr_tot[i] * age_range2 + b
 
         if i==0:
-            ax.plot(age_range, M_range, color='fuchsia', label='time until galaxy formed' )
-            ax.plot(age_range2, M_range2, color='blue', label='time until gas depletes' )
+            ax.plot(age_range, M_range, color='fuchsia', label='time until galaxy formed', zorder=200)
+            ax.plot(age_range2, M_range2, color='blue', label='time until gas depletes', zorder=200)
         else:
-            ax.plot(age_range, M_range, color='fuchsia')
-            ax.plot(age_range2, M_range2, color='blue')
+            ax.plot(age_range, M_range, color='fuchsia', zorder=200)
+            ax.plot(age_range2, M_range2, color='blue', zorder=200)
 
+        s = 120
         if context == True:
-            axins.plot(age_range, M_range, color='fuchsia')
-            axins.plot(age_range2, M_range2, color='blue')
-            axins.scatter(age[i], M[i], label = f'{name}', zorder=100, s=49) #placing the galaxy
+            axins.plot(age_range, M_range, color='fuchsia', zorder=200)
+            axins.plot(age_range2, M_range2, color='blue', zorder=200)
+            axins.scatter(age[i], M[i], label = f'{name}', zorder=100, s=s) #placing the galaxy
 
-        ax.scatter(age[i], M[i], label = f'{name}', zorder=100, s=49) #placing the galaxy
+        ax.scatter(age[i], M[i], label = f'{name}', zorder=100, s=s) #placing the galaxy
 
     if context == True:
 
@@ -502,15 +503,18 @@ def plot_evolution_df(df, fig=None, ax=None, context=True):
         ax.set_ylim(ymax=8e11)
 
         for label, df in src.ms_data_reader.FILES.items():
-            if max(df['redshift']) < 0.5:
+            if 'SMG' not in label:
                 continue
 
+            # Marker size
+            s = 50
+
             ax.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label,
-                zorder=50, s=50, alpha=.7, marker='D')
+                zorder=50, s=s, alpha=.7, marker='D')
 
-            axins.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label, zorder=50, s=50, alpha=.7, marker='D')
+            axins.scatter(LCDM.age(df[df['redshift'] > 0]['redshift']) * 1e9, np.power(10., df[df['redshift'] > 0]['logMstar']), label=label, zorder=50, s=s, alpha=.7, marker='D')
 
-        x1, x2, y1, y2 = 3.3e9, 5.7e9, 0, 1.3e11
+        x1, x2, y1, y2 = 3.3e9, 5.85e9, 0, 1.3e11
         axins.set_xlim(x1, x2)
         axins.set_ylim(y1, y2)
         ax.indicate_inset_zoom(axins, edgecolor="black")

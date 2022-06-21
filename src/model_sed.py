@@ -343,7 +343,7 @@ def plot_fit(lqso, models, avg_model, save_plots=True, save_location='plots', co
     avg_wls, avg_model, avg_err = avg_model
 
     # Plot the model on just the foreground galaxy data
-    fig, ax, labels, legend_list = lqso.plot_spectrum(loglog=True, component='_G')
+    fig, ax, labels, legend_list = lqso.plot_spectrum(loglog=True, component='_G', save=False)
     for i in range(count):
         labels.append(models['name'].iloc[i])
         legend_list.append(ax.plot(MODELS[models['name'].iloc[i]].wavelength * (1 + lqso.props['z_lens'].values[0]), MODELS[models['name'].iloc[i]].flux * models['mult'].iloc[i], alpha=.6 / count * (count - i) + .4, label=models['name'].iloc[i])[0])
@@ -363,7 +363,7 @@ def plot_fit(lqso, models, avg_model, save_plots=True, save_location='plots', co
     rfig, rax = fig, ax
 
     # Plot the model on total flux data
-    fig, ax, labels, legend_list = lqso.plot_spectrum(loglog=True)
+    fig, ax, labels, legend_list = lqso.plot_spectrum(loglog=True, save=False)
     # labels.append('Average')
     avg = (ax.fill_between(avg_wls, avg_model - avg_err, avg_model + avg_err, color='grey', alpha=.5), ax.plot(avg_wls, avg_model, color='black')[0])
     legend_list.append(avg)

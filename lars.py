@@ -111,6 +111,9 @@ def _lqsos_dict_to_df(lqsos_dict):
     # Specific SFR
     lqsos_df['sSFR'] = lqsos_df['SFR'] / np.power(10., lqsos_df['logMstar'])
 
+    # Linear Mstar
+    lqsos_df['Mstar'] = np.power(10., lqsos_df['logMstar'])
+
     # Calculate gas fraction
     alpha_CO = 3.6
     lqsos_df['Mgas'] = alpha_CO * lqsos_df['mu_m_gas'] / lqsos_df['magnification']
@@ -141,8 +144,8 @@ def load_all_galaxies(n=10, sub_folder=None, generate_lqso_plots=False, from_fil
             _update_lqsos_dict(lqsos_dict, lqso)
 
             if generate_lqso_plots:
-                lqso.plot_spectrum(disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
-                lqso.plot_spectrum(component='_sub', disallowed_sources=['chandra', 'luichies'] + src.lensed_qso.FILTERED_SOURCES_AGNFITTER[g])
+                lqso.plot_spectrum(disallowed_sources=['chandra', 'luichies'])
+                lqso.plot_spectrum(component='_sub', disallowed_sources=['chandra', 'luichies'])
 
                 # Model subtraction also creates lqso.plot_spectrum but without above filtered sources, so messes up the saved plots
                 # model_subtraction(lqso)
@@ -178,7 +181,7 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
 
     pd.set_option('display.max_columns', None)
     print(lqsos_df.columns)
-    print(lqsos_df[['name', 'Mgas', 'Mgas_err', 'f_gas', 'f_gas_pe', 'f_gas_me', 't_dep', 'sSFR']])
+    print(lqsos_df[['name', 'Mgas', 'Mgas_err', 'f_gas', 'f_gas_pe', 'f_gas_me', 't_dep', 'sSFR', 'SFR', 'Mstar']])
     print(np.mean(lqsos_df['f_gas']))
     print(np.mean(lqsos_df['redshift']))
 
@@ -198,6 +201,8 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
     plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='Lbb(0.1-1)', unique_markers=True)
     plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='f_gas', unique_markers=True)
     plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='t_dep', unique_markers=True)
+    plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='log age', unique_markers=True)
+    plot_agnf_output(lqsos_df, 'logMstar', 'logSFR', color_scale_field='tau', unique_markers=True)
     plot_agnf_output(lqsos_df, 'sSFR', 'f_gas', logx=True, unique_markers=True)
     plot_agnf_output(lqsos_df, 'SFR', 't_dep', logx=True, unique_markers=True)
     plot_agnf_output(lqsos_df, 'SFR', 'logMgas', logx=True, unique_markers=True)
@@ -256,6 +261,36 @@ def generate_context_plots(lqsos_df, lqsos_all_runs_df):
 
     plot_evolution_df(lqsos_df, context=False)
     plot_evolution_df(lqsos_df)
+
+
+def generate_presentation_plots(lqsos_df):
+    sep_plots = ['SMG', 'Local', ['Quasars', 'AGN']]
+
+    fas = []
+    for i in range(len(sep_plots)):
+        fas.append([])
+
+    for label, df in src.ms_data_reader.FILES.items():
+        for i, s in enumerate(sep_plots):
+            # If s is a str, check str in label
+            # other option is s is a list of str, check for each substring st if in labels
+            if type(s) == str:
+                isin = s in label
+                save_name = s.lower()
+            else:
+                isin = False
+                for st in s:
+                    if st in label:
+                        isin = True
+                save_name = s[0].lower()
+
+            if isin:
+                # Create new fig, ax if first time, plot with our sample
+                if len(fas[i]) == 0:
+                    f, a = plot_lqsos_in_speagle_z_scaled(lqsos_df, label='This work', group=True, errorbar_kwargs={'zorder': 200, 'markersize': 10, 'alpha': 1, 'color': 'black'}, save_name=f'pres_speagle_{save_name}')
+                    fas[i].append(f)
+                    fas[i].append(a)
+                plot_lqsos_in_speagle_z_scaled(df, label=label, fig=fas[i][0], ax=fas[i][1], group=True, errorbar_kwargs={'markersize': 6, 'alpha':.7, 'capsize': 0, 'linewidth': 0, 'fmt': 'o'}, save_name=f'pres_speagle_{save_name}')
 
 
 def big_plot():
@@ -329,9 +364,11 @@ def plot_ell_models():
 
 
 if __name__ == '__main__':
-    lqsos_df, lqsos_all_runs_df = load_all_galaxies(from_file=True, generate_lqso_plots=False)
+    lqsos_df, lqsos_all_runs_df = load_all_galaxies(from_file=False, generate_lqso_plots=True)
 
     generate_context_plots(lqsos_df, lqsos_all_runs_df)
+
+    # generate_presentation_plots(lqsos_df)
     # plot_ell_models()
     # fit_foreground()
     # fg_subtraction()
