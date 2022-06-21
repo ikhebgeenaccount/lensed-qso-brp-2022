@@ -75,6 +75,29 @@ w, f, fe = fit(lqso, morph=morph, N=N)
 model_subtraction(lqso, w, f, fe)
 
 
+"""
+AGNFITTER
+=============================================================
+Sometimes new filters need to be added before running AGNfitter, there are
+some functions that turn these into the proper files. Take the XML transmission profiles
+for each filter from the csv filter profile service and save them to the folder FILTERPROFILES.
+TODO: describe automated running of AGNfitter
+"""
 
-# AGNfitter
+# Turns xml files into the proper format
+from src.agnfitter.xml_to_txt import xml_to_txt
+# xml_to_txt(Gemini_K.xml,Gemini_K.txt)
+
+
+# It could be that the csv filter profile service lists transmission in percentage tp fraction, this function fixes it
+from src.agnfitter.percent_to_fraction import percent_to_fraction
+# percent_to_fraction(WIYN.U_HARRIS.txt, WIYN.U_HARRIS_fraction.txt)
+
+# For e.g. radio wavelengths, no exact filter is known. Therefore we assume a tophat type filter. If it is given in angstrom or Ghz, 
+# enter the central wavelength and the bandwidth. 
+# If it is entered as an energy in keV, let the parameter central be the lower limit and bandwidth be the upper limit
+# Output is always in angstrom
+from src.agnfitter.tophat import tophat
+# tophat(central,bandwidth,filtername)
+
 

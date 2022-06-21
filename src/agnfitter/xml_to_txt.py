@@ -8,10 +8,10 @@ import matplotlib.pyplot as plt
 
 def xml_to_txt(xmlname,txtname):
     """
-    The xml files taken from he filter profile service website follow the 
-    same structure, this fil reads the entries in from the xmlname file and 
+    The xml files taken from the filter profile service website follow the 
+    same structure, this file reads the entries in from the xmlname file and 
     writes them to the txtname file, assuming both the files are in the 
-    FIlterprofiles folder. 
+    FIlTERprofiles folder. 
     """
     #Reading in the xml file
     tree = ET.parse(os.path.join(App.config().get(section='GENERAL', option='data_dir'),'Filterprofiles','XML',xmlname))

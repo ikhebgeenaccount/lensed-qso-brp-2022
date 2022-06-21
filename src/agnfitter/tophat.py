@@ -14,7 +14,7 @@ def tophat(central,bandwidth,filtername,freq_Ghz=False,energy_Kev=False,length=3
     with transmission =1 within the bandwidth and 0 outside it.
     """
         
-    #wavelengths in angstrom or hertz
+    #wavelengths in angstrom or frequencies in hertz
     x_array = np.linspace (float(central) - float(bandwidth), float(central) + float(bandwidth), length)
     
     #corresponding transmission
