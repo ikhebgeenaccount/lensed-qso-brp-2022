@@ -84,16 +84,7 @@ def add_model_data(model_name, wavelength, flux):
     MODELS[model_name].append(pandas.DataFrame({'wavelength': wavelength, 'flux': flux}))
 
 
-
-# Fitting
-#
-# Duncan+2017 (https://academic.oup.com/mnras/article/473/2/2655/4315948?login=true) uses EAZY
-# (https://github.com/gbrammer/eazy-photoz/tree/master) on single template mode, EAZY is for photometric redshift though
-#
-# Leja+2017 (https://iopscience.iop.org/article/10.3847/1538-4357/aa5ffe/meta) uses scipy minimize combined with MCMC
-
-
-def fit(lqso, morph='all',save_plots=True, save_location='plots', verbose_plots=False, N=5):
+def fit(lqso, morph='all', save_plots=True, verbose_plots=False, N=5):
 
     """
     Fits a Brown SED to the foreground galaxy data points of given LensedQSO using scipy.optimize.curve_fit.
@@ -104,7 +95,6 @@ def fit(lqso, morph='all',save_plots=True, save_location='plots', verbose_plots=
     :param morph: type of allowed morphologies, valid values are 'all', 'spiral', 'elliptical'
     :return: three 1D arrays, wavelengths, fluxes, errors for each flux at each wavelength
     """
-    # TODO: , allow_zero_error=lqso.name == 'J1650+4251' removed, allowed?
     sed = lqso.filter_sed(component='_G').copy()  # Copy such that changing the wavelength doesn't affect the original
     sed['wavelength'] = sed['wavelength'] / (1 + lqso.props['z_lens'].values[0])
 
@@ -139,6 +129,8 @@ def fit(lqso, morph='all',save_plots=True, save_location='plots', verbose_plots=
     elif single_g:
         models = App.config().getlist(section='LENS-SUBTRACTION', option='single_fg_datapoint_models')
         model_set_is = model_set.loc[model_set['name'].isin(models)].index
+
+    print(lqso.name, model_set_is)
 
     # Fit applicable models, save chi squared values
     for i, label_index in enumerate(model_set_is):
