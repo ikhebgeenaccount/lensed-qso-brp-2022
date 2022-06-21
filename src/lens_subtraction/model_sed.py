@@ -61,7 +61,7 @@ def add_model_data(model_name, wavelength, flux, obs_wavelength):
     """
     This function allows one to add data to the brown templates, we use it to add SPIRE wavelengths to the spiral galaxies
     """
-    MODELS[model_name].append(pandas.DataFrame({'wavelength': wavelength, 'flux': flux , 'observed_wavelength':obs_wavelength, 'source':4}))
+    MODELS[model_name] = MODELS[model_name].append(pandas.DataFrame({'wavelength': wavelength, 'flux': flux , 'observed_wavelength':obs_wavelength, 'source':4}))
 
 
 add_model_data('UGC_12150',[2.4476e6, 3.4257e6, 4.8953e6],[5.086e3, 2.031e3, 0.611e3],[2.5e6, 3.5e6, 5e6])
