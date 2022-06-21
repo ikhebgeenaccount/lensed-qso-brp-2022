@@ -1,3 +1,4 @@
+from src.app import App
 from src.lensed_qso import LensedQSO
 import os.path
 import os
