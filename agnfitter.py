@@ -17,7 +17,7 @@ def agnfitter(galaxies, run_times=1, git_push=False, rX=False, copy=False, model
 
         if model_sub:
             model_subtraction(lqso)
-        run_agn_fitter([g], run_times=run_times, rX=rX, settings=settings, component=component)
+        run_agn_fitter([g], run_times=run_times, rX=rX, component=component)
 
         if copy:
             lqso.agn_fitter_output(copy=copy)
