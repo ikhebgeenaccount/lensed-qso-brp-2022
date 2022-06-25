@@ -20,6 +20,7 @@ def _get_page(url, params):
     time_since_last_request = time.time() * 1000 - last_request_time
     if time_since_last_request < 1000:
         time.sleep((1000 - time_since_last_request) / 1000)
+    last_request_time = time.time() * 1000
 
     return requests.get(url, params=params)
 
@@ -35,6 +36,7 @@ def _xml_to_dataframe(xml_str):
         data[f['ID']] = []
         cols.append(f['ID'])
 
+    # Loop through all table rows and add them to lists
     for tr in soup.find_all('TR'):
         for i, td in enumerate(tr.find_all('TD')):
             data[cols[i]].append(td.text.strip())
@@ -47,9 +49,16 @@ def query_sed(target_name):
 
 
 def access_sed(target_name):
+    """
+    Retrieves all SED data from NED and returns them as a pandas DataFrame.
+    :param target_name: 
+    :return:
+    """
     req = _get_page(_generate_url('accessSED'), params={'TARGETNAME': target_name, 'REQUEST': 'getData'})
     return _xml_to_dataframe(req.text)
 
 
 pd.set_option('max_columns', None)
-print(access_sed('SDSS0806+2006')[['DataSpectralPassBand', 'DataFluxValue', 'DataFluxStatErr', 'DataFluxUnit', 'DataSpectralPublishedValue']])
+ned_sed = access_sed('SDSS0806+2006')
+print(ned_sed.columns)
+print(ned_sed[['DataSpectralPassBand', 'DataFluxValue', 'DataFluxStatErr', 'DataFluxUnit', 'DataSpectralPublishedValue', 'DataQualifiers']])
