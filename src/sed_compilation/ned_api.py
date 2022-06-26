@@ -1,4 +1,5 @@
 import time
+import warnings
 
 import pandas as pd
 import requests
@@ -17,16 +18,23 @@ def _generate_url(service):
 
 def _get_page(url, params):
     # Make sure we do not request data more than once per second
-    time_since_last_request = time.time() * 1000 - last_request_time
-    if time_since_last_request < 1000:
-        time.sleep((1000 - time_since_last_request) / 1000)
-    last_request_time = time.time() * 1000
+    global last_request_time
+    time_since_last_request = time.time() - last_request_time
+    if time_since_last_request < 1:
+        time.sleep((1 - time_since_last_request))
+    last_request_time = time.time()
 
     return requests.get(url, params=params)
 
 
-def _xml_to_dataframe(xml_str):
+def _response_to_dataframe(res):
+    xml_str = res.text
     soup = BeautifulSoup(xml_str, features='xml')
+
+    # Check if object found
+    msg = soup.find('PARAM', {'name': 'Message'})  # PARAM message is only there when no object found
+    if msg is not None:
+        warnings.warn(msg['value'] + ', ' + res.url)
 
     data = {}
 
@@ -51,14 +59,15 @@ def query_sed(target_name):
 def access_sed(target_name):
     """
     Retrieves all SED data from NED and returns them as a pandas DataFrame.
-    :param target_name: 
+    :param target_name:
     :return:
     """
-    req = _get_page(_generate_url('accessSED'), params={'TARGETNAME': target_name, 'REQUEST': 'getData'})
-    return _xml_to_dataframe(req.text)
+    res = _get_page(_generate_url('accessSED'), params={'TARGETNAME': target_name, 'REQUEST': 'getData'})
+
+    return _response_to_dataframe(res)
 
 
-pd.set_option('max_columns', None)
-ned_sed = access_sed('SDSS0806+2006')
-print(ned_sed.columns)
-print(ned_sed[['DataSpectralPassBand', 'DataFluxValue', 'DataFluxStatErr', 'DataFluxUnit', 'DataSpectralPublishedValue', 'DataQualifiers']])
+# pd.set_option('max_columns', None)
+# ned_sed = access_sed('J0806+2006')
+# print(ned_sed.columns)
+# print(ned_sed)

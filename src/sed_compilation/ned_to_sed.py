@@ -4,6 +4,10 @@ import os.path
 import warnings
 
 
+def ned_api_update_sed(lqso):
+    pass
+
+
 def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_conversion=1e3, qualifier=None, allowed_sources=None):
     """
     Reads a ned.txt file of a NED bar-separated table and enters it into the SED of the galaxy.
