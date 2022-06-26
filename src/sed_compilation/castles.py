@@ -4,8 +4,10 @@ import warnings
 import pandas as pd
 import requests
 
+CASTLES_BASE_URL = 'https://lweb.cfa.harvard.edu/castles/Individual/{quasar}.html'
 
-def extract_table(url):
+
+def _extract_table(url):
     """
     Extracts all data from tables on an individual quasar's CASTLES page.
     Combines any tables found, notifies if values of magnitudes are outside the range [15,25], as these are probably fluxes.
@@ -15,15 +17,18 @@ def extract_table(url):
     res = requests.get(url)
 
     # Read all tables in the html
-    dfs = pd.read_html(res.text)
+    try:
+        dfs = pd.read_html(res.text)
+    except ValueError:
+        return pd.DataFrame()
 
     # Loop through each table and add data to lists
     data = {
         'filter': [],
         'source': [],
     }
+    # Flag to keep track of having to warn user or not about possible fluxes instead of magnitudes in the data
     might_be_flux = False
-    # TODO: source column (extract source from "Data from ..." specs
     for df in dfs:
         # Only take rows with fluxes (usually these are mags)
         rel = df[df[df.columns[0]] == 'fluxes']
@@ -33,7 +38,7 @@ def extract_table(url):
         for i, c in enumerate(rel.columns):
             if i > 1:  # From 3rd column onward is data
                 # Split column data with
-                spl = rel[c].str.split('±')
+                spl = rel[c].astype(str).str.split('±')
 
                 sed_name = f'mag_{c[1]}'
                 sed_err_name = f'mag_{c[1]}_err'
@@ -85,16 +90,25 @@ def extract_table(url):
                 data['filter'] += list(rel[c].values)
                 data['source'] += [source] * rel.shape[0]
 
-    # Make sure all arrays are same length
-    length = 0
-    for c in data:
-        length = len(data[c]) if len(data[c]) > length else length
+        # Make sure all arrays are same length before with next table
+        length = 0
+        for c in data:
+            length = len(data[c]) if len(data[c]) > length else length
 
-    for c in data:
-        if len(data[c]) != length:
-            data[c] += [0] * (length - len(data[c]))
+        for c in data:
+            if len(data[c]) != length:
+                data[c] += [0] * (length - len(data[c]))
 
     if might_be_flux:
         warnings.warn(f'{url} might contain fluxes, check it.')
 
     return pd.DataFrame(data)
+
+
+def update_mags(lqso):
+    # First half of quasar name (e.g. B1152+200 -> B1152) is page name in CASTLES
+    page = re.match('([A-Za-z]*[0-9]+)[-+.][0-9]+', lqso.name)[1]
+
+    mags_df = _extract_table(CASTLES_BASE_URL.format(quasar=page))
+
+    lqso.update_mags(mags_df)
