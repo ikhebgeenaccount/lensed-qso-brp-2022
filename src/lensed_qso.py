@@ -45,24 +45,32 @@ class LensedQSO:
         if not os.path.isdir(self.save_location):
             os.mkdir(self.save_location)
 
+        # lqsos_data root folder
+        if not os.path.isdir(App.config().get(section='GENERAL', option='lqsos_dir')):
+            os.mkdir(App.config().get(section='GENERAL', option='lqsos_dir'))
+
+        # This lqso data folder
+        if not os.path.isdir(os.path.join(App.config().get(section='GENERAL', option='lqsos_dir'), name)):
+            os.mkdir(os.path.join(App.config().get(section='GENERAL', option='lqsos_dir'), name))
+
         # Read SED
-        self.sed_file = sed_source
-        self.sed = pd.read_csv(os.path.join(App.config().get(section='GENERAL', option='data_dir'), name, sed_source))
-        self.sed.fillna(0., inplace=True)
+        try:
+            self.sed_file = sed_source
+            self.sed = pd.read_csv(os.path.join(App.config().get(section='GENERAL', option='lqsos_dir'), name, sed_source))
+            self.sed.fillna(0., inplace=True)
+        except FileNotFoundError:
+            self.sed = None
 
         try:
             # Read mags
-            self.mags = pd.read_csv(os.path.join(App.config().get(section='GENERAL', option='data_dir'), name, mags_source))
+            self.mags_file = mags_source
+            self.mags = pd.read_csv(os.path.join(App.config().get(section='GENERAL', option='lqsos_dir'), name, mags_source))
             self.mags.fillna(0., inplace=True)
         except FileNotFoundError:
             print('No mags file found for galaxy ' + self.name)
+            self.mags = None
 
         self.props = PROPERTIES.loc[PROPERTIES.galaxy == self.name]
-
-        # filtered_sed only selects entries that have a wavelength and a flux_total
-        self.filtered_sed = self.sed[(self.sed.wavelength > 0) & (self.sed.flux_total > 0)].copy()
-
-        # self.load_agnf_output()
 
     def filter_sed(self, disallowed_sources=None, component='_total', allow_zero_error=True, rX=True):
         """
@@ -213,20 +221,43 @@ class LensedQSO:
 
         return fig, ax, plotted_sources, legend_list
 
-    def plot_error_percentage(self, loglog=True):
-        fig, ax = plt.subplots(figsize=(10, 8))
-        ratio=self.sed['flux_sub_err']/self.sed['flux_sub'] *100
-        ax.scatter(self.sed['wavelength'][ratio<=100],ratio[ratio<=100], label='sub')
-        ratio2=self.sed['flux_err']/self.sed['flux_total'] *100
-        ax.scatter(self.sed['wavelength'][ratio2<=100],ratio2[ratio2<=100], label='total')
-        ax.set_xscale('log')
-        ax.set_ylabel('errors of sub in percentage', fontsize=15)
-        ax.set_title(f'{self.name} percentage error')
+    def update_sed(self, df):
+        """
+        Updates the SED with the data in pandas DataFrame df.
+        :param df: A pandas DataFrame containing SED data.
+        :return:
+        """
+        if df.shape == (0, 0):
+            return
 
-        return fig,ax
+        if self.sed is None:
+            self.sed = df
+        else:
+            # TODO: fix, this is not inplace so doesn't do anything. Have to check if data already in there
+            self.sed.append(df)
+        self.save_sed()
+
+    def update_mags(self, df):
+        """
+        Updates the mags with the data in pandas DataFrame df.
+        :param df:
+        :return:
+        """
+        if df.shape == (0, 0):
+            return
+
+        if self.mags is None:
+            self.mags = df
+        else:
+            # TODO: see above
+            self.mags.append(df)
+        self.save_mags()
 
     def save_sed(self):
-        self.sed.to_csv(os.path.join(App.config().get(section='GENERAL', option='data_dir'), self.name, self.sed_file), index=False)
+        self.sed.to_csv(os.path.join(App.config().get(section='GENERAL', option='lqsos_dir'), self.name, self.sed_file), index=False)
+
+    def save_mags(self):
+        self.mags.to_csv(os.path.join(App.config().get(section='GENERAL', option='lqsos_dir'), self.name, self.mags_file), index=False)
 
     def sed_to_agn_fitter(self, rX=False, component='_sub', run_times=1):
         """
@@ -383,6 +414,7 @@ class LensedQSO:
             raise NotImplementedError('rX path not yet')
         else:
             if sub_folder is None:
+                # TODO: change to config path
                 path = os.path.join(os.pardir, 'AGNfitter', 'OUTPUT', str(agnf_id))
             else:
                 path = os.path.join(os.pardir, 'AGNfitter', 'OUTPUT', sub_folder, str(agnf_id))
@@ -395,7 +427,7 @@ class LensedQSO:
         if os.path.isdir(path):
             par_values_file = f'parameter_outvalues_{agnf_id}.txt'
             if copy:
-                distutils.dir_util.copy_tree(path, os.path.join(App.config().get(section='GENERAL', option='data_dir'), self.name, 'agnfitter'))
+                distutils.dir_util.copy_tree(path, os.path.join(App.config().get(section='GENERAL', option='lqsos_dir'), self.name, 'agnfitter'))
         elif os.path.isdir(repo_path) and check_git:
             # TODO: fix
             # print(re.escape(os.path.join(repo_path, f'parameter_outvalues_{self.agn_fitter_id(component=component)}')).replace('/', '\\/') + '[0-9]?\.txt')
