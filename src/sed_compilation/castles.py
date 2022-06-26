@@ -92,8 +92,3 @@ def extract_table(url):
         warnings.warn(f'{url} might contain fluxes, check it.')
 
     return pd.DataFrame(data)
-
-
-print(_extract_table('https://lweb.cfa.harvard.edu/castles/Individual/CTQ414.html'))
-print(_extract_table('https://lweb.cfa.harvard.edu/castles/Individual/B1608.html'))
-# _extract_table('https://lweb.cfa.harvard.edu/castles/noimages.html')
