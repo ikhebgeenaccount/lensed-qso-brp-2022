@@ -1,3 +1,4 @@
+import re
 import warnings
 
 import pandas as pd
@@ -19,11 +20,15 @@ def extract_table(url):
     # Loop through each table and add data to lists
     data = {
         'filter': [],
+        'source': [],
     }
     might_be_flux = False
+    # TODO: source column (extract source from "Data from ..." specs
     for df in dfs:
         # Only take rows with fluxes (usually these are mags)
         rel = df[df[df.columns[0]] == 'fluxes']
+
+        source = re.match('Data from ([A-Za-z0-9]*)', df.columns[0][0])[1]
 
         for i, c in enumerate(rel.columns):
             if i > 1:  # From 3rd column onward is data
@@ -78,6 +83,7 @@ def extract_table(url):
 
             elif i == 1:  # 2nd column contains filters
                 data['filter'] += list(rel[c].values)
+                data['source'] += [source] * rel.shape[0]
 
     # Make sure all arrays are same length
     length = 0
