@@ -227,6 +227,13 @@ class LensedQSO:
         return fig, ax, plotted_sources, legend_list
 
     def _update_df(self, df, df_to_update):
+        """
+        Updates DataFrame df_to_update with data from DataFrame df.
+        It matches already existing data using a 'bibcode' or 'source' column.
+        :param df:
+        :param df_to_update:
+        :return:
+        """
         if df_to_update is None:
             return df
 
@@ -267,7 +274,7 @@ class LensedQSO:
         if df.shape == (0, 0):
             return
 
-        self._update_df(df, self.sed)
+        self.sed = self._update_df(df, self.sed)
         self.save_sed()
 
     def update_mags(self, df):
@@ -279,14 +286,18 @@ class LensedQSO:
         if df.shape == (0, 0):
             return
 
-        self._update_df(df, self.mags)
+        self.mags = self._update_df(df, self.mags)
         self.save_mags()
 
+    def _save_df(self, df, path):
+        if df is not None:
+            df.to_csv(path, index=False)
+
     def save_sed(self):
-        self.sed.to_csv(os.path.join(App.config().get(section='GENERAL', option='lqsos_dir'), self.name, self.sed_file), index=False)
+        self._save_df(self.sed, os.path.join(App.config().get(section='GENERAL', option='lqsos_dir'), self.name, self.sed_file))
 
     def save_mags(self):
-        self.mags.to_csv(os.path.join(App.config().get(section='GENERAL', option='lqsos_dir'), self.name, self.mags_file), index=False)
+        self._save_df(self.mags, os.path.join(App.config().get(section='GENERAL', option='lqsos_dir'), self.name, self.mags_file))
 
     def sed_to_agn_fitter(self, rX=False, component='_sub', run_times=1):
         """
