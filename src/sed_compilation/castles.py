@@ -109,6 +109,13 @@ def update_mags(lqso):
     # First half of quasar name (e.g. B1152+200 -> B1152) is page name in CASTLES
     page = re.match('([A-Za-z]*[0-9]+)[-+.][0-9]+', lqso.name)[1]
 
+    # Special case
+    # TODO: why?
+    if page == 'QJ0158':
+        page = 'CTQ414'
+
     mags_df = _extract_table(CASTLES_BASE_URL.format(quasar=page))
 
     lqso.update_mags(mags_df)
+
+    return mags_df

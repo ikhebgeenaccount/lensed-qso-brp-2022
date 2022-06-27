@@ -65,9 +65,3 @@ def access_sed(target_name):
     res = _get_page(_generate_url('accessSED'), params={'TARGETNAME': target_name, 'REQUEST': 'getData'})
 
     return _response_to_dataframe(res)
-
-
-# pd.set_option('max_columns', None)
-# ned_sed = access_sed('J0806+2006')
-# print(ned_sed.columns)
-# print(ned_sed)

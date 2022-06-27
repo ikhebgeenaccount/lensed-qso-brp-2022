@@ -3,12 +3,29 @@ import numpy as np
 import os.path
 import warnings
 
+from src.app import App
+from src.sed_compilation import ned_api
 
-def ned_api_update_sed(lqso):
-    pass
+
+def update_sed(lqso):
+    """
+    Adds to the SED of lqso all data points found in NED.
+    :param lqso:
+    :return:
+    """
+    # Try all aliases until we find something
+    for alias in lqso.aliases:
+        ned_sed = ned_api.access_sed(alias)
+
+        if ned_sed.shape[0] > 0:
+            break
+
+    # TODO: qualifiers
+    # TODO: unit conversions (using astropy?)
+    return ned_sed
 
 
-def ned_table_to_sed(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_conversion=1e3, qualifier=None, allowed_sources=None):
+def read_table_file(lqso, ned_file='ned.txt', wavelength_conversion=1e4, flux_conversion=1e3, qualifier=None, allowed_sources=None):
     """
     Reads a ned.txt file of a NED bar-separated table and enters it into the SED of the galaxy.
     :param galaxy:

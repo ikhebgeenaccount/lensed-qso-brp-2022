@@ -5,7 +5,7 @@ import os
 from matplotlib import pyplot as plt
 
 from src.lensed_qso import LensedQSO
-from src.sed_compilation import ned_api, castles
+from src.sed_compilation import ned_api, castles, ned
 
 # Print all rows and columns
 pd.set_option('display.max_rows', None)
@@ -33,21 +33,13 @@ print(df_comb.columns)
 # Find NED data point counts for each lqso
 counts = []
 for cas_name, sta_name in zip(df_comb['lens_cas'], df_comb['lens_sta']):
+    lqso = LensedQSO(cas_name, aliases=[sta_name])
     print(sta_name)
     # Fetch CASTLES data
-    castles.update_mags(LensedQSO(cas_name))
+    castles.update_mags(lqso)
 
     # NED data
-    nedsed = ned_api.access_sed(sta_name)
-
-    print(f'\tFound {nedsed.shape[0]} datapoints')
-
-    if nedsed.shape[0] == 0:
-        print(f'\tTrying {cas_name}')
-        nedsed = ned_api.access_sed(cas_name)
-        print(f'\tFound {nedsed.shape[0]} datapoints')
-
-    counts.append(nedsed.shape[0])
+    ned.update_sed(lqso)
 
 df_comb['ned_count'] = counts
 

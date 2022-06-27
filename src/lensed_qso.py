@@ -28,13 +28,18 @@ PROPERTIES = pd.read_csv(os.path.join(App.config().get(section='GENERAL', option
 
 class LensedQSO:
 
-    def __init__(self, name, sed_source='sed.csv',  mags_source='mags.csv', save_all_plots=True):
+    def __init__(self, name, aliases=None, sed_source='sed.csv',  mags_source='mags.csv', save_all_plots=True):
         """
         :param name: Name of the lensed qso.
         :param sed_source: source of the spectral energy density (SED). Must be located in 'data/[name]'. Default is
         'data/[name]/sed.csv'.
         """
         self.name = name
+
+        self.aliases = [name]
+        # Add all given aliases, making sure name is not entered double
+        if aliases is not None:
+            self.aliases += [a for a in aliases if a != name]
 
         # Save location for plots
         self.save_all_plots = save_all_plots
@@ -289,6 +294,7 @@ class LensedQSO:
         return catalog, l
 
     def agn_fitter_id(self):
+        # TODO: update to allow all types of names
         t = self.name.replace('B', '').replace('J', '').replace('+', '')
         return t if t[0] != '0' else t[1:]
 
