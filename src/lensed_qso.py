@@ -226,6 +226,38 @@ class LensedQSO:
 
         return fig, ax, plotted_sources, legend_list
 
+    def _update_df(self, df, df_to_update):
+        if df_to_update is None:
+            return df
+
+        # Prefer bibcode to match
+        if 'bibcode' in df.columns and 'bibcode' in df_to_update.columns:
+            col_match = 'bibcode'
+        elif 'source' in df.columns and 'source' in df_to_update.columns:
+            col_match = 'source'
+        else:
+            raise ValueError('No common column (bibcode or source) found.')
+
+        # Loop over each unique value in col_match
+        for m in np.unique(df[col_match]):
+            # If the col_match entry is in df_to_update
+            if m in df_to_update[col_match].values:
+                # Loop over all wavelengths of this col_match entry
+                for i, row in df[df[col_match] == m].iterrows():
+                    if row['filter'] in df_to_update['filter'][df_to_update[col_match] == m]:
+                        # If wavelength exists, overwrite
+                        df_to_update.loc[(df_to_update['filter'] == row['filter']) & \
+                                         (df_to_update[col_match] == row[col_match]), row.columns] = row.values
+                    else:
+                        # Otherwise, add it
+                        df_to_update = df_to_update.append(row)
+                pass
+            else:
+                # Add it as source is not in df_to_update anyway
+                df_to_update = df_to_update.append(df[df[col_match] == m])
+
+        return df_to_update
+
     def update_sed(self, df):
         """
         Updates the SED with the data in pandas DataFrame df.
@@ -235,11 +267,7 @@ class LensedQSO:
         if df.shape == (0, 0):
             return
 
-        if self.sed is None:
-            self.sed = df
-        else:
-            # TODO: fix, this is not inplace so doesn't do anything. Have to check if data already in there
-            self.sed.append(df)
+        self._update_df(df, self.sed)
         self.save_sed()
 
     def update_mags(self, df):
@@ -251,11 +279,7 @@ class LensedQSO:
         if df.shape == (0, 0):
             return
 
-        if self.mags is None:
-            self.mags = df
-        else:
-            # TODO: see above
-            self.mags.append(df)
+        self._update_df(df, self.mags)
         self.save_mags()
 
     def save_sed(self):
