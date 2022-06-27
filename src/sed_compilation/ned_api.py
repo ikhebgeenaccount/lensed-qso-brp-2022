@@ -4,6 +4,7 @@ import warnings
 import pandas as pd
 import requests
 
+import astropy.units as u
 from bs4 import BeautifulSoup
 
 
@@ -49,7 +50,34 @@ def _response_to_dataframe(res):
         for i, td in enumerate(tr.find_all('TD')):
             data[cols[i]].append(td.text.strip())
 
-    return pd.DataFrame(data)
+    out_df = pd.DataFrame(data)
+    out_df.rename(columns={
+        'DataSpectralPassBand': 'filter',
+        'DataSpectralValue': 'frequency',
+        'DataFrequencyMode': 'fremode',
+        'DataFluxValue': 'flux_total',
+        'DataFluxStatErr': 'flux_err',
+        'DataFluxUnit': 'unit',
+        'DataRefcode': 'bibcode',
+        'DataQualifiers': 'qualifiers',
+    }, inplace=True)
+
+    out_df['wavelength'] = 3e18 / out_df['frequency'].astype(float)
+    out_df['flux_total'] = _convert_array_units(out_df['flux_total'], out_df['unit'], 'mJy')
+    out_df['flux_err'] = _convert_array_units(out_df['flux_err'], out_df['unit'], 'mJy')
+
+    return out_df[['filter', 'wavelength', 'flux_total', 'flux_err', 'bibcode', 'qualifiers']]
+
+
+def _convert_array_units(arr, units, to_unit):
+    """
+    Converts all values in array arr from units in unit to units in to_unit
+    :param arr: Array of values
+    :param units: Array of strings, those being units of values
+    :param to_unit: Single string of unit
+    :return: Array containing unitless values converted to to_unit
+    """
+    return [(v * getattr(u, unit)).to(getattr(u, to_unit)) for v, unit in zip(arr, units)]
 
 
 def query_sed(target_name):
