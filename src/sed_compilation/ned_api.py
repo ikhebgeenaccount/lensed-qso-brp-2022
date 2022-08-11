@@ -50,7 +50,15 @@ def _response_to_dataframe(res):
         for i, td in enumerate(tr.find_all('TD')):
             data[cols[i]].append(td.text.strip())
 
+    # Change titles of columns
     out_df = pd.DataFrame(data)
+    # Columns in out_df:
+    # ['DataPointNumber', 'DataSpectralPassBand', 'DataFluxPublishedValue',
+    #    'DataFluxPublishedStatErr', 'DataFluxPublishedUnit',
+    #    'DataSpectralValue', 'DataFluxValue', 'DataFluxStatErr', 'DataFluxUnit',
+    #    'DataRefcode', 'DataSignificance', 'DataSpectralPublishedValue',
+    #    'DataFrequencyMode', 'DataTargetPos', 'DataSpatialMode',
+    #    'DataQualifiers', 'DataComments']
     out_df.rename(columns={
         'DataSpectralPassBand': 'filter',
         'DataSpectralValue': 'frequency',
@@ -60,13 +68,23 @@ def _response_to_dataframe(res):
         'DataFluxUnit': 'unit',
         'DataRefcode': 'bibcode',
         'DataQualifiers': 'qualifiers',
+        'DataTargetPos': 'pos',
     }, inplace=True)
 
-    out_df['wavelength'] = 3e18 / out_df['frequency'].astype(float)
-    out_df['flux_total'] = _convert_array_units(out_df['flux_total'], out_df['unit'], 'mJy')
-    out_df['flux_err'] = _convert_array_units(out_df['flux_err'], out_df['unit'], 'mJy')
+    # Strip all columns
+    for c in out_df.columns:
+        out_df[c] = out_df[c].str.strip()
 
-    return out_df[['filter', 'wavelength', 'flux_total', 'flux_err', 'bibcode', 'qualifiers']]
+    # Replace non-values with zero for float columns
+    for c in ['frequency', 'flux_total', 'flux_err']:
+        out_df[c] = out_df[c].replace('', '0')
+
+    # Convert frequency to wavelength and units of flux values
+    out_df['wavelength'] = 3e18 / out_df['frequency'].astype(float)
+    out_df['flux_total'] = _convert_array_units(out_df['flux_total'].astype(float), out_df['unit'], 'mJy')
+    out_df['flux_err'] = _convert_array_units(out_df['flux_err'].astype(float), out_df['unit'], 'mJy')
+
+    return out_df[['filter', 'wavelength', 'flux_total', 'flux_err', 'bibcode', 'qualifiers', 'pos']]
 
 
 def _convert_array_units(arr, units, to_unit):
@@ -77,7 +95,7 @@ def _convert_array_units(arr, units, to_unit):
     :param to_unit: Single string of unit
     :return: Array containing unitless values converted to to_unit
     """
-    return [(v * getattr(u, unit)).to(getattr(u, to_unit)) for v, unit in zip(arr, units)]
+    return [(v * getattr(u, unit)).to(getattr(u, to_unit)).value for v, unit in zip(arr, units)]
 
 
 def query_sed(target_name):
