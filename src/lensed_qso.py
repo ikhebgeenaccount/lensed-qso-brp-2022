@@ -226,42 +226,45 @@ class LensedQSO:
 
         return fig, ax, plotted_sources, legend_list
 
-    def _update_df(self, df, df_to_update):
+    def _update_df(self, df_new_data, df_to_update):
         """
-        Updates DataFrame df_to_update with data from DataFrame df.
+        Updates DataFrame df_to_update with data from DataFrame df_new_data.
         It matches already existing data using a 'bibcode' or 'source' column.
-        :param df:
+        :param df_new_data:
         :param df_to_update:
         :return:
         """
         if df_to_update is None:
-            return df
+            return df_new_data
 
         # Prefer bibcode to match
-        if 'bibcode' in df.columns and 'bibcode' in df_to_update.columns:
+        if 'bibcode' in df_new_data.columns and 'bibcode' in df_to_update.columns:
             col_match = 'bibcode'
-        elif 'source' in df.columns and 'source' in df_to_update.columns:
+        elif 'source' in df_new_data.columns and 'source' in df_to_update.columns:
             col_match = 'source'
         else:
             raise ValueError('No common column (bibcode or source) found.')
 
         # Loop over each unique value in col_match
-        for m in np.unique(df[col_match]):
+        for m in np.unique(df_new_data[col_match]):
             # If the col_match entry is in df_to_update
+            # TODO: fix if already in df, currently creates duplicate entries
             if m in df_to_update[col_match].values:
                 # Loop over all wavelengths of this col_match entry
-                for i, row in df[df[col_match] == m].iterrows():
-                    if row['filter'] in df_to_update['filter'][df_to_update[col_match] == m]:
-                        # If wavelength exists, overwrite
-                        df_to_update.loc[(df_to_update['filter'] == row['filter']) & \
-                                         (df_to_update[col_match] == row[col_match]), row.columns] = row.values
+                for i, row in df_new_data[df_new_data[col_match] == m].iterrows():
+                    if row['filter'] in df_to_update['filter'][df_to_update[col_match] == m].values:
+                        # Delete current row with duplicate data
+                        df_to_update.drop(df_to_update.index[(df_to_update['filter'] == row['filter']) & \
+                                         (df_to_update[col_match] == row[col_match])], inplace=True)
+                        # Append new data
+                        df_to_update = df_to_update.append({str(k): v for (k, v) in zip(row.axes[0].tolist(), row.values)}, ignore_index=True)
                     else:
                         # Otherwise, add it
                         df_to_update = df_to_update.append(row)
                 pass
             else:
                 # Add it as source is not in df_to_update anyway
-                df_to_update = df_to_update.append(df[df[col_match] == m])
+                df_to_update = df_to_update.append(df_new_data[df_new_data[col_match] == m])
 
         return df_to_update
 
